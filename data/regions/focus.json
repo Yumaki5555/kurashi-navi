@@ -1,0 +1,343 @@
+{
+ "areas": [
+  {
+   "code": "271004",
+   "name": "大阪市",
+   "pref": "大阪府",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "大阪市住宅宿泊事業の適正な運営の確保に関する条例（平成30年大阪市条例第40号。令和4年4月1日改正施行）",
+     "summary": "住居専用地域では、1年中、住宅宿泊事業（民泊）ができません。ただし、幅員4m以上の道路に面した敷地の区域は除きます。小学校・義務教育学校の敷地の周り100m以内では、月曜の正午から金曜の正午までできません。家主が不在になる場合や居室が5を超える場合が対象です。",
+     "effective": "2018-06-15",
+     "sourceId": "src_osaka_jorei"
+    },
+    {
+     "system": "ryokan",
+     "title": "大阪市旅館業法の施行等に関する条例（令和8年10月30日改正施行）",
+     "summary": "改正された旅館業の条例が2026年10月30日から施行され、人が住んでいる部分がある建物を旅館業に使う場合などの構造設備の基準、近隣住民への周知、常駐の体制についての決まりが加わりました。",
+     "effective": "2026-10-30",
+     "sourceId": "src_osaka_ryokan"
+    },
+    {
+     "system": "tokku",
+     "title": "大阪市国家戦略特別区域外国人滞在施設経営事業（特区民泊）",
+     "summary": "特区民泊の新規の申請受付は令和8年5月29日で終わりました。同日以前に認定を受けた施設は、これまでどおり営業できます。",
+     "effective": "2026-05-29",
+     "sourceId": "src_osaka_tokku"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "大阪市保健所 環境衛生監視課（旅館業指導グループ）",
+     "tel": "06-6647-0692",
+     "hours": null,
+     "url": "https://www.city.osaka.lg.jp/kenko/page/0000422269.html",
+     "handles": [
+      "jutaku",
+      "ryokan"
+     ],
+     "sourceId": "src_osaka_jutaku_page"
+    },
+    {
+     "dept": "大阪市保健所 環境衛生監視課（旅館業指導グループ）違法民泊通報窓口",
+     "tel": "06-6647-0835",
+     "hours": "平日9時〜17時30分（12月29日〜1月3日を除く）。FAX・メールは24時間受付",
+     "url": "https://www.city.osaka.lg.jp/kenko/page/0000644395.html",
+     "handles": [
+      "jutaku",
+      "ryokan"
+     ],
+     "sourceId": "src_osaka_ihou"
+    },
+    {
+     "dept": "大阪市経済戦略局観光部観光課",
+     "tel": "06-6469-5156",
+     "hours": null,
+     "url": "https://www.city.osaka.lg.jp/keizaisenryaku/page/0000672137.html",
+     "handles": [
+      "jutaku",
+      "tokku"
+     ],
+     "sourceId": "src_osaka_minpaku_info"
+    },
+    {
+     "dept": "大阪市環境局事業部一般廃棄物指導課",
+     "tel": "06-6630-3271",
+     "hours": null,
+     "url": "https://www.city.osaka.lg.jp/keizaisenryaku/page/0000672137.html",
+     "handles": [
+      "gomi"
+     ],
+     "sourceId": "src_osaka_minpaku_info"
+    },
+    {
+     "dept": "大阪市健康局生活衛生部生活衛生課",
+     "tel": "06-6208-9981",
+     "hours": null,
+     "url": "https://www.city.osaka.lg.jp/hodoshiryo/keizaisenryaku/0000666129.html",
+     "handles": [
+      "tokku"
+     ],
+     "sourceId": "src_osaka_tokku"
+    }
+   ],
+   "checked": "2026-11-11"
+  },
+  {
+   "code": "261009",
+   "name": "京都市",
+   "pref": "京都府",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "京都市住宅宿泊事業の適正な運営を確保するための措置に関する条例",
+     "summary": "住居専用地域では、3月16日正午から翌年1月15日正午までは民泊ができません（できるのは1月15日正午から3月16日正午まで）。家主が3か月を超えて住んでいる家で家主がいる間に行う民泊や、認定された京町家（1回1組9人以下）は、この制限の対象外です。",
+     "effective": "2018-06-15",
+     "sourceId": "src_kyoto_jorei"
+    },
+    {
+     "system": "ryokan",
+     "title": "京都市旅館業法に基づく衛生に必要な措置及び構造設備の基準等に関する条例",
+     "summary": "簡易宿所の民泊では、使用人が施設の中か、歩いて10分で着く場所（道のりでおよそ800m以内）にいる必要があります。共同住宅では、旅館業の施設と住宅が同じ建物に混ざることを制限する決まりもあります。",
+     "effective": null,
+     "sourceId": "src_kyoto_ryokan"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "京都市民泊通報・相談窓口",
+     "tel": "075-223-0700",
+     "hours": "午前10時〜午後5時（平日のみ。12月29日〜1月3日を除く）。電子メールは24時間受付",
+     "url": "https://www.city.kyoto.lg.jp/hokenfukushi/page/0000201777.html",
+     "handles": [
+      "jutaku",
+      "ryokan"
+     ],
+     "sourceId": "src_kyoto_tsuhou"
+    },
+    {
+     "dept": "保健福祉局 医療衛生推進室 医療衛生センター 住宅宿泊事業審査担当（届出受付窓口）",
+     "tel": "075-748-1313",
+     "hours": "月〜金（祝日・年末年始を除く）午前9時〜正午、午後1時〜5時。来庁は事前予約",
+     "url": "https://www.city.kyoto.lg.jp/hokenfukushi/page/0000233644.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_kyoto_jutaku_page"
+    },
+    {
+     "dept": "医療衛生センター 旅館業審査担当",
+     "tel": "075-746-7209",
+     "hours": null,
+     "url": "https://minpakuportal.city.kyoto.lg.jp/contact/contact1",
+     "handles": [
+      "ryokan"
+     ],
+     "sourceId": "src_kyoto_portal_contact"
+    },
+    {
+     "dept": "医療衛生センター 宿泊施設適正化担当",
+     "tel": "075-585-5653",
+     "hours": null,
+     "url": "https://minpakuportal.city.kyoto.lg.jp/contact/contact1",
+     "handles": [],
+     "sourceId": "src_kyoto_portal_contact"
+    }
+   ],
+   "checked": "2026-11-11"
+  },
+  {
+   "code": "131041",
+   "name": "新宿区",
+   "pref": "東京都",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "新宿区住宅宿泊事業の適正な運営の確保に関する条例（平成29年条例第37号）",
+     "summary": "住居専用地域では、月曜の正午から金曜の正午まで民泊ができません。住居専用地域以外は、曜日に関係なく、法律どおり年間180日まで行えます。",
+     "effective": "2018-06-15",
+     "sourceId": "src_shinjuku_jorei"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "新宿区保健所 衛生課環境衛生係（住宅宿泊事業の手続き）",
+     "tel": "03-5273-3870",
+     "hours": null,
+     "url": "https://www.city.shinjuku.lg.jp/kenkou/eisei03_002089.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_shinjuku_contact"
+    },
+    {
+     "dept": "新宿区保健所 衛生課環境衛生係（その他の問合せ・違法民泊の注意喚起）",
+     "tel": "03-5273-3841",
+     "hours": null,
+     "url": "https://www.city.shinjuku.lg.jp/kenkou/eisei03_002097.html",
+     "handles": [
+      "jutaku",
+      "ryokan"
+     ],
+     "sourceId": "src_shinjuku_ihou"
+    },
+    {
+     "dept": "環境対策課公害対策係（騒音）",
+     "tel": "03-5273-3764",
+     "hours": null,
+     "url": "https://www.city.shinjuku.lg.jp/kenkou/eisei03_002089.html",
+     "handles": [
+      "noise"
+     ],
+     "sourceId": "src_shinjuku_contact"
+    },
+    {
+     "dept": "新宿清掃事務所 事業系ごみ減量係（ごみ）",
+     "tel": "03-3950-3814",
+     "hours": "窓口は年末年始を除く月〜土曜 7:40〜16:25",
+     "url": "https://www.city.shinjuku.lg.jp/kenkou/eisei03_002089.html",
+     "handles": [
+      "gomi"
+     ],
+     "sourceId": "src_shinjuku_contact"
+    }
+   ],
+   "checked": "2026-11-11"
+  },
+  {
+   "code": "131164",
+   "name": "豊島区",
+   "pref": "東京都",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "豊島区住宅宿泊事業の適正な運営の確保に関する条例（令和7年12月2日条例第58号で改正、令和7年12月15日施行）",
+     "summary": "2025年12月15日から、事業を始める前に近所の人へ書面と説明会で知らせることなどが必要になりました。区の案内では、通報があったときの30分以内の駆けつけ・対応着手なども求められています。",
+     "effective": "2025-12-15",
+     "sourceId": "src_toshima_jorei"
+    },
+    {
+     "system": "jutaku",
+     "title": "豊島区住宅宿泊事業の適正な運営の確保に関する条例 第9条・第10条・第13条（区域と期間の制限。令和8年12月16日施行予定）",
+     "summary": "区内全域で、民泊ができるのは春休み・夏休み・冬休みの年間120日だけになります（既存の施設にも適用）。住居専用地域・住居地域・準工業地域・文教地区では、新しく民泊を始められません。違反すると5万円以下の過料です。",
+     "effective": "2026-12-16",
+     "sourceId": "src_toshima_gaiyou"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "健康部（豊島区保健所）生活衛生課 住宅宿泊対策グループ",
+     "tel": "03-4566-4095",
+     "hours": null,
+     "url": "https://www.city.toshima.lg.jp/214/kurashi/ese/kankyoese/minpaku.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_toshima_top"
+    },
+    {
+     "dept": "健康部（豊島区保健所）生活衛生課 環境衛生グループ",
+     "tel": "03-3987-4176",
+     "hours": null,
+     "url": "https://www.city.toshima.lg.jp/214/kurashi/ese/kankyoese/minpaku.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_toshima_top"
+    }
+   ],
+   "checked": "2026-11-11"
+  },
+  {
+   "code": "131067",
+   "name": "台東区",
+   "pref": "東京都",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "東京都台東区住宅宿泊事業の運営に関する条例（平成30年条例第1号）第17条（令和8年10月1日改正施行）",
+     "summary": "区内全域で、令和8年10月1日以降に届出した民泊は、家主が同居していても不在でも、平日（月〜金）は営業できません。令和8年9月30日までに届出を受けた既存の施設は、この制限の対象外です。",
+     "effective": "2026-10-01",
+     "sourceId": "src_taito_joiu"
+    },
+    {
+     "system": "jutaku",
+     "title": "東京都台東区住宅宿泊事業の運営に関する条例 第17条（ゼロ日規制。令和9年1月1日施行予定）",
+     "summary": "令和9年1月1日以降に新しく届出する民泊は、第一種・第二種中高層住居専用地域と第一種・第二種文教地区で、1年中営業できません。",
+     "effective": "2027-01-01",
+     "sourceId": "src_taito_kaisei"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "たいとう民泊コールセンター",
+     "tel": "03-6747-0218",
+     "hours": "開庁日の月〜金曜 8時30分〜17時",
+     "url": "https://www.city.taito.lg.jp/kenchiku/jutaku/eisei/jutakulaw/minpanku20180613_003.html",
+     "handles": [
+      "jutaku",
+      "ryokan",
+      "noise"
+     ],
+     "sourceId": "src_taito_kaisei"
+    },
+    {
+     "dept": "台東保健所 生活衛生課 住宅宿泊事業担当",
+     "tel": "03-3847-9403",
+     "hours": "平日8時30分〜17時",
+     "url": "https://www.city.taito.lg.jp/kenchiku/jutaku/eisei/jutakulaw/minpanku20180613_003.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_taito_kaisei"
+    }
+   ],
+   "checked": "2026-11-11"
+  },
+  {
+   "code": "011002",
+   "name": "札幌市",
+   "pref": "北海道",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "札幌市住宅宿泊事業の実施の制限に関する条例（平成30年条例第8号）",
+     "summary": "家主が住まいとして使っていない民泊、家主が不在になる民泊、居室が5を超える民泊が対象です。小学校などの出入口の周り100m以内では授業のある日はできません。市長が指定する低層・中高層の住居専用地域などでは、土日祝日と12月31日〜1月3日以外はできません。",
+     "effective": "2018-06-15",
+     "sourceId": "src_sapporo_jorei"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "札幌市民泊総合窓口（北海道経済センタービル7階）",
+     "tel": "011-211-0031",
+     "hours": "9時〜12時、13時〜17時（土日祝・年末年始を除く）",
+     "url": "https://www.city.sapporo.jp/keizai/kanko/minpaku/minpakusougou.html",
+     "handles": [
+      "jutaku",
+      "noise"
+     ],
+     "sourceId": "src_sapporo_soudan"
+    },
+    {
+     "dept": "札幌市保健福祉局保健所 生活環境課",
+     "tel": "011-622-5165",
+     "hours": null,
+     "url": "https://www.city.sapporo.jp/keizai/kanko/minpaku/minpakusougou.html",
+     "handles": [
+      "jutaku"
+     ],
+     "sourceId": "src_sapporo_soudan"
+    }
+   ],
+   "checked": "2026-11-11"
+  }
+ ]
+}

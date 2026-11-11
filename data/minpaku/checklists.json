@@ -1,0 +1,25 @@
+{
+  "items": [
+    { "id": "cl_datetime", "priority": 100, "text": "困りごとが起きた日時を記録した", "when": { "fact": "situation", "in": ["B", "C", "D"] } },
+    { "id": "cl_detail", "priority": 95, "text": "被害の様子（音の内容、ごみの状態など）を整理した", "when": { "all": [ { "fact": "situation", "in": ["B", "C", "D"] }, { "not": { "fact": "problems", "has": "none" } } ] } },
+    { "id": "cl_sign", "priority": 90, "text": "玄関などの[[標識]]を、道路から確認した", "when": { "fact": "situation", "in": ["B", "C"] } },
+    { "id": "cl_list", "priority": 88, "text": "自治体が公開している施設の一覧を確認した（資料の時点も見た）", "when": { "any": [ { "fact": "situation", "in": ["A", "C"] }, { "fact": "know", "has": "none" } ] } },
+    { "id": "cl_type", "priority": 85, "text": "施設の営業の種類（届出・旅館業・特区）を確認した", "when": { "fact": "situation", "in": ["A", "B", "C", "D"] } },
+    { "id": "cl_contact", "priority": 80, "text": "管理者・運営者の連絡先を確認した", "when": { "fact": "situation", "in": ["A", "B"] } },
+    { "id": "cl_manager", "priority": 75, "text": "管理者・運営者に連絡した", "when": { "fact": "situation", "eq": "B" } },
+    { "id": "cl_owner_side", "priority": 74, "text": "管理組合・管理会社・大家さんに伝えた", "when": { "fact": "building", "in": ["same_condo", "same_rental"] } },
+    { "id": "cl_kiyaku", "priority": 73, "text": "管理規約（賃貸なら契約）で民泊が認められているか確認した", "when": { "fact": "building", "in": ["same_condo", "same_rental"] } },
+    { "id": "cl_a_record", "priority": 72, "text": "建物の場所と、掲示・チラシの内容を記録した", "when": { "fact": "situation", "eq": "A" } },
+    { "id": "cl_ordinance", "priority": 70, "text": "自治体の条例・ルール（区域・期間・事前の周知）を確認した", "when": { "fact": "situation", "in": ["A", "E"] } },
+    { "id": "cl_a_ask", "priority": 68, "text": "事業者に、苦情の連絡先とごみ・騒音の対策をたずねた", "when": { "all": [ { "fact": "situation", "eq": "A" }, { "fact": "goal", "eq": "request" } ] } },
+    { "id": "cl_gov", "priority": 65, "text": "自治体の担当窓口に相談した", "when": { "fact": "situation", "in": ["A", "B", "C", "D"] } },
+    { "id": "cl_gov_log", "priority": 60, "text": "相談した日時・部署・担当者・回答の内容を記録した", "when": { "fact": "situation", "in": ["A", "B", "C", "D"] } },
+    { "id": "cl_writing", "priority": 55, "text": "あいまいな回答は、文書で問い合わせ直した", "when": { "fact": "gov_response", "in": ["legal_ok", "no_change", "no_reply", "not_ours"] } },
+    { "id": "cl_improve", "priority": 50, "text": "その後、改善したかを確認した", "when": { "fact": "situation", "in": ["B", "C", "D"] } },
+    { "id": "cl_e_compare", "priority": 68, "text": "他の自治体のルールと比べた", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_e_voice", "priority": 66, "text": "困りごとの記録や住民の声をまとめた", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_e_giin", "priority": 64, "text": "地元の議員に相談した", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_e_deadline", "priority": 62, "text": "議会やパブコメの締め切りを確認した", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_next", "priority": 10, "text": "必要に応じて、次の対応を考えた" }
+  ]
+}

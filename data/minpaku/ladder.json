@@ -1,0 +1,30 @@
+{
+  "recordTypes": {
+    "manager": "施設の管理者・運営者",
+    "owner_side": "管理組合・管理会社・大家さん",
+    "gov": "市区町村の担当課",
+    "pref_gov": "都道府県の担当課",
+    "kuni": "国の相談窓口（観光庁など）",
+    "police": "警察",
+    "giin": "議員",
+    "disclosure": "情報公開請求",
+    "petition": "陳情・請願",
+    "pubcome": "パブコメ",
+    "shomei": "署名",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
+  "states": { "todo": "これから", "doing": "回答待ち・対応中", "done": "終わった" },
+  "steps": [
+    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "manager", "title": "施設の管理者・運営者に伝える", "body": "標識などに書かれた連絡先に、困りごとと改善してほしいことを伝えます。", "showIf": { "fact": "situation", "in": ["B", "C"] }, "toTypes": ["manager"], "doneIf": { "fact": "done", "has": "manager" }, "links": [ { "type": "doc", "doc": "manager_letter", "label": "連絡文を作る" } ] },
+    { "id": "owner_side", "title": "管理組合・管理会社・大家さんに伝える", "body": "同じ建物の中なら、建物のルールで対応できることがあります。", "showIf": { "fact": "building", "in": ["same_condo", "same_rental"] }, "toTypes": ["owner_side"], "doneIf": { "fact": "done", "has": "owner_side" } },
+    { "id": "gov", "title": "市区町村の担当課に相談する", "body": "民泊の担当課（旅館業なら保健所）に、施設の確認と事業者への指導をお願いします。", "toTypes": ["gov"], "doneIf": { "any": [ { "fact": "done", "has": "gov" }, { "fact": "situation", "eq": "D" } ] }, "links": [ { "type": "todokeru-contacts" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" } ] },
+    { "id": "gov_letter", "title": "文書で問い合わせる", "body": "回答の期限と方法をつけて、文書（郵送・メール）で問い合わせます。回答が記録に残ります。", "toTypes": ["gov", "pref_gov"], "methods": ["letter", "mail"], "doneIf": { "fact": "gov_method", "in": ["letter", "mail"] }, "links": [ { "type": "doc", "doc": "gov_request", "label": "問い合わせの文書を作る" } ] },
+    { "id": "upper", "title": "都道府県や国の相談窓口に伝える", "body": "市区町村で解決しないときは、都道府県の担当課や、観光庁の民泊制度の相談窓口に伝えます。", "toTypes": ["pref_gov", "kuni"] },
+    { "id": "giin", "title": "議員に相談する・情報公開請求をする", "body": "地元の議員に相談したり、情報公開請求で行政の対応の記録を確かめたりします。", "toTypes": ["giin", "disclosure"], "links": [ { "type": "doc", "doc": "disclosure_draft", "label": "情報公開請求の書き方" } ] },
+    { "id": "rule", "title": "ルールを変える（陳情・請願・パブコメ・署名）", "body": "今のルールで止められないときは、地域のルールを変える方法を考えます。", "toTypes": ["petition", "pubcome", "shomei"], "links": [ { "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" }, { "type": "pubcome" }, { "type": "shomei" } ] },
+    { "id": "lawyer", "title": "法律の専門家に相談する", "body": "法テラスや弁護士会の法律相談、自治体の無料法律相談を使えます。", "toTypes": ["lawyer"] }
+  ]
+}

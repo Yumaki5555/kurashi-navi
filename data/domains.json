@@ -1,0 +1,10 @@
+{
+  "domains": [
+    { "id": "minpaku", "name": "民泊・旅館業", "status": "active", "intro": "近所の民泊の騒音・ごみ・無許可営業の疑い、役所の対応、地域のルールづくりについて、あなたの状況に合わせて次にすることをご案内します。" },
+    { "id": "kenchiku", "name": "建築・土地利用・宗教施設", "status": "coming" },
+    { "id": "gakko", "name": "学校・教育環境", "status": "coming" },
+    { "id": "gyosei", "name": "行政の対応・情報公開", "status": "coming" },
+    { "id": "yosan", "name": "自治体の予算・税金", "status": "coming" },
+    { "id": "koe", "name": "署名・陳情・請願・パブリックコメント", "status": "coming" }
+  ]
+}

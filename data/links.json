@@ -1,0 +1,15 @@
+{
+  "todokeru": "https://yumaki5555.github.io/todokeru/",
+  "minpakuMap": "https://yumaki5555.github.io/minpaku-map/",
+  "pubcome": "https://yumaki5555.github.io/pubcome/",
+  "shomei": "https://yumaki5555.github.io/shomei/",
+  "labels": {
+    "todokeru-contacts": "窓口を探す（声を届ける）",
+    "todokeru-guide": "手続きの案内（声を届ける）",
+    "minpaku-map": "民泊・旅館業マップで施設を見る",
+    "pubcome": "パブコメ掲示板",
+    "shomei": "署名掲示板",
+    "doc": "下書きを作る",
+    "records": "対応を記録する"
+  }
+}
