@@ -36,7 +36,7 @@ async function copy(text, btn) {
   }
   if (btn) { const o = btn.textContent; btn.textContent = 'コピーしました'; setTimeout(() => (btn.textContent = o), 1500); }
 }
-const KIND = { law: '法令', ordinance: '条例', guideline: '国の指針・ガイドライン', official: '公式発表', minutes: '議会議事録', court: '裁判例', news: '報道' };
+const KIND = { law: '法令', ordinance: '条例', guideline: '国の指針・ガイドライン', official: '公式発表', minutes: '議会の資料（会議録・審査結果など）', court: '裁判例', news: '報道' };
 const OUTCOME = { resolved: '解決', partial: '一部改善', unresolved: '未解決', unknown: '結果不明' };
 
 async function loadCommon() {
