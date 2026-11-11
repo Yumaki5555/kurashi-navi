@@ -154,10 +154,10 @@ export function compose(data, facts) {
   return { todo: pick('do'), check: pick('check'), checklist, cases, ifnot: pick('ifnot'), dont: pick('dont') };
 }
 
-// 事例の近さ：同じ状況（A〜E）なら+2、困りごとなどのタグが重なるごとに+1
+// 事例の近さ：同じ状況（A〜E）なら+2、困りごと・理由・施設の種類・望むことなどのタグが重なるごとに+1
 export function caseScore(c, facts) {
   let s = (c.routes || []).includes(facts.situation) ? 2 : 0;
-  const tags = new Set([...(facts.problems || []), ...(facts.rule_goal || [])]);
+  const tags = new Set([...(facts.problems || []), ...(facts.rule_goal || []), ...(facts.reasons || []), facts.facility, facts.goal].filter(Boolean));
   if (facts.situation === 'C') tags.add('unlicensed');
   if (facts.situation === 'D' || facts.gov_response) tags.add('gov_response');
   if (facts.situation === 'E' || facts.goal === 'rule') tags.add('rule_change');

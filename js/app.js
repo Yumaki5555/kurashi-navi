@@ -206,7 +206,11 @@ function regionBlock() {
   const prefs = G.areas?.prefs || [];
   const pref = prefs.find(p => p.code === r?.pref);
   let info = '';
-  if (r) {
+  if (r && cur.file.domain !== 'minpaku') {
+    // 民泊以外の分野は、地域ごとの確認済み情報をまだ持っていない。推測では出さず、窓口探しだけを案内する
+    info += `<p class="note">この地域の条例や担当窓口は、この分野ではまだ確認できていません。推測ではお出ししません。下のボタンから、お住まいの自治体の窓口を探せます。</p>`;
+    info += linksBlock([{ type: 'todokeru-contacts' }]);
+  } else if (r) {
     const area = (G.focus?.areas || []).find(a => a.code === r.code && a.status === 'verified');
     const lists = [...(G.lists?.byCode?.[r.code] || []), ...(G.lists?.byCode?.[r.pref] || [])];
     const KINDS = { jutaku: '届出の民泊（住宅宿泊事業）', ryokan: '旅館業', tokku: '特区民泊' };
@@ -264,6 +268,13 @@ function caseItem(c) {
 }
 
 // ---------- 画面：事例 ----------
+function viewCaseDomains() {
+  const ds = G.domains.filter(d => d.status === 'active');
+  setView(`<p class="crumb"><a href="#/">トップ</a></p><h1>似た問題の事例集</h1>
+    <p class="lead">分野を選んでください。</p>
+    <div class="stack">${ds.map(d => `<a class="btn big" href="#/cases/${d.id}">${esc(d.name)}</a>`).join('')}</div>`, '事例集');
+}
+
 async function viewCases(domain, q = {}) {
   const data = await loadDomain(domain);
   const out = q.o || '', kind = q.k || '';
@@ -416,7 +427,8 @@ async function route() {
   try {
     if (!a) return viewHome();
     if (a === 'start') return viewStart(b);
-    if (a === 'cases') return viewCases(b || 'minpaku', q);
+    if (a === 'cases' && !b) return viewCaseDomains();
+    if (a === 'cases') return viewCases(b, q);
     if (a === 'case') return viewCase(b, c);
     if (a === 'emergency') return viewEmergency();
     if (a === 'data') return viewData(false);

@@ -1,0 +1,34 @@
+{
+  "recordTypes": {
+    "owner": "建築主・事業者・施設の管理者",
+    "builder": "工事の会社（施工者）",
+    "neighbors": "近所の人・自治会",
+    "gov": "市区町村の担当課",
+    "pref_gov": "都道府県の担当課",
+    "kuni": "国の相談窓口（行政相談など）",
+    "police": "警察",
+    "chotei": "調停（公害審査会・民事調停など）",
+    "shinsa": "審査請求（建築審査会）",
+    "giin": "議員",
+    "disclosure": "情報公開請求",
+    "petition": "陳情・請願",
+    "pubcome": "パブコメ・意見書",
+    "shomei": "署名",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
+  "states": { "todo": "これから", "doing": "回答待ち・対応中", "done": "終わった" },
+  "steps": [
+    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "check_plan", "title": "計画や許可の記録を確かめる", "body": "現地の看板、建築計画概要書、用途地域などで、事実を確かめます。", "showIf": { "fact": "situation", "in": ["A", "C"] }, "doneIf": { "any": [{ "fact": "checked_plan", "eq": "yes" }, { "fact": "checked_record", "eq": "yes" }] } },
+    { "id": "owner", "title": "建築主・施工者・管理者に伝える", "body": "看板などに書かれた連絡先に、困りごとと、お願いしたいことを伝えます。", "showIf": { "fact": "situation", "in": ["A", "B"] }, "toTypes": ["owner", "builder"], "doneIf": { "fact": "done", "in": ["owner", "builder"] }, "links": [{ "type": "doc", "doc": "owner_letter", "label": "連絡文を作る" }] },
+    { "id": "gov", "title": "市区町村の担当課に相談する", "body": "建築・都市計画・環境・農地など、困りごとに合った担当課に相談します。", "toTypes": ["gov"], "doneIf": { "any": [{ "fact": "done", "has": "gov" }, { "fact": "situation", "eq": "D" }] }, "links": [{ "type": "todokeru-contacts" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" }] },
+    { "id": "gov_letter", "title": "文書で問い合わせる・処分を求める", "body": "回答の期限と方法をつけて文書で問い合わせます。違反の事実があれば「処分等の求め」もできます。", "toTypes": ["gov", "pref_gov"], "methods": ["letter", "mail"], "doneIf": { "fact": "gov_method", "in": ["letter", "mail"] }, "links": [{ "type": "doc", "doc": "gov_request", "label": "問い合わせの文書を作る" }, { "type": "doc", "doc": "shobun_request", "label": "処分等の求めの申出書" }] },
+    { "id": "upper", "title": "都道府県や国の相談窓口に伝える", "body": "市区町村で解決しないときは、都道府県の担当課や、総務省の行政相談に伝えます。", "toTypes": ["pref_gov", "kuni"], "links": [{ "type": "tel", "tel": "0570-090110", "label": "行政苦情110番に電話" }] },
+    { "id": "chotei", "title": "第三者を入れて話し合う（調停）", "body": "公害審査会の調停や、簡易裁判所の民事調停で、第三者に入ってもらいます。", "showIf": { "not": { "fact": "situation", "eq": "E" } }, "toTypes": ["chotei"] },
+    { "id": "giin", "title": "議員に相談する・情報公開請求をする", "body": "地元の議員に相談したり、情報公開請求で役所の対応の記録を確かめたりします。", "toTypes": ["giin", "disclosure"], "links": [{ "type": "doc", "doc": "disclosure_draft", "label": "情報公開請求の書き方" }] },
+    { "id": "rule", "title": "ルールを変える（地区計画・陳情・パブコメ・署名）", "body": "今のルールで解決しないときは、地域のルールを変える方法を考えます。", "toTypes": ["petition", "pubcome", "shomei"], "links": [{ "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" }, { "type": "pubcome" }, { "type": "shomei" }] },
+    { "id": "lawyer", "title": "法律の専門家に相談する", "body": "法テラスや弁護士会の法律相談、自治体の無料法律相談を使えます。", "toTypes": ["lawyer", "shinsa"] }
+  ]
+}

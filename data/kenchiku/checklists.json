@@ -1,0 +1,22 @@
+{
+  "items": [
+    { "id": "cl_datetime", "priority": 100, "text": "困りごとが起きた日時を記録した", "when": { "fact": "situation", "in": ["B", "C", "D"] } },
+    { "id": "cl_detail", "priority": 95, "text": "被害の様子（音の内容、車の台数、ひびの位置など）を整理した", "when": { "all": [{ "fact": "situation", "in": ["B", "C", "D"] }, { "not": { "fact": "problems", "has": "none" } }] } },
+    { "id": "cl_sign", "priority": 92, "text": "現地の看板（[[建築確認]]の表示・お知らせ）を道路から確認し、建築主・施工者の名前と連絡先を控えた", "when": { "any": [{ "fact": "situation", "in": ["A", "C"] }, { "fact": "phase", "eq": "construction" }] } },
+    { "id": "cl_gaiyosho", "priority": 88, "text": "[[建築計画概要書]]を閲覧した（または閲覧の方法を役所に聞いた）", "when": { "all": [{ "fact": "situation", "in": ["A", "C"] }, { "not": { "fact": "facility", "in": ["cemetery", "land"] } }] } },
+    { "id": "cl_youto", "priority": 85, "text": "[[用途地域]]や[[地区計画]]を、都市計画図で確認した", "when": { "fact": "situation", "in": ["A", "C", "E"] } },
+    { "id": "cl_photo_before", "priority": 84, "text": "工事の前（または今）の自宅の外壁・塀などを、日付の分かる写真で残した", "when": { "any": [{ "fact": "stage", "in": ["sign", "meeting", "started"] }, { "fact": "phase", "eq": "construction" }, { "fact": "problems", "has": "damage" }] } },
+    { "id": "cl_work_time", "priority": 82, "text": "うるさい作業の時間帯（何時から何時まで）を記録した", "when": { "all": [{ "fact": "phase", "eq": "construction" }, { "fact": "problems", "has": "noise" }] } },
+    { "id": "cl_questions", "priority": 80, "text": "建築主に聞きたいこと（工事の時間・車の通り道・完成後の使い方）をメモにまとめた", "when": { "fact": "situation", "eq": "A" } },
+    { "id": "cl_reasons", "priority": 78, "text": "そう思う理由を、見て分かった事実だけで書き出した（推測や決めつけを入れない）", "when": { "fact": "situation", "eq": "C" } },
+    { "id": "cl_gov_log", "priority": 76, "text": "役所に相談した日時・部署・担当者・回答を記録した", "when": { "any": [{ "fact": "situation", "eq": "D" }, { "fact": "done", "has": "gov" }] } },
+    { "id": "cl_basis", "priority": 74, "text": "役所の回答の根拠（どの法律・条例のどの基準か）を聞いた", "when": { "fact": "gov_response", "in": ["legal_ok", "civil", "no_change"] } },
+    { "id": "cl_deadline", "priority": 90, "text": "審査請求の期限（建築確認を知った日の翌日から3か月）を確認した", "when": { "fact": "goal", "eq": "stop" } },
+    { "id": "cl_cemetery_rule", "priority": 86, "text": "墓地・納骨堂の許可の基準や、近所への説明の決まりを、自治体の条例・規則で確認した", "when": { "fact": "facility", "eq": "cemetery" } },
+    { "id": "cl_specific", "priority": 83, "text": "困りごとを、音・車・人の出入りなど具体的な行為だけで書き出した（施設を使う人の信仰や属性には触れない）", "when": { "fact": "facility", "in": ["religious", "cemetery"] } },
+    { "id": "cl_neighbors", "priority": 60, "text": "同じことで困っている近所の人と、確かめた事実だけを共有した", "when": { "fact": "situation", "in": ["A", "B", "E"] } },
+    { "id": "cl_rule_now", "priority": 90, "text": "今のルール（用途地域・地区計画・建築協定・条例）を調べた", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_landowners", "priority": 84, "text": "ルールをかけたい区域の、土地や建物の持ち主に声をかけた", "when": { "fact": "situation", "eq": "E" } },
+    { "id": "cl_goal_memo", "priority": 80, "text": "困りごとと、つくりたいルールの目標を1枚のメモにまとめた", "when": { "fact": "situation", "eq": "E" } }
+  ]
+}

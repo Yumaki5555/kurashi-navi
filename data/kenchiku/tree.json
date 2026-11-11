@@ -1,0 +1,285 @@
+{
+  "domain": "kenchiku",
+  "title": "建築・土地利用・宗教施設の困りごと",
+  "version": "2026-11-11",
+  "start": "situation",
+  "maxQuestions": 8,
+  "optionSets": {
+    "facility": [
+      { "value": "condo", "label": "マンション・アパートなどの集合住宅", "short": "集合住宅" },
+      { "value": "houses", "label": "戸建て住宅・宅地の分譲（土地の造成を含む）", "short": "住宅地の開発" },
+      { "value": "shop", "label": "店舗・事務所・工場・倉庫", "short": "店舗・工場など" },
+      { "value": "public", "label": "福祉施設・保育所・学校・病院", "short": "福祉・教育・医療の施設" },
+      { "value": "religious", "label": "宗教施設（礼拝や集会のための施設）", "short": "宗教施設" },
+      { "value": "cemetery", "label": "墓地・納骨堂", "short": "墓地・納骨堂" },
+      { "value": "land", "label": "建物以外の土地の使い方（資材置き場・駐車場・太陽光発電・盛土など）", "short": "建物以外の土地利用" },
+      { "value": "unknown", "label": "わからない", "short": "種類は不明" }
+    ],
+    "problems": [
+      { "value": "noise", "label": "騒音・振動（工事の音、人の声、音響、車の音など）", "short": "騒音・振動" },
+      { "value": "traffic", "label": "車の出入り・路上駐車・通学路などの交通の危険", "short": "車・駐車・交通" },
+      { "value": "sunlight", "label": "日当たり・風通し・圧迫感・眺め", "short": "日当たり・圧迫感" },
+      { "value": "privacy", "label": "窓やベランダから家の中が見える（プライバシー）", "short": "プライバシー" },
+      { "value": "dust", "label": "ほこり・におい・まぶしい照明", "short": "ほこり・におい・光" },
+      { "value": "damage", "label": "家や塀のひび・傾きなどの被害", "short": "家の被害" },
+      { "value": "water", "label": "雨水・排水・土砂の流れ込み、崩れの心配", "short": "水・土砂・崩れ" },
+      { "value": "crowd", "label": "多くの人の出入り・行事のときの混雑", "short": "人の出入り・混雑" },
+      { "value": "gomi", "label": "ごみ", "short": "ごみ" },
+      { "value": "none", "label": "今は具体的な被害はない", "short": "具体的な被害はない", "exclusive": true }
+    ],
+    "done": [
+      { "value": "owner", "label": "建築主・事業者・施設の管理者に伝えた", "short": "建築主・管理者へ" },
+      { "value": "builder", "label": "工事の会社（施工者）に伝えた", "short": "工事の会社へ" },
+      { "value": "gov", "label": "市区町村・都道府県の担当課に相談した", "short": "役所へ" },
+      { "value": "police", "label": "警察に相談した", "short": "警察へ" },
+      { "value": "neighbors", "label": "近所の人や自治会と話し合った", "short": "近所・自治会と" },
+      { "value": "none", "label": "まだ何もしていない", "short": "まだ何も", "exclusive": true }
+    ],
+    "govResponse": [
+      { "value": "legal_ok", "label": "「法律上の問題はない（決まりの範囲内）」と言われた", "short": "法律上は問題ないと言われた" },
+      { "value": "civil", "label": "「当事者どうしの問題（民事）なので、役所は入れない」と言われた", "short": "民事の問題と言われた" },
+      { "value": "not_ours", "label": "「担当が違う」と言われた・たらい回しにされた", "short": "担当が違うと言われた" },
+      { "value": "no_change", "label": "「指導する」と言われたが、変化がない", "short": "指導すると言われたが変化なし" },
+      { "value": "no_reply", "label": "返事がない", "short": "返事がない" },
+      { "value": "forgot", "label": "覚えていない・その他", "short": "その他" }
+    ]
+  },
+  "nodes": {
+    "situation": {
+      "type": "choice", "fact": "situation", "sum": "状況",
+      "text": "今の状況にいちばん近いものは？",
+      "help": "あとから戻って選び直せます。建物や施設の種類は、このあと聞きます。",
+      "options": [
+        { "value": "A", "label": "近所に建物・施設ができるらしい", "short": "近所に建物・施設ができる予定", "next": "a_facility" },
+        { "value": "B", "label": "工事中、またはできあがった建物・施設の使われ方で困っている", "short": "工事中・利用中の困りごと", "next": "b_phase" },
+        { "value": "C", "label": "許可を取っていない・決まりを守っていないのではと疑っている", "short": "無許可・決まり違反の疑い", "next": "c_facility" },
+        { "value": "D", "label": "役所に相談したが対応してもらえない", "short": "役所が対応してくれない", "next": "d_where" },
+        { "value": "E", "label": "地域の建て方・土地の使い方のルールをつくりたい・変えたい", "short": "地域のルールをつくりたい", "next": "e_what" }
+      ]
+    },
+
+    "a_facility": {
+      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
+      "text": "できるらしい建物・施設は、どれですか？",
+      "help": "種類によって、確かめる決まりと窓口が変わります。",
+      "next": "a_stage"
+    },
+    "a_stage": {
+      "type": "choice", "fact": "stage", "sum": "計画の段階",
+      "text": "今、どの段階ですか？",
+      "help": "工事の前には、多くの場合[[建築確認]]という手続きがあります。",
+      "options": [
+        { "value": "rumor", "label": "うわさや、土地が売れたという話を聞いた段階", "short": "うわさの段階" },
+        { "value": "sign", "label": "現地に「建築計画のお知らせ」などの看板が立った", "short": "お知らせの看板が立った" },
+        { "value": "meeting", "label": "説明会のお知らせがあった・説明会があった", "short": "説明会があった" },
+        { "value": "started", "label": "工事が始まった", "short": "工事が始まった" },
+        { "value": "unknown", "label": "わからない", "short": "段階は不明" }
+      ],
+      "next": "a_worries"
+    },
+    "a_worries": {
+      "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems",
+      "text": "心配なことはどれですか？（いくつでも）",
+      "next": "a_checked"
+    },
+    "a_checked": {
+      "type": "yesno", "fact": "checked_plan", "sum": "計画の中身の確認",
+      "text": "建物の使い道・高さ・工事の期間など、計画の中身を確かめましたか？",
+      "help": "役所で[[建築計画概要書]]を見たり、[[用途地域]]を調べたりすると分かることがあります。",
+      "next": "a_goal"
+    },
+    "a_goal": {
+      "type": "choice", "fact": "goal", "sum": "望むこと",
+      "text": "いちばん望むことは？",
+      "options": [
+        { "value": "info", "label": "計画の中身を知りたい・説明してほしい", "short": "計画を知りたい" },
+        { "value": "request", "label": "工事の時間や目隠し、駐車場などに配慮してほしい", "short": "配慮してほしい" },
+        { "value": "stop", "label": "計画を見直してほしい・止めたい", "short": "計画を見直してほしい" },
+        { "value": "rule", "label": "地域の建て方のルールをつくりたい", "short": "地域のルールをつくりたい" }
+      ],
+      "next": "@result"
+    },
+
+    "b_phase": {
+      "type": "choice", "fact": "phase", "sum": "時期",
+      "text": "困っているのは、どちらの時期ですか？",
+      "options": [
+        { "value": "construction", "label": "工事中（解体工事を含む）", "short": "工事中" },
+        { "value": "use", "label": "できあがって使われている", "short": "利用中" }
+      ],
+      "next": "b_facility"
+    },
+    "b_facility": {
+      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
+      "text": "困りごとの元になっている建物・施設は、どれですか？",
+      "next": "b_problems"
+    },
+    "b_problems": {
+      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
+      "text": "どんなことで困っていますか？（いくつでも）",
+      "help": "判断は、起きていること（音・車・被害など）だけで行います。",
+      "next": "b_ongoing"
+    },
+    "b_ongoing": {
+      "type": "yesno", "fact": "ongoing", "sum": "今も続いているか",
+      "text": "その困りごとは、今も続いていますか？",
+      "next": "b_done"
+    },
+    "b_done": {
+      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
+      "next": [
+        { "if": { "fact": "done", "has": "gov" }, "go": "b_gov_response" },
+        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
+        { "go": "b_outcome" }
+      ]
+    },
+    "b_gov_response": {
+      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
+      "text": "役所からは、どんな回答でしたか？",
+      "next": "b_outcome"
+    },
+    "b_outcome": {
+      "type": "choice", "fact": "outcome", "sum": "伝えたあとの様子",
+      "text": "伝えたあと、様子は変わりましたか？",
+      "options": [
+        { "value": "improved", "label": "よくなった", "short": "よくなった" },
+        { "value": "temporary", "label": "一時的によくなったが、元に戻った", "short": "一時的によくなった" },
+        { "value": "same", "label": "変わらない", "short": "変わらない" },
+        { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
+      ],
+      "next": "@result"
+    },
+
+    "c_facility": {
+      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
+      "text": "疑いのある建物・土地は、どれですか？",
+      "next": "c_reasons"
+    },
+    "c_reasons": {
+      "type": "multi", "fact": "reasons", "sum": "そう思う理由",
+      "text": "そう思う理由はどれですか？（いくつでも）",
+      "help": "見て分かることだけで大丈夫です。分からないまま「違反」と決めつけないための質問です。",
+      "options": [
+        { "value": "no_sign", "label": "工事現場に「建築確認」の表示（看板）が見当たらない", "short": "確認の表示がない" },
+        { "value": "use_diff", "label": "聞いていた使い道と違う使い方をしているように見える", "short": "使い道が違うように見える" },
+        { "value": "size", "label": "高さや大きさが、聞いていた計画と違うように見える", "short": "大きさが違うように見える" },
+        { "value": "farmland", "label": "田畑だった土地が、資材置き場や駐車場などに変わった", "short": "田畑が別の使い方に" },
+        { "value": "morido", "label": "土や残土が高く積まれている・盛土が崩れそう", "short": "盛土・土の積み上げ" },
+        { "value": "other", "label": "その他・はっきりしない", "short": "その他" }
+      ],
+      "next": "c_checked"
+    },
+    "c_checked": {
+      "type": "yesno", "fact": "checked_record", "sum": "役所の記録の確認",
+      "text": "役所で、建築確認や許可の記録を確かめましたか？",
+      "help": "[[建築計画概要書]]や[[開発登録簿]]は、だれでも見られます。",
+      "next": "c_problems"
+    },
+    "c_problems": {
+      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
+      "text": "実際に困っていることはありますか？（いくつでも）",
+      "next": "c_done"
+    },
+    "c_done": {
+      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
+      "next": [
+        { "if": { "fact": "done", "has": "gov" }, "go": "c_gov_response" },
+        { "go": "@result" }
+      ]
+    },
+    "c_gov_response": {
+      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
+      "text": "役所からは、どんな回答でしたか？",
+      "next": "@result"
+    },
+
+    "d_where": {
+      "type": "choice", "fact": "gov_where", "sum": "相談した窓口",
+      "text": "どこに相談しましたか？",
+      "options": [
+        { "value": "kenchiku_dept", "label": "建築の担当課（建築指導課・建築審査課など）", "short": "建築の担当課" },
+        { "value": "toshi_dept", "label": "都市計画・開発許可の担当課", "short": "都市計画・開発の担当課" },
+        { "value": "env", "label": "環境・公害（騒音・振動）の担当課", "short": "環境・公害の担当課" },
+        { "value": "nogyo", "label": "農業委員会", "short": "農業委員会" },
+        { "value": "other", "label": "その他・わからない", "short": "その他の窓口" }
+      ],
+      "next": "d_method"
+    },
+    "d_method": {
+      "type": "choice", "fact": "gov_method", "sum": "相談の方法",
+      "text": "どの方法で相談しましたか？",
+      "options": [
+        { "value": "phone", "label": "電話", "short": "電話" },
+        { "value": "counter", "label": "窓口", "short": "窓口" },
+        { "value": "mail", "label": "メール・問い合わせフォーム", "short": "メール" },
+        { "value": "letter", "label": "文書（郵送・手渡し）", "short": "文書" }
+      ],
+      "next": "d_response"
+    },
+    "d_response": {
+      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
+      "text": "役所からは、どんな回答でしたか？",
+      "next": "d_recorded"
+    },
+    "d_recorded": {
+      "type": "yesno", "fact": "recorded", "sum": "相談の記録",
+      "text": "相談した日時・相手の部署・回答を記録していますか？",
+      "next": "d_problems"
+    },
+    "d_problems": {
+      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
+      "text": "困っていることはどれですか？（いくつでも）",
+      "next": "d_facility"
+    },
+    "d_facility": {
+      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
+      "text": "困りごとの元になっている建物・施設・土地は、どれですか？",
+      "next": "@result"
+    },
+
+    "e_what": {
+      "type": "multi", "fact": "rule_goal", "sum": "つくりたいルール",
+      "text": "どんなルールをつくりたい・変えたいですか？（いくつでも）",
+      "options": [
+        { "value": "district_plan", "label": "建物の高さ・使い道などの地区のルール（[[地区計画]]）", "short": "地区計画" },
+        { "value": "kyotei", "label": "土地の持ち主どうしの約束（[[建築協定]]）", "short": "建築協定" },
+        { "value": "prior_notice", "label": "大きな建物の事前の説明や、もめごとの調整の仕組み（[[条例]]）", "short": "事前説明・調整の条例" },
+        { "value": "enforcement", "label": "違反への役所の対応を強めてほしい", "short": "違反への対応の強化" },
+        { "value": "disclosure", "label": "計画や審査の情報をもっと公開してほしい", "short": "情報の公開" },
+        { "value": "undecided", "label": "まだ決めていない", "short": "まだ決めていない", "exclusive": true }
+      ],
+      "next": "e_checked_rule"
+    },
+    "e_checked_rule": {
+      "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認",
+      "text": "今のルール（[[用途地域]]・地区計画・条例など）を確かめましたか？",
+      "next": "e_allies"
+    },
+    "e_allies": {
+      "type": "yesno", "fact": "allies", "sum": "一緒に取り組む人",
+      "text": "一緒に取り組む人（近所の人・自治会など）はいますか？",
+      "next": "e_landowners"
+    },
+    "e_landowners": {
+      "type": "yesno", "fact": "landowners", "sum": "土地の持ち主の参加",
+      "text": "ルールをかけたい区域の、土地や建物の持ち主の人も加わっていますか？",
+      "help": "地区計画の提案や建築協定では、土地の持ち主などの合意が大切になります。",
+      "next": "e_method"
+    },
+    "e_method": {
+      "type": "choice", "fact": "rule_method", "sum": "考えている方法",
+      "text": "どの方法を考えていますか？",
+      "options": [
+        { "value": "proposal", "label": "市区町村に地区計画などを提案する", "short": "都市計画の提案" },
+        { "value": "giin", "label": "議員に相談する", "short": "議員に相談" },
+        { "value": "petition", "label": "陳情・請願を出す", "short": "陳情・請願" },
+        { "value": "pubcome", "label": "パブリックコメントに意見を出す", "short": "パブコメ" },
+        { "value": "shomei", "label": "署名を集める", "short": "署名" },
+        { "value": "undecided", "label": "まだ決めていない", "short": "まだ決めていない" }
+      ],
+      "next": "@result"
+    }
+  }
+}

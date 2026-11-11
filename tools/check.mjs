@@ -128,7 +128,8 @@ const allText = JSON.stringify({ tree, cards, checklists, docs });
 for (const m of allText.matchAll(/\[\[([^\]]+)\]\]/g)) if (!terms.has(m[1])) warn('用語の説明がない: ' + m[1]);
 
 // ---- 5. 表現の検査（断定・属性） ----
-const BANNED = [/違法です/, /違反しています/, /違法営業です/, /犯罪です/, /国籍/, /民族/, /外国人(?!滞在施設経営事業)/, /中国人|韓国人/, /宗教/];
+// 「宗教施設」は建物の種類として使う（分野名）。それ以外の「宗教」や、特定の宗教・宗派の名前は質問・結果に入れない
+const BANNED = [/違法です/, /違反しています/, /違法営業です/, /犯罪です/, /国籍/, /民族/, /外国人(?!滞在施設経営事業)/, /中国人|韓国人/, /宗教(?!施設)/, /イスラム|ムスリム|モスク|キリスト教|カトリック|プロテスタント|仏教|神道|ヒンドゥー|ユダヤ|新興宗教|カルト/];
 const texts = [];
 const pushTexts = (o, where) => { if (typeof o === 'string') texts.push([where, o]); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) pushTexts(v, where); };
 pushTexts(tree, 'tree'); cards.forEach(c => pushTexts(c, c.id)); checklists.forEach(c => pushTexts(c, c.id)); docs.forEach(d => pushTexts(d, d.id));
