@@ -1,0 +1,16 @@
+{
+  "items": [
+    { "id": "cl_dates", "priority": 100, "text": "起きたことの日付と内容を記録した" },
+    { "id": "cl_child", "priority": 95, "text": "子どもが話した言葉を、そのまま書き留めた", "when": { "any": [{ "fact": "situation", "in": ["B", "C"] }, { "fact": "topic", "in": ["B", "C"] }, { "fact": "problems", "has": "child_role" }] } },
+    { "id": "cl_photo", "priority": 90, "text": "けが・持ち物の被害・ネットの画面を、写真や画面の保存で残した", "when": { "fact": "problems", "in": ["violence", "injury", "net"] } },
+    { "id": "cl_income", "priority": 90, "text": "収入が分かる書類（源泉徴収票など）を用意した", "when": { "fact": "problems", "has": "shugaku" } },
+    { "id": "cl_who", "priority": 88, "text": "学校の種類と、相談先（教育委員会や担当課）を確かめた" },
+    { "id": "cl_request", "priority": 85, "text": "学校にしてほしいことを、1〜3つにしぼった" },
+    { "id": "cl_doctor", "priority": 85, "text": "医師の書類（診断書・意見書など）を用意した", "when": { "any": [{ "fact": "problems", "in": ["allergy", "medical", "accommodation"] }, { "fact": "danger", "eq": "yes" }] } },
+    { "id": "cl_deadline", "priority": 80, "text": "回答の期限と、次に話す日を決めた", "when": { "any": [{ "fact": "situation", "eq": "G" }, { "all": [{ "fact": "done", "answered": true }, { "not": { "fact": "done", "has": "none" } }] }] } },
+    { "id": "cl_rules", "priority": 80, "text": "校則・PTAの規約・計画の資料など、元になる文書を手に入れた", "when": { "fact": "problems", "in": ["rules", "pta", "merger", "facility", "cost", "club"] } },
+    { "id": "cl_log", "priority": 78, "text": "相談した日・相手（部署と名前）・回答を記録した", "when": { "any": [{ "fact": "situation", "eq": "G" }, { "fact": "done", "in": ["teacher", "school_lead", "board", "outside"] }] } },
+    { "id": "cl_papers", "priority": 75, "text": "学校からのお便り・連絡帳・メールを保管した" },
+    { "id": "cl_others", "priority": 70, "text": "同じことで困っているほかの保護者がいるか確かめた", "when": { "fact": "scope", "eq": "class" } }
+  ]
+}

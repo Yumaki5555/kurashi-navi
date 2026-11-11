@@ -1,0 +1,31 @@
+{
+  "recordTypes": {
+    "teacher": "担任・教科の先生",
+    "school_lead": "校長・教頭（副校長）・学年主任",
+    "counselor": "スクールカウンセラー・養護の先生",
+    "board": "教育委員会",
+    "pref": "都道府県の担当課（私立学校など）",
+    "corp": "学校を運営する法人",
+    "pta": "PTA・学校運営協議会",
+    "parents": "ほかの保護者",
+    "outside": "学校の外の相談窓口（SOSダイヤル・法務局など）",
+    "giin": "議員",
+    "disclosure": "情報公開請求",
+    "petition": "陳情・請願",
+    "pubcome": "パブコメ・意見書",
+    "shomei": "署名",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "methods": { "phone": "電話", "counter": "面談・窓口", "mail": "メール・連絡帳・アプリ", "letter": "文書（郵送・手渡し）", "other": "その他" },
+  "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
+  "steps": [
+    { "id": "record", "title": "記録をつける", "body": "日付と、起きたこと・お子さんの言葉を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "teacher", "title": "担任の先生に伝える", "body": "起きていることと、してほしいことを1〜3つにしぼって伝えます。", "toTypes": ["teacher", "counselor"], "doneIf": { "any": [{ "fact": "done", "has": "teacher" }, { "fact": "g_where", "in": ["teacher", "school_lead", "board", "pref"] }] }, "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }] },
+    { "id": "school_lead", "title": "校長・教頭に文書で伝える", "body": "担任で進まないときは、記録を添えて校長あてに文書で伝え、回答の期限をつけます。", "toTypes": ["school_lead"], "doneIf": { "any": [{ "fact": "done", "has": "school_lead" }, { "fact": "g_where", "in": ["school_lead", "board", "pref"] }] }, "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }] },
+    { "id": "board", "title": "教育委員会（私立は都道府県の担当課など）に相談する", "body": "学校で進まないときは、学校を設置している教育委員会に、学校とのやりとりの記録を添えて相談します。", "toTypes": ["board", "pref", "corp"], "doneIf": { "any": [{ "fact": "done", "has": "board" }, { "fact": "g_where", "in": ["board", "pref"] }] }, "links": [{ "type": "todokeru-contacts" }, { "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }] },
+    { "id": "outside", "title": "学校の外の相談窓口に相談する", "body": "24時間子供SOSダイヤル、法務局の人権相談、法律の専門家など、学校の外の窓口も使えます。", "toTypes": ["outside", "lawyer"], "links": [{ "type": "tel", "tel": "0120-078310", "label": "24時間子供SOSダイヤルに電話" }] },
+    { "id": "giin", "title": "議員に相談する・情報公開請求をする", "body": "地元の議員に相談したり、情報公開請求で教育委員会が持っている文書を確かめたりします。", "toTypes": ["giin", "disclosure"] },
+    { "id": "rule", "title": "仕組みを変える（陳情・請願・パブコメ・署名）", "body": "人の配置や予算など、仕組みの問題は、議会や自治体の計画に意見を届けます。", "toTypes": ["petition", "pubcome", "shomei"], "links": [{ "type": "pubcome" }, { "type": "shomei" }] }
+  ]
+}

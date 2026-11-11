@@ -1,0 +1,117 @@
+{
+  "docs": [
+    { "id": "school_letter", "title": "学校への手紙（担任・校長あての相談・質問）",
+      "desc": "担任の先生や校長に、起きていることと、教えてほしいこと・お願いしたいことを伝える文です。連絡帳・メール・手紙に使えます。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇小学校 校長 〇〇先生／〇年〇組 担任 〇〇先生" },
+        { "id": "problems", "label": "相談したいこと", "prefill": { "fact": "problems" } },
+        { "id": "dates", "label": "起きたこと（日付）", "type": "textarea", "placeholder": "11月10日・12日・14日 算数の時間が自習だった（子どもから聞いた）" },
+        { "id": "detail", "label": "わが子の様子", "type": "textarea", "placeholder": "授業の内容が分からないと言い、宿題に時間がかかるようになった" },
+        { "id": "questions", "label": "教えていただきたいこと・お願いしたいこと（1〜3つ）", "type": "textarea", "placeholder": "1. 自習になった回数と、遅れた分を補う予定　2. 代わりの先生が来る見通し" },
+        { "id": "deadline", "label": "お返事をいただきたい日", "placeholder": "11月25日", "optional": true },
+        { "id": "name", "label": "差出人", "placeholder": "〇年〇組 〇〇の保護者" },
+        { "id": "contact", "label": "連絡先", "optional": true, "help": "書かなくてもかまいません。書く場合は必要な分だけに。" }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "いつもお世話になっております。次のことについて、ご相談させてください。" },
+        { "text": "" },
+        { "text": "相談したいこと：{problems}", "requires": ["problems"] },
+        { "text": "起きたこと：{dates}", "requires": ["dates"] },
+        { "text": "子どもの様子：{detail}", "requires": ["detail"] },
+        { "text": "教えていただきたいこと・お願いしたいこと：{questions}", "requires": ["questions"] },
+        { "text": "" },
+        { "text": "お手数ですが、{deadline}ごろまでにお返事をいただけますと幸いです。", "requires": ["deadline"] },
+        { "text": "どうぞよろしくお願いいたします。" },
+        { "text": "{name}", "requires": ["name"] },
+        { "text": "連絡先：{contact}", "requires": ["contact"] }
+      ],
+      "checks": ["事実だけを書き、推測や決めつけを書いていない", "ほかの子の名前や家庭のことを書いていない（必要なときは「同じクラスの子」などにした）", "お願いしたいことを1〜3つにしぼった", "強い言葉や、相手を責める表現がない", "写しを手元に残した"] },
+
+    { "id": "board_request", "title": "教育委員会への問い合わせ・要望（私立は都道府県の担当課など）",
+      "desc": "学校で進まないことを、教育委員会などに文書で問い合わせる・お願いする文です。回答の期限をつけて出します。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇市教育委員会 〇〇課 御中" },
+        { "id": "school", "label": "学校名", "placeholder": "〇〇市立〇〇小学校" },
+        { "id": "problems", "label": "内容", "prefill": { "fact": "problems" } },
+        { "id": "history", "label": "これまでの経緯", "type": "textarea", "placeholder": "10月5日 担任に相談。10月20日 校長に手紙を出したが、11月10日現在、回答がない。" },
+        { "id": "questions", "label": "お尋ねしたいこと・お願いしたいこと", "type": "textarea", "placeholder": "1. 〇年生の担任不在への対応の見通し　2. それまでの学習を補う方法" },
+        { "id": "deadline", "label": "回答をいただきたい日", "placeholder": "12月5日", "optional": true },
+        { "id": "name", "label": "差出人", "optional": true, "placeholder": "〇〇小学校 〇年生の保護者" },
+        { "id": "contact", "label": "連絡先", "optional": true, "help": "文書で回答をもらうには、送り先が必要です。" }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "{school}について、保護者としてお問い合わせします。", "requires": ["school"] },
+        { "text": "" },
+        { "text": "内容：{problems}", "requires": ["problems"] },
+        { "text": "これまでの経緯：{history}", "requires": ["history"] },
+        { "text": "お尋ねしたいこと・お願いしたいこと：{questions}", "requires": ["questions"] },
+        { "text": "" },
+        { "text": "{deadline}までに、文書でご回答ください。", "requires": ["deadline"] },
+        { "text": "回答が難しい項目がある場合は、その理由もあわせてお知らせください。" },
+        { "text": "差出人：{name}", "requires": ["name"] },
+        { "text": "連絡先：{contact}", "requires": ["contact"] }
+      ],
+      "checks": ["経緯の日付が、自分の記録と合っている", "人数などを聞くときは、個人が分からない範囲（学校全体・市全体など）で聞いている", "ほかの子や家庭を責める書き方になっていない", "写しを手元に残した"] },
+
+    { "id": "serious_request", "title": "いじめの重大事態としての調査の申し入れ",
+      "desc": "いじめで心や体に大きな被害が出ている、または長く休まざるを得ないときに、学校や教育委員会に、いじめ防止対策推進法の重大事態として調べるよう求める文です。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇小学校 校長 〇〇先生／〇〇市教育委員会 御中" },
+        { "id": "since", "label": "いじめに気づいた時期", "placeholder": "9月下旬" },
+        { "id": "facts_text", "label": "起きたこと", "type": "textarea", "placeholder": "同じクラスの子から、毎日のように持ち物を隠されたり、無視されたりしていると話している" },
+        { "id": "damage", "label": "心や体・欠席への影響", "type": "textarea", "placeholder": "10月から計25日欠席している／眠れない日が続き、通院している" },
+        { "id": "deadline", "label": "回答をいただきたい日", "placeholder": "11月30日", "optional": true },
+        { "id": "name", "label": "差出人", "placeholder": "〇年〇組 〇〇の保護者" },
+        { "id": "contact", "label": "連絡先", "optional": true }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "いじめの重大事態としての調査のお願い" },
+        { "text": "" },
+        { "text": "わが子が受けているいじめについて、次のとおりお伝えします。" },
+        { "text": "いじめに気づいた時期：{since}", "requires": ["since"] },
+        { "text": "起きたこと：{facts_text}", "requires": ["facts_text"] },
+        { "text": "心や体・欠席への影響：{damage}", "requires": ["damage"] },
+        { "text": "" },
+        { "text": "つきましては、いじめ防止対策推進法第28条第1項の重大事態として、事実関係を明らかにするための調査を行ってください。" },
+        { "text": "あわせて、調査の組織と進め方、子どもの安全を守るための当面の対応、結果を説明していただける時期を教えてください。" },
+        { "text": "{deadline}までに、文書でご回答ください。", "requires": ["deadline"] },
+        { "text": "{name}", "requires": ["name"] },
+        { "text": "連絡先：{contact}", "requires": ["contact"] }
+      ],
+      "checks": ["日付・回数・欠席の日数が、記録と合っている", "相手の子の名前は、必要な範囲だけにした", "診断書など、裏づけになるものを添えた（あれば）", "写しを手元に残した"] },
+
+    { "id": "hairyo_request", "title": "合理的配慮の申し出",
+      "desc": "わが子が学校で困っている場面と、お願いしたい手立てを、学校に文書で申し出る文です。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇小学校 校長 〇〇先生" },
+        { "id": "scene", "label": "困っている場面", "type": "textarea", "placeholder": "黒板の字を写すのに時間がかかり、授業の後半についていけない" },
+        { "id": "request", "label": "お願いしたい手立て", "type": "textarea", "placeholder": "黒板を写真に撮ることを認めてほしい／プリントを配ってほしい" },
+        { "id": "basis", "label": "医師・専門家の意見など", "type": "textarea", "optional": true, "placeholder": "主治医から、書き写しの負担を減らすよう助言を受けている（意見書を添付）" },
+        { "id": "deadline", "label": "お返事をいただきたい日", "placeholder": "12月1日", "optional": true },
+        { "id": "name", "label": "差出人", "placeholder": "〇年〇組 〇〇の保護者" },
+        { "id": "contact", "label": "連絡先", "optional": true }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "合理的配慮についてのお願い" },
+        { "text": "" },
+        { "text": "子どもが学校生活で困っている場面と、お願いしたい手立てをお伝えします。" },
+        { "text": "困っている場面：{scene}", "requires": ["scene"] },
+        { "text": "お願いしたい手立て：{request}", "requires": ["request"] },
+        { "text": "医師・専門家の意見など：{basis}", "requires": ["basis"] },
+        { "text": "" },
+        { "text": "ご検討のうえ、実施していただける内容と時期を教えてください。難しい点がある場合は、その理由と、ほかの方法もあわせて教えてください。" },
+        { "text": "{deadline}ごろまでにお返事をいただけますと幸いです。", "requires": ["deadline"] },
+        { "text": "{name}", "requires": ["name"] },
+        { "text": "連絡先：{contact}", "requires": ["contact"] }
+      ],
+      "checks": ["困っている場面を、具体的に書いた", "お願いしたい手立てを、できるだけ具体的に書いた", "医師の意見書などがあれば添えた", "写しを手元に残した"] }
+  ]
+}

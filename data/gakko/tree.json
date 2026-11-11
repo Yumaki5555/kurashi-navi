@@ -1,0 +1,235 @@
+{
+  "domain": "gakko",
+  "title": "学校・教育環境の困りごと",
+  "version": "2026-11-11",
+  "start": "situation",
+  "maxQuestions": 8,
+  "optionSets": {
+    "schoolType": [
+      { "value": "public", "label": "公立の小学校・中学校（市区町村立）", "short": "公立の小中学校" },
+      { "value": "public_hs", "label": "公立の高校・特別支援学校など（主に都道府県立）", "short": "公立の高校・特別支援学校" },
+      { "value": "private", "label": "私立・国立の学校", "short": "私立・国立の学校" },
+      { "value": "preschool", "label": "保育園・幼稚園・認定こども園", "short": "保育園・幼稚園・こども園" },
+      { "value": "unknown", "label": "わからない", "short": "学校の種類は不明" }
+    ],
+    "schoolResponse": [
+      { "value": "promised", "label": "対応を約束してくれた", "short": "対応を約束してくれた" },
+      { "value": "in_school", "label": "「学校で対応します」「様子を見ます」と言われたが、変化がない", "short": "学校で対応すると言われたが変化なし" },
+      { "value": "no_staff", "label": "「人手や予算が足りないので難しい」と言われた", "short": "人手・予算が足りないと言われた" },
+      { "value": "privacy", "label": "「個人情報なので答えられない」と言われた", "short": "個人情報なので答えられないと言われた" },
+      { "value": "refused", "label": "理由をはっきり言われないまま、答えてもらえなかった", "short": "理由なく答えてもらえなかった" },
+      { "value": "not_ours", "label": "「担当が違う」と言われた・たらい回しにされた", "short": "担当が違うと言われた" },
+      { "value": "no_reply", "label": "返事がない", "short": "返事がない" },
+      { "value": "other", "label": "覚えていない・その他", "short": "その他" }
+    ]
+  },
+  "nodes": {
+    "situation": {
+      "type": "choice", "fact": "situation", "sum": "困りごと",
+      "text": "今の困りごとにいちばん近いものは？",
+      "help": "あとから戻って選び直せます。くわしい中身は、このあと聞きます。",
+      "options": [
+        { "value": "A", "label": "わが子の授業・学習が心配（自習が多い、授業が進まないなど）", "short": "授業・学習の心配", "next": "a_problems" },
+        { "value": "B", "label": "いじめ・けが・先生の言動で困っている", "short": "いじめ・けが・先生の言動", "next": "b_problems" },
+        { "value": "C", "label": "学校に行きづらい・その子に合った支援が受けられない", "short": "登校・支援の困りごと", "next": "c_problems" },
+        { "value": "D", "label": "給食・授業の内容・学校のルールが気になる", "short": "給食・授業の内容・ルール", "next": "d_problems" },
+        { "value": "E", "label": "学校のお金・PTA・部活動などの負担が重い", "short": "お金・PTA・部活動の負担", "next": "e_problems" },
+        { "value": "F", "label": "学校の統合・通学路・学童保育など、学校とそのまわりの変化", "short": "学校とまわりの変化", "next": "f_problems" },
+        { "value": "G", "label": "学校や教育委員会に相談したが、対応してもらえない", "short": "学校・教育委員会が対応してくれない", "next": "g_topic" }
+      ]
+    },
+
+    "a_problems": {
+      "type": "multi", "fact": "problems", "sum": "心配なこと",
+      "text": "どんなことが心配ですか？（いくつでも）",
+      "help": "原因はまだ分からなくて大丈夫です。起きていることを選んでください。",
+      "options": [
+        { "value": "teacher_absent", "label": "担任や教科の先生が休んだまま代わりの先生が来ない・自習が多い", "short": "先生の不在・自習が多い" },
+        { "value": "unsettled", "label": "クラスが落ち着かず、授業が中断することが多い", "short": "授業の中断が多い" },
+        { "value": "support_load", "label": "支援が必要な子（[[日本語指導]]が必要な子、発達の特性がある子など）への対応で、先生の手が回っていない", "short": "支援への対応で先生の手が回らない" },
+        { "value": "child_role", "label": "わが子が、ほかの子の通訳やお世話係などを任されて負担になっている", "short": "わが子が通訳・お世話係に" },
+        { "value": "pace", "label": "授業の進み方が遅い・内容が減ったように感じる", "short": "授業の遅れ・内容が減った" },
+        { "value": "assessment", "label": "宿題・テストの量や、成績のつけ方に疑問がある", "short": "宿題・テスト・成績" }
+      ],
+      "next": "scope"
+    },
+    "b_problems": {
+      "type": "multi", "fact": "problems", "sum": "起きていること",
+      "text": "どんなことが起きていますか？（いくつでも）",
+      "options": [
+        { "value": "bullying", "label": "ほかの子からのいじめ（悪口・無視・仲間外れ・持ち物を隠されるなど）", "short": "いじめ" },
+        { "value": "violence", "label": "ほかの子からの暴力・けがをさせられた", "short": "暴力・けが" },
+        { "value": "net", "label": "ネット・SNS・学校のタブレットでのトラブル", "short": "ネット・SNSのトラブル" },
+        { "value": "teacher_conduct", "label": "先生の暴言・体罰・行き過ぎた指導", "short": "先生の言動" },
+        { "value": "injury", "label": "学校でけがをしたが、説明や対応が足りない", "short": "学校でのけがの対応" }
+      ],
+      "next": "danger"
+    },
+    "c_problems": {
+      "type": "multi", "fact": "problems", "sum": "困っていること",
+      "text": "どんなことで困っていますか？（いくつでも）",
+      "options": [
+        { "value": "reluctant", "label": "学校に行きたがらない・休みがち", "short": "休みがち" },
+        { "value": "futoko", "label": "長く学校を休んでいる", "short": "長く休んでいる" },
+        { "value": "accommodation", "label": "発達や障害などに合わせた手立て（[[合理的配慮]]）が受けられない", "short": "合理的配慮が受けられない" },
+        { "value": "medical", "label": "持病や医療的なケアへの対応が足りない", "short": "持病・医療的ケアへの対応" },
+        { "value": "other_place", "label": "別室での登校や、学校以外の学びの場のことを知りたい", "short": "学校以外の学びの場" }
+      ],
+      "next": "danger"
+    },
+    "d_problems": {
+      "type": "multi", "fact": "problems", "sum": "気になること",
+      "text": "どんなことが気になりますか？（いくつでも）",
+      "options": [
+        { "value": "lunch_change", "label": "給食の献立や食材の使い方が変わった", "short": "給食の献立の変更" },
+        { "value": "allergy", "label": "わが子の食物アレルギーへの対応が不十分", "short": "アレルギーへの対応" },
+        { "value": "diet_policy", "label": "体質や信条などで食べられないものがある子への対応が、全員の給食にどう影響するか知りたい", "short": "食べられないものへの対応の影響" },
+        { "value": "belief_activity", "label": "特定の信仰に関わる行事や活動への参加を求められた", "short": "信仰に関わる活動への参加" },
+        { "value": "bias", "label": "授業や教材が、一方の考え方に偏っているように感じる", "short": "授業・教材の偏り" },
+        { "value": "rules", "label": "校則（服装・髪型・持ち物など）に疑問がある", "short": "校則" },
+        { "value": "uneven_rules", "label": "水泳・体育・行事などのルールが一部の子だけ違い、理由の説明がない", "short": "一部だけ違うルール" },
+        { "value": "no_explain", "label": "給食・行事・ルールの変更が、保護者への説明なしに決まった", "short": "説明なしの変更" }
+      ],
+      "next": "scope"
+    },
+    "e_problems": {
+      "type": "multi", "fact": "problems", "sum": "負担に感じること",
+      "text": "どんなことが負担ですか？（いくつでも）",
+      "options": [
+        { "value": "cost", "label": "教材費・修学旅行費などの学校の費用", "short": "学校の費用" },
+        { "value": "shugaku", "label": "家計が苦しく、学校のお金の支払いがむずかしい", "short": "支払いがむずかしい" },
+        { "value": "pta", "label": "PTAの加入・役員・活動の負担", "short": "PTAの負担" },
+        { "value": "club", "label": "部活動の地域への移行による費用や送迎", "short": "部活動の移行" },
+        { "value": "parent_load", "label": "送迎・付き添い・塾代など、学校の手が足りない分を保護者が担っている", "short": "保護者が学校の代わりを担う" }
+      ],
+      "next": "scope"
+    },
+    "f_problems": {
+      "type": "multi", "fact": "problems", "sum": "気になる変化",
+      "text": "どんな変化が気になりますか？（いくつでも）",
+      "options": [
+        { "value": "merger", "label": "学校の統合・閉校や、通う学校の区域（学区）の変更", "short": "統合・学区の変更" },
+        { "value": "route", "label": "通学路の安全（交通・見守りなど）", "short": "通学路の安全" },
+        { "value": "facility", "label": "校舎の古さ・建て替え・エアコンなどの設備", "short": "校舎・設備" },
+        { "value": "gakudo", "label": "[[学童保育]]に入れない・足りない", "short": "学童保育" }
+      ],
+      "next": "school_type"
+    },
+
+    "danger": {
+      "type": "yesno", "fact": "danger", "sum": "心や体の危険",
+      "text": "お子さんが「死にたい」「消えたい」と口にする、けがが続くなど、心や体が危ない様子はありますか？",
+      "help": "「はい」の場合は、学校への相談より先に、お子さんの安全を守る方法をご案内します。",
+      "next": "scope"
+    },
+    "scope": {
+      "type": "choice", "fact": "scope", "sum": "どの範囲のことか",
+      "text": "これは、わが子だけのことですか？ほかの子にも関わることですか？",
+      "help": "わが子だけなら個別の対応を、学校全体のことなら人や予算の仕組みの話になることが多く、相談先が変わります。",
+      "options": [
+        { "value": "mine", "label": "わが子だけのこと", "short": "わが子だけ" },
+        { "value": "class", "label": "クラス・学年・学校全体のこと（ほかの子にも関わる）", "short": "クラス・学校全体" },
+        { "value": "unknown", "label": "わからない", "short": "範囲は不明" }
+      ],
+      "next": "school_type"
+    },
+    "school_type": {
+      "type": "choice", "fact": "school_type", "sum": "学校の種類", "optionSet": "schoolType",
+      "text": "お子さんが通っているのは、どの学校ですか？",
+      "help": "学校の種類によって、相談先（[[教育委員会]]など）が変わります。",
+      "next": "done"
+    },
+    "done": {
+      "type": "multi", "fact": "done", "sum": "これまでにしたこと",
+      "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
+      "options": [
+        { "value": "teacher", "label": "担任や教科の先生に伝えた", "short": "担任・先生へ" },
+        { "value": "school_lead", "label": "校長・教頭（副校長）・学年主任などに伝えた", "short": "校長・教頭へ" },
+        { "value": "board", "label": "教育委員会（私立は都道府県の担当課など）に相談した", "short": "教育委員会へ" },
+        { "value": "pta", "label": "PTAやほかの保護者と話した", "short": "PTA・ほかの保護者と" },
+        { "value": "outside", "label": "スクールカウンセラーや、学校の外の相談窓口に相談した", "short": "カウンセラー・外の窓口へ" },
+        { "value": "none", "label": "まだ何もしていない", "short": "まだ何も", "exclusive": true }
+      ],
+      "next": [
+        { "if": { "fact": "done", "in": ["teacher", "school_lead", "board"] }, "go": "response" },
+        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
+        { "go": "outcome" }
+      ]
+    },
+    "response": {
+      "type": "choice", "fact": "school_response", "sum": "学校・教育委員会の回答", "optionSet": "schoolResponse",
+      "text": "学校や教育委員会からは、どんな回答でしたか？",
+      "next": "outcome"
+    },
+    "outcome": {
+      "type": "choice", "fact": "outcome", "sum": "伝えたあとの様子",
+      "text": "伝えたあと、様子は変わりましたか？",
+      "options": [
+        { "value": "improved", "label": "よくなった", "short": "よくなった" },
+        { "value": "partial", "label": "一部はよくなったが、まだ困っている", "short": "一部よくなった" },
+        { "value": "temporary", "label": "一時的によくなったが、元に戻った", "short": "一時的によくなった" },
+        { "value": "same", "label": "変わらない", "short": "変わらない" },
+        { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
+      ],
+      "next": "@result"
+    },
+
+    "g_topic": {
+      "type": "choice", "fact": "topic", "sum": "相談した内容",
+      "text": "相談したのは、どんな内容ですか？",
+      "options": [
+        { "value": "A", "label": "授業・学習のこと", "short": "授業・学習" },
+        { "value": "B", "label": "いじめ・けが・先生の言動のこと", "short": "いじめ・けが・先生の言動" },
+        { "value": "C", "label": "登校のしづらさや、支援のこと", "short": "登校・支援" },
+        { "value": "D", "label": "給食・授業の内容・ルールのこと", "short": "給食・内容・ルール" },
+        { "value": "E", "label": "お金・PTA・部活動の負担のこと", "short": "お金・PTA・部活動" },
+        { "value": "F", "label": "学校の統合・通学路・学童保育などのこと", "short": "学校とまわりの変化" },
+        { "value": "info", "label": "児童・生徒の人数や、先生・支援員の配置などの情報", "short": "人数・配置の情報" }
+      ],
+      "next": "g_school_type"
+    },
+    "g_school_type": {
+      "type": "choice", "fact": "school_type", "sum": "学校の種類", "optionSet": "schoolType",
+      "text": "お子さんが通っているのは、どの学校ですか？",
+      "help": "学校の種類によって、次の相談先が変わります。",
+      "next": "g_where"
+    },
+    "g_where": {
+      "type": "choice", "fact": "g_where", "sum": "相談した相手",
+      "text": "いちばん最近、どこに相談しましたか？",
+      "options": [
+        { "value": "teacher", "label": "担任や教科の先生", "short": "担任・先生" },
+        { "value": "school_lead", "label": "校長・教頭（副校長）", "short": "校長・教頭" },
+        { "value": "board", "label": "教育委員会", "short": "教育委員会" },
+        { "value": "pref", "label": "都道府県の私立学校の担当課など", "short": "都道府県の担当課" },
+        { "value": "other", "label": "その他（議員・相談窓口など）", "short": "その他" }
+      ],
+      "next": "g_method"
+    },
+    "g_method": {
+      "type": "choice", "fact": "g_method", "sum": "相談の方法",
+      "text": "どの方法で相談しましたか？",
+      "options": [
+        { "value": "talk", "label": "面談・電話など、口頭で", "short": "口頭" },
+        { "value": "note", "label": "連絡帳・メール・学校のアプリ", "short": "連絡帳・メール" },
+        { "value": "letter", "label": "文書（手紙・申し入れ書）", "short": "文書" }
+      ],
+      "next": "g_response"
+    },
+    "g_response": {
+      "type": "choice", "fact": "school_response", "sum": "回答", "optionSet": "schoolResponse",
+      "text": "どんな回答でしたか？",
+      "next": "g_recorded"
+    },
+    "g_recorded": {
+      "type": "yesno", "fact": "recorded", "sum": "相談の記録",
+      "text": "相談した日・相手・回答を記録していますか？",
+      "next": "g_fear"
+    },
+    "g_fear": {
+      "type": "yesno", "fact": "fear", "sum": "子どもへの影響の心配",
+      "text": "相談したことで、お子さんが不利な扱いを受けないか心配ですか？",
+      "next": "@result"
+    }
+  }
+}

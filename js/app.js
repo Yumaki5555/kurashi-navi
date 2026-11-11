@@ -416,7 +416,8 @@ function viewRecords(editId) {
 function viewEmergency() {
   setView(`<h1>まず安全を確保してください</h1>
     <div class="box danger"><p>けんか・暴力・不審者の侵入など：<a class="tel" href="tel:110">110</a></p><p>火事・けが・急病：<a class="tel" href="tel:119">119</a></p>
-    <p>緊急ではない警察への相談：<a class="tel" href="tel:%239110">#9110</a></p></div>
+    <p>緊急ではない警察への相談：<a class="tel" href="tel:%239110">#9110</a></p>
+    <p>子どもが「死にたい」と言う・いじめで追い詰められているなど（夜間・休日も、子ども本人も保護者も）：24時間子供SOSダイヤル <a class="tel" href="tel:0120078310">0120-078310</a></p></div>
     <ul class="points"><li>相手に直接詰め寄らず、離れた安全な場所から連絡してください</li><li>落ち着いたら、いつ・何が起きたかをメモしておくと、後の相談に役立ちます</li></ul>
     <button class="btn big" data-act="histback">前の画面に戻る</button>`, '緊急のとき');
 }
