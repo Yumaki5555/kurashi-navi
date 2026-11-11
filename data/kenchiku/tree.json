@@ -1,6 +1,6 @@
 {
   "domain": "kenchiku",
-  "title": "建築・土地利用・宗教施設の困りごと",
+  "title": "建物・土地・施設の困りごと",
   "version": "2026-11-11",
   "start": "situation",
   "maxQuestions": 8,
@@ -46,7 +46,9 @@
   },
   "nodes": {
     "situation": {
-      "type": "choice", "fact": "situation", "sum": "状況",
+      "type": "choice",
+      "fact": "situation",
+      "sum": "状況",
       "text": "今の状況にいちばん近いものは？",
       "help": "あとから戻って選び直せます。建物や施設の種類は、このあと聞きます。",
       "options": [
@@ -57,15 +59,19 @@
         { "value": "E", "label": "地域の建て方・土地の使い方のルールをつくりたい・変えたい", "short": "地域のルールをつくりたい", "next": "e_what" }
       ]
     },
-
     "a_facility": {
-      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
+      "type": "choice",
+      "fact": "facility",
+      "sum": "建物・施設の種類",
+      "optionSet": "facility",
       "text": "できるらしい建物・施設は、どれですか？",
       "help": "種類によって、確かめる決まりと窓口が変わります。",
       "next": "a_stage"
     },
     "a_stage": {
-      "type": "choice", "fact": "stage", "sum": "計画の段階",
+      "type": "choice",
+      "fact": "stage",
+      "sum": "計画の段階",
       "text": "今、どの段階ですか？",
       "help": "工事の前には、多くの場合[[建築確認]]という手続きがあります。",
       "options": [
@@ -73,23 +79,24 @@
         { "value": "sign", "label": "現地に「建築計画のお知らせ」などの看板が立った", "short": "お知らせの看板が立った" },
         { "value": "meeting", "label": "説明会のお知らせがあった・説明会があった", "short": "説明会があった" },
         { "value": "started", "label": "工事が始まった", "short": "工事が始まった" },
+        { "value": "conversion", "label": "今ある建物を、別の使い方（例：住宅や店舗を、人が集まる施設に）に変えるらしい", "short": "今ある建物の使い方が変わる" },
         { "value": "unknown", "label": "わからない", "short": "段階は不明" }
       ],
       "next": "a_worries"
     },
-    "a_worries": {
-      "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems",
-      "text": "心配なことはどれですか？（いくつでも）",
-      "next": "a_checked"
-    },
+    "a_worries": { "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems", "text": "心配なことはどれですか？（いくつでも）", "next": "a_checked" },
     "a_checked": {
-      "type": "yesno", "fact": "checked_plan", "sum": "計画の中身の確認",
+      "type": "yesno",
+      "fact": "checked_plan",
+      "sum": "計画の中身の確認",
       "text": "建物の使い道・高さ・工事の期間など、計画の中身を確かめましたか？",
       "help": "役所で[[建築計画概要書]]を見たり、[[用途地域]]を調べたりすると分かることがあります。",
       "next": "a_goal"
     },
     "a_goal": {
-      "type": "choice", "fact": "goal", "sum": "望むこと",
+      "type": "choice",
+      "fact": "goal",
+      "sum": "望むこと",
       "text": "いちばん望むことは？",
       "options": [
         { "value": "info", "label": "計画の中身を知りたい・説明してほしい", "short": "計画を知りたい" },
@@ -99,48 +106,38 @@
       ],
       "next": "@result"
     },
-
     "b_phase": {
-      "type": "choice", "fact": "phase", "sum": "時期",
+      "type": "choice",
+      "fact": "phase",
+      "sum": "時期",
       "text": "困っているのは、どちらの時期ですか？",
-      "options": [
-        { "value": "construction", "label": "工事中（解体工事を含む）", "short": "工事中" },
-        { "value": "use", "label": "できあがって使われている", "short": "利用中" }
-      ],
+      "options": [{"value": "construction", "label": "工事中（解体工事を含む）", "short": "工事中"}, {"value": "use", "label": "できあがって使われている", "short": "利用中"}],
       "next": "b_facility"
     },
-    "b_facility": {
-      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
-      "text": "困りごとの元になっている建物・施設は、どれですか？",
-      "next": "b_problems"
-    },
+    "b_facility": { "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility", "text": "困りごとの元になっている建物・施設は、どれですか？", "next": "b_problems" },
     "b_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "困っていること",
+      "optionSet": "problems",
       "text": "どんなことで困っていますか？（いくつでも）",
       "help": "判断は、起きていること（音・車・被害など）だけで行います。",
       "next": "b_ongoing"
     },
-    "b_ongoing": {
-      "type": "yesno", "fact": "ongoing", "sum": "今も続いているか",
-      "text": "その困りごとは、今も続いていますか？",
-      "next": "b_done"
-    },
+    "b_ongoing": { "type": "yesno", "fact": "ongoing", "sum": "今も続いているか", "text": "その困りごとは、今も続いていますか？", "next": "b_done" },
     "b_done": {
-      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
+      "optionSet": "done",
       "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
-      "next": [
-        { "if": { "fact": "done", "has": "gov" }, "go": "b_gov_response" },
-        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
-        { "go": "b_outcome" }
-      ]
+      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "b_gov_response"}, {"if": {"fact": "done", "has": "none"}, "go": "@result"}, {"go": "b_outcome"}]
     },
-    "b_gov_response": {
-      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
-      "text": "役所からは、どんな回答でしたか？",
-      "next": "b_outcome"
-    },
+    "b_gov_response": { "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse", "text": "役所からは、どんな回答でしたか？", "next": "b_outcome" },
     "b_outcome": {
-      "type": "choice", "fact": "outcome", "sum": "伝えたあとの様子",
+      "type": "choice",
+      "fact": "outcome",
+      "sum": "伝えたあとの様子",
       "text": "伝えたあと、様子は変わりましたか？",
       "options": [
         { "value": "improved", "label": "よくなった", "short": "よくなった" },
@@ -151,14 +148,11 @@
       ],
       "next": "@result"
     },
-
-    "c_facility": {
-      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
-      "text": "疑いのある建物・土地は、どれですか？",
-      "next": "c_reasons"
-    },
+    "c_facility": { "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility", "text": "疑いのある建物・土地は、どれですか？", "next": "c_reasons" },
     "c_reasons": {
-      "type": "multi", "fact": "reasons", "sum": "そう思う理由",
+      "type": "multi",
+      "fact": "reasons",
+      "sum": "そう思う理由",
       "text": "そう思う理由はどれですか？（いくつでも）",
       "help": "見て分かることだけで大丈夫です。分からないまま「違反」と決めつけないための質問です。",
       "options": [
@@ -172,32 +166,27 @@
       "next": "c_checked"
     },
     "c_checked": {
-      "type": "yesno", "fact": "checked_record", "sum": "役所の記録の確認",
+      "type": "yesno",
+      "fact": "checked_record",
+      "sum": "役所の記録の確認",
       "text": "役所で、建築確認や許可の記録を確かめましたか？",
       "help": "[[建築計画概要書]]や[[開発登録簿]]は、だれでも見られます。",
       "next": "c_problems"
     },
-    "c_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
-      "text": "実際に困っていることはありますか？（いくつでも）",
-      "next": "c_done"
-    },
+    "c_problems": { "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems", "text": "実際に困っていることはありますか？（いくつでも）", "next": "c_done" },
     "c_done": {
-      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
+      "optionSet": "done",
       "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
-      "next": [
-        { "if": { "fact": "done", "has": "gov" }, "go": "c_gov_response" },
-        { "go": "@result" }
-      ]
+      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "c_gov_response"}, {"go": "@result"}]
     },
-    "c_gov_response": {
-      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
-      "text": "役所からは、どんな回答でしたか？",
-      "next": "@result"
-    },
-
+    "c_gov_response": { "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse", "text": "役所からは、どんな回答でしたか？", "next": "@result" },
     "d_where": {
-      "type": "choice", "fact": "gov_where", "sum": "相談した窓口",
+      "type": "choice",
+      "fact": "gov_where",
+      "sum": "相談した窓口",
       "text": "どこに相談しましたか？",
       "options": [
         { "value": "kenchiku_dept", "label": "建築の担当課（建築指導課・建築審査課など）", "short": "建築の担当課" },
@@ -209,7 +198,9 @@
       "next": "d_method"
     },
     "d_method": {
-      "type": "choice", "fact": "gov_method", "sum": "相談の方法",
+      "type": "choice",
+      "fact": "gov_method",
+      "sum": "相談の方法",
       "text": "どの方法で相談しましたか？",
       "options": [
         { "value": "phone", "label": "電話", "short": "電話" },
@@ -219,29 +210,14 @@
       ],
       "next": "d_response"
     },
-    "d_response": {
-      "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse",
-      "text": "役所からは、どんな回答でしたか？",
-      "next": "d_recorded"
-    },
-    "d_recorded": {
-      "type": "yesno", "fact": "recorded", "sum": "相談の記録",
-      "text": "相談した日時・相手の部署・回答を記録していますか？",
-      "next": "d_problems"
-    },
-    "d_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
-      "text": "困っていることはどれですか？（いくつでも）",
-      "next": "d_facility"
-    },
-    "d_facility": {
-      "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility",
-      "text": "困りごとの元になっている建物・施設・土地は、どれですか？",
-      "next": "@result"
-    },
-
+    "d_response": { "type": "choice", "fact": "gov_response", "sum": "役所の回答", "optionSet": "govResponse", "text": "役所からは、どんな回答でしたか？", "next": "d_recorded" },
+    "d_recorded": { "type": "yesno", "fact": "recorded", "sum": "相談の記録", "text": "相談した日時・相手の部署・回答を記録していますか？", "next": "d_problems" },
+    "d_problems": { "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems", "text": "困っていることはどれですか？（いくつでも）", "next": "d_facility" },
+    "d_facility": { "type": "choice", "fact": "facility", "sum": "建物・施設の種類", "optionSet": "facility", "text": "困りごとの元になっている建物・施設・土地は、どれですか？", "next": "@result" },
     "e_what": {
-      "type": "multi", "fact": "rule_goal", "sum": "つくりたいルール",
+      "type": "multi",
+      "fact": "rule_goal",
+      "sum": "つくりたいルール",
       "text": "どんなルールをつくりたい・変えたいですか？（いくつでも）",
       "options": [
         { "value": "district_plan", "label": "建物の高さ・使い道などの地区のルール（[[地区計画]]）", "short": "地区計画" },
@@ -253,24 +229,20 @@
       ],
       "next": "e_checked_rule"
     },
-    "e_checked_rule": {
-      "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認",
-      "text": "今のルール（[[用途地域]]・地区計画・条例など）を確かめましたか？",
-      "next": "e_allies"
-    },
-    "e_allies": {
-      "type": "yesno", "fact": "allies", "sum": "一緒に取り組む人",
-      "text": "一緒に取り組む人（近所の人・自治会など）はいますか？",
-      "next": "e_landowners"
-    },
+    "e_checked_rule": { "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認", "text": "今のルール（[[用途地域]]・地区計画・条例など）を確かめましたか？", "next": "e_allies" },
+    "e_allies": { "type": "yesno", "fact": "allies", "sum": "一緒に取り組む人", "text": "一緒に取り組む人（近所の人・自治会など）はいますか？", "next": "e_landowners" },
     "e_landowners": {
-      "type": "yesno", "fact": "landowners", "sum": "土地の持ち主の参加",
+      "type": "yesno",
+      "fact": "landowners",
+      "sum": "土地の持ち主の参加",
       "text": "ルールをかけたい区域の、土地や建物の持ち主の人も加わっていますか？",
       "help": "地区計画の提案や建築協定では、土地の持ち主などの合意が大切になります。",
       "next": "e_method"
     },
     "e_method": {
-      "type": "choice", "fact": "rule_method", "sum": "考えている方法",
+      "type": "choice",
+      "fact": "rule_method",
+      "sum": "考えている方法",
       "text": "どの方法を考えていますか？",
       "options": [
         { "value": "proposal", "label": "市区町村に地区計画などを提案する", "short": "都市計画の提案" },

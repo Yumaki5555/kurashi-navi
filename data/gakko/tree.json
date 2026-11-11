@@ -1,6 +1,6 @@
 {
   "domain": "gakko",
-  "title": "学校・教育環境の困りごと",
+  "title": "学校・子どもの教育の困りごと",
   "version": "2026-11-11",
   "start": "situation",
   "maxQuestions": 8,
@@ -25,7 +25,9 @@
   },
   "nodes": {
     "situation": {
-      "type": "choice", "fact": "situation", "sum": "困りごと",
+      "type": "choice",
+      "fact": "situation",
+      "sum": "困りごと",
       "text": "今の困りごとにいちばん近いものは？",
       "help": "あとから戻って選び直せます。くわしい中身は、このあと聞きます。",
       "options": [
@@ -35,12 +37,14 @@
         { "value": "D", "label": "給食・授業の内容・学校のルールが気になる", "short": "給食・授業の内容・ルール", "next": "d_problems" },
         { "value": "E", "label": "学校のお金・PTA・部活動などの負担が重い", "short": "お金・PTA・部活動の負担", "next": "e_problems" },
         { "value": "F", "label": "学校の統合・通学路・学童保育など、学校とそのまわりの変化", "short": "学校とまわりの変化", "next": "f_problems" },
-        { "value": "G", "label": "学校や教育委員会に相談したが、対応してもらえない", "short": "学校・教育委員会が対応してくれない", "next": "g_topic" }
+        { "value": "G", "label": "学校や教育委員会に相談したが、対応してもらえない", "short": "学校・教育委員会が対応してくれない", "next": "g_topic" },
+        { "value": "H", "label": "学校の実態の把握や、情報の公表を求めた請願・陳情が、議会で通らなかった（不採択など）", "short": "請願・陳情が通らなかった", "next": "@result" }
       ]
     },
-
     "a_problems": {
-      "type": "multi", "fact": "problems", "sum": "心配なこと",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "心配なこと",
       "text": "どんなことが心配ですか？（いくつでも）",
       "help": "原因はまだ分からなくて大丈夫です。起きていることを選んでください。",
       "options": [
@@ -54,7 +58,9 @@
       "next": "scope"
     },
     "b_problems": {
-      "type": "multi", "fact": "problems", "sum": "起きていること",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "起きていること",
       "text": "どんなことが起きていますか？（いくつでも）",
       "options": [
         { "value": "bullying", "label": "ほかの子からのいじめ（悪口・無視・仲間外れ・持ち物を隠されるなど）", "short": "いじめ" },
@@ -66,7 +72,9 @@
       "next": "danger"
     },
     "c_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "困っていること",
       "text": "どんなことで困っていますか？（いくつでも）",
       "options": [
         { "value": "reluctant", "label": "学校に行きたがらない・休みがち", "short": "休みがち" },
@@ -78,7 +86,9 @@
       "next": "danger"
     },
     "d_problems": {
-      "type": "multi", "fact": "problems", "sum": "気になること",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "気になること",
       "text": "どんなことが気になりますか？（いくつでも）",
       "options": [
         { "value": "lunch_change", "label": "給食の献立や食材の使い方が変わった", "short": "給食の献立の変更" },
@@ -93,7 +103,9 @@
       "next": "scope"
     },
     "e_problems": {
-      "type": "multi", "fact": "problems", "sum": "負担に感じること",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "負担に感じること",
       "text": "どんなことが負担ですか？（いくつでも）",
       "options": [
         { "value": "cost", "label": "教材費・修学旅行費などの学校の費用", "short": "学校の費用" },
@@ -105,7 +117,9 @@
       "next": "scope"
     },
     "f_problems": {
-      "type": "multi", "fact": "problems", "sum": "気になる変化",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "気になる変化",
       "text": "どんな変化が気になりますか？（いくつでも）",
       "options": [
         { "value": "merger", "label": "学校の統合・閉校や、通う学校の区域（学区）の変更", "short": "統合・学区の変更" },
@@ -115,15 +129,18 @@
       ],
       "next": "school_type"
     },
-
     "danger": {
-      "type": "yesno", "fact": "danger", "sum": "心や体の危険",
+      "type": "yesno",
+      "fact": "danger",
+      "sum": "心や体の危険",
       "text": "お子さんが「死にたい」「消えたい」と口にする、けがが続くなど、心や体が危ない様子はありますか？",
       "help": "「はい」の場合は、学校への相談より先に、お子さんの安全を守る方法をご案内します。",
       "next": "scope"
     },
     "scope": {
-      "type": "choice", "fact": "scope", "sum": "どの範囲のことか",
+      "type": "choice",
+      "fact": "scope",
+      "sum": "どの範囲のことか",
       "text": "これは、わが子だけのことですか？ほかの子にも関わることですか？",
       "help": "わが子だけなら個別の対応を、学校全体のことなら人や予算の仕組みの話になることが多く、相談先が変わります。",
       "options": [
@@ -134,13 +151,18 @@
       "next": "school_type"
     },
     "school_type": {
-      "type": "choice", "fact": "school_type", "sum": "学校の種類", "optionSet": "schoolType",
+      "type": "choice",
+      "fact": "school_type",
+      "sum": "学校の種類",
+      "optionSet": "schoolType",
       "text": "お子さんが通っているのは、どの学校ですか？",
       "help": "学校の種類によって、相談先（[[教育委員会]]など）が変わります。",
       "next": "done"
     },
     "done": {
-      "type": "multi", "fact": "done", "sum": "これまでにしたこと",
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
       "text": "これまでに、どこかへ伝えたり相談したりしましたか？（いくつでも）",
       "options": [
         { "value": "teacher", "label": "担任や教科の先生に伝えた", "short": "担任・先生へ" },
@@ -151,18 +173,23 @@
         { "value": "none", "label": "まだ何もしていない", "short": "まだ何も", "exclusive": true }
       ],
       "next": [
-        { "if": { "fact": "done", "in": ["teacher", "school_lead", "board"] }, "go": "response" },
-        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
+        { "if": {"fact": "done", "in": ["teacher", "school_lead", "board"]}, "go": "response" },
+        { "if": {"fact": "done", "has": "none"}, "go": "@result" },
         { "go": "outcome" }
       ]
     },
     "response": {
-      "type": "choice", "fact": "school_response", "sum": "学校・教育委員会の回答", "optionSet": "schoolResponse",
+      "type": "choice",
+      "fact": "school_response",
+      "sum": "学校・教育委員会の回答",
+      "optionSet": "schoolResponse",
       "text": "学校や教育委員会からは、どんな回答でしたか？",
       "next": "outcome"
     },
     "outcome": {
-      "type": "choice", "fact": "outcome", "sum": "伝えたあとの様子",
+      "type": "choice",
+      "fact": "outcome",
+      "sum": "伝えたあとの様子",
       "text": "伝えたあと、様子は変わりましたか？",
       "options": [
         { "value": "improved", "label": "よくなった", "short": "よくなった" },
@@ -173,9 +200,10 @@
       ],
       "next": "@result"
     },
-
     "g_topic": {
-      "type": "choice", "fact": "topic", "sum": "相談した内容",
+      "type": "choice",
+      "fact": "topic",
+      "sum": "相談した内容",
       "text": "相談したのは、どんな内容ですか？",
       "options": [
         { "value": "A", "label": "授業・学習のこと", "short": "授業・学習" },
@@ -189,13 +217,18 @@
       "next": "g_school_type"
     },
     "g_school_type": {
-      "type": "choice", "fact": "school_type", "sum": "学校の種類", "optionSet": "schoolType",
+      "type": "choice",
+      "fact": "school_type",
+      "sum": "学校の種類",
+      "optionSet": "schoolType",
       "text": "お子さんが通っているのは、どの学校ですか？",
       "help": "学校の種類によって、次の相談先が変わります。",
       "next": "g_where"
     },
     "g_where": {
-      "type": "choice", "fact": "g_where", "sum": "相談した相手",
+      "type": "choice",
+      "fact": "g_where",
+      "sum": "相談した相手",
       "text": "いちばん最近、どこに相談しましたか？",
       "options": [
         { "value": "teacher", "label": "担任や教科の先生", "short": "担任・先生" },
@@ -207,7 +240,9 @@
       "next": "g_method"
     },
     "g_method": {
-      "type": "choice", "fact": "g_method", "sum": "相談の方法",
+      "type": "choice",
+      "fact": "g_method",
+      "sum": "相談の方法",
       "text": "どの方法で相談しましたか？",
       "options": [
         { "value": "talk", "label": "面談・電話など、口頭で", "short": "口頭" },
@@ -216,20 +251,9 @@
       ],
       "next": "g_response"
     },
-    "g_response": {
-      "type": "choice", "fact": "school_response", "sum": "回答", "optionSet": "schoolResponse",
-      "text": "どんな回答でしたか？",
-      "next": "g_recorded"
-    },
-    "g_recorded": {
-      "type": "yesno", "fact": "recorded", "sum": "相談の記録",
-      "text": "相談した日・相手・回答を記録していますか？",
-      "next": "g_fear"
-    },
-    "g_fear": {
-      "type": "yesno", "fact": "fear", "sum": "子どもへの影響の心配",
-      "text": "相談したことで、お子さんが不利な扱いを受けないか心配ですか？",
-      "next": "@result"
-    }
-  }
+    "g_response": { "type": "choice", "fact": "school_response", "sum": "回答", "optionSet": "schoolResponse", "text": "どんな回答でしたか？", "next": "g_recorded" },
+    "g_recorded": { "type": "yesno", "fact": "recorded", "sum": "相談の記録", "text": "相談した日・相手・回答を記録していますか？", "next": "g_fear" },
+    "g_fear": { "type": "yesno", "fact": "fear", "sum": "子どもへの影響の心配", "text": "相談したことで、お子さんが不利な扱いを受けないか心配ですか？", "next": "@result" }
+  },
+  "startNextIf": { "fact": "situation", "eq": "H" }
 }

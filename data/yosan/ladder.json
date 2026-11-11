@@ -1,0 +1,41 @@
+{
+  "recordTypes": {
+    "gov": "担当課・財政課",
+    "kansa": "監査委員（住民監査請求）",
+    "giin": "議員",
+    "disclosure": "情報公開請求",
+    "petition": "陳情・請願",
+    "pubcome": "パブコメ・意見書",
+    "kuni": "国の機関",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
+  "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
+  "steps": [
+    { "id": "record", "title": "事業名と資料をメモする", "body": "事業名・年度・担当課・金額をメモします。", "anyRecord": true, "doneIf": {"fact": "found", "eq": "yes"} },
+    {
+      "id": "gov",
+      "title": "担当課に問い合わせる",
+      "body": "わからない点を、文書で具体的に聞きます。",
+      "toTypes": ["gov"],
+      "links": [{"type": "doc", "doc": "budget_question", "label": "問い合わせ文を作る"}]
+    },
+    {
+      "id": "disclosure",
+      "title": "情報公開請求で文書を求める",
+      "body": "契約書・実績報告書などを取り寄せます。",
+      "toTypes": ["disclosure"],
+      "links": [{"type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手順"}]
+    },
+    { "id": "giin", "title": "議員に相談する", "body": "予算・決算の審査で確かめてもらえないか相談します。", "toTypes": ["giin"] },
+    {
+      "id": "kansa",
+      "title": "住民監査請求を検討する",
+      "body": "違法・不当な支出の疑いがあり、資料で示せるときの手続きです（原則1年以内）。",
+      "showIf": { "fact": "situation", "eq": "C" },
+      "toTypes": ["kansa"]
+    },
+    { "id": "opinion", "title": "陳情・請願・意見募集で意見を出す", "body": "予算の使い方を変えてほしいときの手段です。", "toTypes": ["petition", "pubcome"] }
+  ]
+}

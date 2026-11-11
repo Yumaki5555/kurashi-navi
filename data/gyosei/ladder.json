@@ -1,0 +1,71 @@
+{
+  "recordTypes": {
+    "gov": "市区町村・都道府県の担当課",
+    "school": "学校",
+    "board": "教育委員会",
+    "party": "相手方（事業者・管理者など）",
+    "kuni": "国の機関",
+    "koucho": "市民の声・行政相談などの受付",
+    "giin": "議員",
+    "disclosure": "情報公開請求",
+    "shinsa": "審査請求・不服申立て",
+    "petition": "陳情・請願",
+    "pubcome": "パブコメ・意見書",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "commonRecordTypes": {
+    "disclosure": "情報公開請求",
+    "shinsa": "審査請求・不服申立て",
+    "koucho": "市民の声・行政相談などの受付",
+    "giin": "議員",
+    "petition": "陳情・請願",
+    "lawyer": "法律の専門家",
+    "other": "その他"
+  },
+  "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
+  "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
+  "steps": [
+    { "id": "record", "title": "記録をつける", "body": "相談や請求の日時・相手・回答を記録します。", "anyRecord": true, "doneIf": {"fact": "facts_ready", "eq": "yes"} },
+    {
+      "id": "ask",
+      "title": "根拠や理由を文書で確かめる",
+      "body": "回答の根拠（法令・事実）を、文書で確かめます。",
+      "toTypes": ["gov", "board", "school"],
+      "methods": ["letter", "mail"],
+      "doneIf": { "any": [{"fact": "did", "eq": "letter"}, {"fact": "basis_known", "eq": "yes"}, {"fact": "reason_given", "eq": "yes"}] },
+      "links": [{"type": "doc", "doc": "ask_basis", "label": "問い合わせ文を作る"}]
+    },
+    {
+      "id": "disclosure",
+      "title": "情報公開請求で文書を求める",
+      "body": "判断や対応の記録を、正式な手続きで求めます。",
+      "toTypes": ["disclosure"],
+      "doneIf": { "fact": "did", "eq": "disclosure" },
+      "links": [{"type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手順"}]
+    },
+    {
+      "id": "giin",
+      "title": "議員に相談する",
+      "body": "記録と資料を1枚にまとめて相談します。",
+      "toTypes": ["giin"],
+      "doneIf": { "fact": "did", "eq": "giin" },
+      "links": [{"type": "doc", "doc": "giin_memo", "label": "相談メモを作る"}]
+    },
+    {
+      "id": "petition",
+      "title": "陳情・請願・意見募集で意見を出す",
+      "body": "ルールや予算を変えたいときの手段です。",
+      "toTypes": ["petition", "pubcome"],
+      "doneIf": { "fact": "did", "eq": "petition" },
+      "links": [{"type": "todokeru-guide", "guide": "petition", "label": "請願・陳情の手順"}]
+    },
+    {
+      "id": "lawyer",
+      "title": "法律の専門家に相談する",
+      "body": "法的に取れる手段があるかを確かめます。",
+      "toTypes": ["lawyer"],
+      "links": [{"type": "tel", "tel": "0570-078374", "label": "法テラスに電話"}]
+    }
+  ]
+}

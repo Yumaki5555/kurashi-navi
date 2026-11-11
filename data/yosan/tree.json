@@ -1,0 +1,81 @@
+{
+  "domain": "yosan",
+  "title": "税金・予算の使い道",
+  "version": 1,
+  "start": "situation",
+  "maxQuestions": 8,
+  "startNextIf": { "fact": "situation", "eq": "F" },
+  "optionSets": {
+    "topic": [
+      { "value": "tabunka", "label": "多文化共生・国際交流の事業", "short": "多文化共生・国際交流" },
+      { "value": "hojo", "label": "団体などへの補助金", "short": "補助金" },
+      { "value": "itaku", "label": "事業の委託・契約（外部の会社や団体に任せる仕事）", "short": "委託・契約" },
+      { "value": "shisetsu", "label": "施設の建設・管理", "short": "施設" },
+      { "value": "other", "label": "その他の事業", "short": "その他" }
+    ],
+    "level": [
+      { "value": "city", "label": "市区町村", "short": "市区町村" },
+      { "value": "pref", "label": "都道府県", "short": "都道府県" },
+      { "value": "kuni", "label": "国", "short": "国" },
+      { "value": "unknown", "label": "わからない", "short": "わからない" }
+    ]
+  },
+  "nodes": {
+    "situation": {
+      "type": "choice",
+      "fact": "situation",
+      "sum": "困りごと",
+      "text": "今の困りごとに、いちばん近いものは？",
+      "help": "あとから戻って選び直せます。",
+      "options": [
+        { "value": "A", "label": "事業や補助金の中身・金額を知りたい", "short": "事業や補助金の中身を知りたい", "next": "topic" },
+        { "value": "B", "label": "事業の成果や効果に疑問がある", "short": "事業の成果に疑問", "next": "topic" },
+        { "value": "C", "label": "お金の使い方が、違法・不当ではないかと思う", "short": "違法・不当な支出の疑い", "next": "topic" },
+        { "value": "D", "label": "自治体が企業や団体と結んだ[[連携協定]]の中身を知りたい", "short": "連携協定の中身を知りたい", "sets": {"topic": "kyotei"}, "next": "d_published" },
+        { "value": "E", "label": "予算の使い方を変えてほしい・意見を言いたい", "short": "予算に意見を言いたい", "next": "topic" },
+        { "value": "F", "label": "問い合わせや情報公開請求をしたが、うまくいかなかった", "short": "問い合わせ・請求がうまくいかない", "next": "@result" }
+      ]
+    },
+    "topic": {
+      "type": "choice",
+      "fact": "topic",
+      "sum": "事業の種類",
+      "text": "どんな事業についてですか？",
+      "optionSet": "topic",
+      "next": [{"if": {"fact": "situation", "eq": "C"}, "go": "c_level"}, {"if": {"fact": "situation", "eq": "E"}, "go": "level"}, {"go": "found"}]
+    },
+    "found": { "type": "yesno", "fact": "found", "sum": "資料を見たか", "text": "[[予算書]]・[[決算]]書や、事業の説明資料を見ましたか？", "next": "level" },
+    "level": { "type": "choice", "fact": "level", "sum": "どこの予算か", "text": "どこの予算ですか？", "optionSet": "level", "next": "@result" },
+    "c_level": { "type": "choice", "fact": "level", "sum": "どこの予算か", "text": "どこの予算ですか？", "optionSet": "level", "next": "c_point" },
+    "c_point": {
+      "type": "multi",
+      "fact": "c_point",
+      "sum": "疑問の点",
+      "text": "どこが問題だと思いますか？（いくつでも）",
+      "options": [
+        { "value": "rule", "label": "法令や契約のきまりに反しているのではないか", "short": "きまりに反する疑い" },
+        { "value": "price", "label": "金額が高すぎる・むだではないか", "short": "金額・むだ" },
+        { "value": "purpose", "label": "決められた目的と違うことに使われているのではないか", "short": "目的外の使い方" },
+        { "value": "noresult", "label": "お金を出したのに、成果や成果物がないのではないか", "short": "成果がない" },
+        { "value": "unknown", "label": "わからない", "short": "わからない", "exclusive": true }
+      ],
+      "next": "c_when"
+    },
+    "c_when": {
+      "type": "choice",
+      "fact": "c_when",
+      "sum": "支出の時期",
+      "text": "その支出や契約は、いつごろのものですか？",
+      "options": [
+        { "value": "within1y", "label": "この1年以内", "short": "1年以内" },
+        { "value": "over1y", "label": "1年より前", "short": "1年より前" },
+        { "value": "future", "label": "これから行われる予定", "short": "これから（予定）" },
+        { "value": "unknown", "label": "わからない", "short": "わからない" }
+      ],
+      "next": "c_evidence"
+    },
+    "c_evidence": { "type": "yesno", "fact": "c_evidence", "sum": "事実を示す資料があるか", "text": "その事実を示す資料（予算書・決算書・契約書・開示された文書など）がありますか？", "next": "c_resident" },
+    "c_resident": { "type": "yesno", "fact": "c_resident", "sum": "その自治体の住民か", "text": "あなたは、その自治体（市区町村・都道府県）の住民ですか？", "next": "@result" },
+    "d_published": { "type": "yesno", "fact": "d_published", "sum": "協定書が公開されているか", "text": "協定書（協定の文書）は、自治体のホームページなどで公開されていますか？", "next": "level" }
+  }
+}

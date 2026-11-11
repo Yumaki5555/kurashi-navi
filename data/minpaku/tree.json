@@ -1,6 +1,6 @@
 {
   "domain": "minpaku",
-  "title": "民泊・旅館業の困りごと",
+  "title": "民泊・宿泊施設の困りごと",
   "version": "2026-11-11",
   "start": "situation",
   "maxQuestions": 8,
@@ -51,31 +51,29 @@
         { "value": "E", "label": "自治体の民泊ルールを変えたい", "short": "自治体のルールを変えたい", "next": "e_what" }
       ]
     },
-
     "a_building": {
-      "type": "choice", "fact": "building", "sum": "建物", "optionSet": "building",
+      "type": "choice",
+      "fact": "building",
+      "sum": "建物",
+      "optionSet": "building",
       "text": "民泊ができるらしい建物は、どれですか？",
       "help": "分譲マンションの中なら、マンションのルール（[[管理規約]]）が大きく関係します。",
       "next": "a_notice"
     },
     "a_notice": {
-      "type": "yesno", "fact": "notice", "sum": "事業者からの説明・掲示",
+      "type": "yesno",
+      "fact": "notice",
+      "sum": "事業者からの説明・掲示",
       "text": "事業者から説明やお知らせ（説明会、チラシ、建物への掲示など）はありましたか？",
       "help": "自治体によっては、開業前に近所へ知らせることを求めるルールがあります。",
       "next": "a_worries"
     },
-    "a_worries": {
-      "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems",
-      "text": "心配していることは？（いくつでも）",
-      "next": "a_checked"
-    },
-    "a_checked": {
-      "type": "yesno", "fact": "checked_gov", "sum": "自治体への確認",
-      "text": "その建物の[[届出]]や[[許可]]の申請が出ているか、自治体に問い合わせましたか？",
-      "next": "a_goal"
-    },
+    "a_worries": { "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems", "text": "心配していることは？（いくつでも）", "next": "a_checked" },
+    "a_checked": { "type": "yesno", "fact": "checked_gov", "sum": "自治体への確認", "text": "その建物の[[届出]]や[[許可]]の申請が出ているか、自治体に問い合わせましたか？", "next": "a_goal" },
     "a_goal": {
-      "type": "choice", "fact": "goal", "sum": "望むこと",
+      "type": "choice",
+      "fact": "goal",
+      "sum": "望むこと",
       "text": "いちばん望むことは？",
       "options": [
         { "value": "info", "label": "どんな施設になるのか、正しい情報を知りたい", "short": "情報を知りたい" },
@@ -84,26 +82,28 @@
       ],
       "next": "@result"
     },
-
     "b_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "困っていること",
+      "optionSet": "problems",
       "text": "困っていることは？（いくつでも）",
       "help": "今まさに危険なことが起きているときは、上の赤いボタンを押してください。",
       "next": "b_ongoing"
     },
     "b_ongoing": {
-      "type": "yesno", "fact": "ongoing", "sum": "今も続いているか",
+      "type": "yesno",
+      "fact": "ongoing",
+      "sum": "今も続いているか",
       "text": "その困りごとは、今も続いていますか？",
       "help": "ここ1か月ほどの間に起きていれば「はい」を選んでください。",
       "next": "b_building"
     },
-    "b_building": {
-      "type": "choice", "fact": "building", "sum": "建物", "optionSet": "building",
-      "text": "その民泊がある建物は、どれですか？",
-      "next": "b_know"
-    },
+    "b_building": { "type": "choice", "fact": "building", "sum": "建物", "optionSet": "building", "text": "その民泊がある建物は、どれですか？", "next": "b_know" },
     "b_know": {
-      "type": "multi", "fact": "know", "sum": "施設について分かっていること",
+      "type": "multi",
+      "fact": "know",
+      "sum": "施設について分かっていること",
       "text": "施設について分かっていることは？（いくつでも）",
       "help": "[[標識]]は、玄関など外から見える場所に出ている札です。建物の外（道路など）から見える範囲で確かめてください。",
       "options": [
@@ -115,21 +115,18 @@
       "next": "b_done"
     },
     "b_done": {
-      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
+      "optionSet": "done",
       "text": "これまでにしたことは？（いくつでも）",
-      "next": [
-        { "if": { "fact": "done", "has": "gov" }, "go": "b_gov_response" },
-        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
-        { "go": "b_outcome" }
-      ]
+      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "b_gov_response"}, {"if": {"fact": "done", "has": "none"}, "go": "@result"}, {"go": "b_outcome"}]
     },
-    "b_gov_response": {
-      "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse",
-      "text": "自治体からは、どんな回答でしたか？",
-      "next": "b_outcome"
-    },
+    "b_gov_response": { "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse", "text": "自治体からは、どんな回答でしたか？", "next": "b_outcome" },
     "b_outcome": {
-      "type": "choice", "fact": "outcome", "sum": "その結果",
+      "type": "choice",
+      "fact": "outcome",
+      "sum": "その結果",
       "text": "その後、困りごとはどうなりましたか？",
       "options": [
         { "value": "improved", "label": "よくなった", "short": "よくなった" },
@@ -140,9 +137,10 @@
       ],
       "next": "@result"
     },
-
     "c_reasons": {
-      "type": "multi", "fact": "reasons", "sum": "そう思う理由",
+      "type": "multi",
+      "fact": "reasons",
+      "sum": "そう思う理由",
       "text": "無許可ではないかと思う理由は？（いくつでも）",
       "help": "ここで選んだだけで「無許可」と決まるわけではありません。確かめる順番を、結果でご案内します。",
       "options": [
@@ -152,47 +150,39 @@
         { "value": "all_year", "label": "1年中、毎日のように宿泊客が来ているようだ", "short": "1年中営業していそう" },
         { "value": "other", "label": "その他", "short": "その他" }
       ],
-      "next": [
-        { "if": { "fact": "reasons", "has": "not_listed" }, "go": "c_building" },
-        { "go": "c_checked_list" }
-      ]
+      "next": [{"if": {"fact": "reasons", "has": "not_listed"}, "go": "c_building"}, {"go": "c_checked_list"}]
     },
     "c_checked_list": {
-      "type": "yesno", "fact": "checked_list", "sum": "公開一覧の確認",
+      "type": "yesno",
+      "fact": "checked_list",
+      "sum": "公開一覧の確認",
       "text": "自治体が公開している「民泊（届出住宅）」や「旅館業の施設」の一覧を確認しましたか？",
       "help": "多くの自治体が、届出・許可を受けた施設の一覧をホームページで公開しています。結果画面で探し方をご案内します。",
       "next": "c_building"
     },
-    "c_building": {
-      "type": "choice", "fact": "building", "sum": "建物", "optionSet": "building",
-      "text": "その施設がある建物は、どれですか？",
-      "next": "c_problems"
-    },
+    "c_building": { "type": "choice", "fact": "building", "sum": "建物", "optionSet": "building", "text": "その施設がある建物は、どれですか？", "next": "c_problems" },
     "c_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること",
+      "type": "multi",
+      "fact": "problems",
+      "sum": "困っていること",
       "text": "困っていることは？（いくつでも）",
       "optionSet": "problems",
-      "extraOptions": [
-        { "value": "none", "label": "特に困っていないが、ルールが守られているか確かめたい", "short": "困りごとはないが確かめたい", "exclusive": true }
-      ],
+      "extraOptions": [{"value": "none", "label": "特に困っていないが、ルールが守られているか確かめたい", "short": "困りごとはないが確かめたい", "exclusive": true}],
       "next": "c_done"
     },
     "c_done": {
-      "type": "multi", "fact": "done", "sum": "これまでにしたこと", "optionSet": "done",
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
+      "optionSet": "done",
       "text": "これまでにしたことは？（いくつでも）",
-      "next": [
-        { "if": { "fact": "done", "has": "gov" }, "go": "c_gov_response" },
-        { "go": "@result" }
-      ]
+      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "c_gov_response"}, {"go": "@result"}]
     },
-    "c_gov_response": {
-      "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse",
-      "text": "自治体からは、どんな回答でしたか？",
-      "next": "@result"
-    },
-
+    "c_gov_response": { "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse", "text": "自治体からは、どんな回答でしたか？", "next": "@result" },
     "d_where": {
-      "type": "choice", "fact": "gov_where", "sum": "相談した先",
+      "type": "choice",
+      "fact": "gov_where",
+      "sum": "相談した先",
       "text": "どこに相談しましたか？",
       "help": "複数ある場合は、いちばん最近のところを選んでください。",
       "options": [
@@ -205,7 +195,9 @@
       "next": "d_method"
     },
     "d_method": {
-      "type": "choice", "fact": "gov_method", "sum": "相談の方法",
+      "type": "choice",
+      "fact": "gov_method",
+      "sum": "相談の方法",
       "text": "どの方法で相談しましたか？",
       "options": [
         { "value": "phone", "label": "電話", "short": "電話" },
@@ -216,7 +208,9 @@
       "next": "d_response"
     },
     "d_response": {
-      "type": "choice", "fact": "gov_response", "sum": "回答の内容",
+      "type": "choice",
+      "fact": "gov_response",
+      "sum": "回答の内容",
       "text": "どんな回答でしたか？",
       "options": [
         { "value": "not_ours", "label": "「担当ではない」と言われた", "short": "担当ではないと回答" },
@@ -227,18 +221,12 @@
       ],
       "next": "d_recorded"
     },
-    "d_recorded": {
-      "type": "yesno", "fact": "recorded", "sum": "相談の記録",
-      "text": "相談した日時・相手の部署（名前）・回答の内容を、記録していますか？",
-      "next": "d_problems"
-    },
-    "d_problems": {
-      "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems",
-      "text": "困っていることは？（いくつでも）",
-      "next": "d_type"
-    },
+    "d_recorded": { "type": "yesno", "fact": "recorded", "sum": "相談の記録", "text": "相談した日時・相手の部署（名前）・回答の内容を、記録していますか？", "next": "d_problems" },
+    "d_problems": { "type": "multi", "fact": "problems", "sum": "困っていること", "optionSet": "problems", "text": "困っていることは？（いくつでも）", "next": "d_type" },
     "d_type": {
-      "type": "choice", "fact": "biz_type", "sum": "営業の種類",
+      "type": "choice",
+      "fact": "biz_type",
+      "sum": "営業の種類",
       "text": "その施設の営業の種類はわかりますか？",
       "help": "玄関の[[標識]]に「住宅宿泊事業届出住宅」とあれば、届出の民泊です。わからなければ「わからない」で大丈夫です。",
       "options": [
@@ -249,9 +237,10 @@
       ],
       "next": "@result"
     },
-
     "e_what": {
-      "type": "multi", "fact": "rule_goal", "sum": "変えたいこと",
+      "type": "multi",
+      "fact": "rule_goal",
+      "sum": "変えたいこと",
       "text": "どんなルールにしたいですか？（いくつでも）",
       "options": [
         { "value": "area_limit", "label": "営業できる場所や期間を制限したい", "short": "場所・期間の制限" },
@@ -263,23 +252,13 @@
       ],
       "next": "e_checked_rule"
     },
-    "e_checked_rule": {
-      "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認",
-      "text": "今の自治体の民泊のルール（[[条例]]など）を確認しましたか？",
-      "next": "e_allies"
-    },
-    "e_allies": {
-      "type": "yesno", "fact": "allies", "sum": "仲間",
-      "text": "同じ考えの住民や町内会など、一緒に動ける人はいますか？",
-      "next": "e_pubcome"
-    },
-    "e_pubcome": {
-      "type": "yesno", "fact": "pubcome_open", "sum": "意見募集",
-      "text": "自治体で、民泊のルールについての意見募集（[[パブコメ]]）が行われていますか？",
-      "next": "e_method"
-    },
+    "e_checked_rule": { "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認", "text": "今の自治体の民泊のルール（[[条例]]など）を確認しましたか？", "next": "e_allies" },
+    "e_allies": { "type": "yesno", "fact": "allies", "sum": "仲間", "text": "同じ考えの住民や町内会など、一緒に動ける人はいますか？", "next": "e_pubcome" },
+    "e_pubcome": { "type": "yesno", "fact": "pubcome_open", "sum": "意見募集", "text": "自治体で、民泊のルールについての意見募集（[[パブコメ]]）が行われていますか？", "next": "e_method" },
     "e_method": {
-      "type": "choice", "fact": "rule_method", "sum": "取りたい方法",
+      "type": "choice",
+      "fact": "rule_method",
+      "sum": "取りたい方法",
       "text": "どの方法で進めたいですか？",
       "options": [
         { "value": "giin", "label": "地元の議員に相談する", "short": "議員に相談" },

@@ -1,0 +1,81 @@
+// 「次の一手」：同じ相談（ファイル）の中に、行動の結果ごとの診断（round）を積み上げる。画面には触れない。
+// 診断データは「役所の対応」（data/gyosei）を共通で使い、入口 next から始める。
+import * as E from './engine.js';
+import { isPlanned } from './records.js';
+
+export const NEXT_DOMAIN = 'gyosei';
+const localToday = () => new Date().toLocaleDateString('sv-SE');
+
+// 実際にした記録のうち、いちばん新しいもの（同じ日付なら後に書いたもの）
+export function latestDone(records = [], today = localToday()) {
+  let best = null, bi = -1;
+  records.forEach((r, i) => {
+    if (isPlanned(r, today)) return;
+    if (!best || (r.date || '') > (best.date || '') || ((r.date || '') === (best.date || '') && i > bi)) { best = r; bi = i; }
+  });
+  return best;
+}
+
+// 記録から分かること（相手の種類 → 相手・したこと、方法 → したこと）
+export function factsFromRecord(tree, rec) {
+  if (!rec) return {};
+  const m = tree.recordMap || {};
+  const byType = m.toType?.[rec.toType] || {};
+  const out = { ...byType };
+  if (!out.did && out.target && m.method?.[rec.method]) Object.assign(out, m.method[rec.method]);
+  return out;
+}
+
+// 分野の診断の答えから分かること（tree.fromDomain の規則）
+export function factsFromDomain(tree, domain, facts = {}) {
+  const f = { ...facts, from: domain };
+  const out = {};
+  for (const r of tree.fromDomain || []) if (E.test(r.if, f)) Object.assign(out, r.set);
+  return out;
+}
+
+// 新しい「次の一手」に最初から入れておく答え。
+// 1回目で、まだ実際の記録がなければ分野の診断の答えから。記録があれば、いちばん新しい記録から（したこと・相手だけ。結果は聞く）。
+export function prefill(tree, file, today = localToday()) {
+  const f = { from: file.domain };
+  const rec = latestDone(file.records, today);
+  const first = !(file.rounds || []).length;
+  if (first && !rec && file.domain !== NEXT_DOMAIN && file.state?.node === E.RESULT) Object.assign(f, factsFromDomain(tree, file.domain, file.state.facts));
+  if (rec) Object.assign(f, factsFromRecord(tree, rec));
+  return f;
+}
+
+export function newRound(tree, file, id, today = localToday()) {
+  const facts = prefill(tree, file, today);
+  return { id, createdAt: new Date().toISOString(), state: E.begin(tree, 'next', facts), done: false, chosen: [] };
+}
+
+// 再提案しない行動：この回より前の回（最初の診断＝main を含む）で選んだ行動と、この回以外で記録した行動
+export function usedKeys(file, roundId) {
+  const rounds = file.rounds || [];
+  const idx = roundId === 'main' ? -1 : rounds.findIndex(r => r.id === roundId);
+  const used = new Set();
+  if (idx >= 0) for (const k of file.chosen || []) used.add(k);
+  rounds.slice(0, Math.max(idx, 0)).forEach(r => (r.chosen || []).forEach(k => used.add(k)));
+  for (const r of file.records || []) if (r.actionKey && r.round !== roundId) used.add(r.actionKey);
+  return used;
+}
+
+// 案内を「まだ試していない」と「試した・選んだ」に分ける。key のない案内（分野の案内）はそのまま
+export function splitActions(todo, used) {
+  const fresh = [], tried = [];
+  for (const c of todo) (c.key && used.has(c.key) ? tried : fresh).push(c);
+  return { fresh, tried };
+}
+
+// 案内カードの記録の「相手の種類」：カードの recType のうち、その分野の記録に使えるもの。
+// recType のない分野の案内は、題名の言葉から推し量る（当てはまらなければ「その他」）
+const GUESS = [[/警察/, ['police']], [/議員/, ['giin']], [/情報公開/, ['disclosure']], [/請願|陳情/, ['petition']], [/意見募集|パブリック/, ['pubcome']],
+  [/弁護士|法テラス/, ['lawyer']], [/教育委員会/, ['board']], [/担任/, ['teacher']], [/校長|学校/, ['school_lead', 'school']], [/管理者|運営者/, ['manager', 'owner_side']],
+  [/建築主|事業者/, ['owner', 'builder', 'owner_side']], [/自治体|役所|窓口|担当課|保健所/, ['gov']]];
+export function recTypeFor(card, labels) {
+  const t = (card.recType || []).find(x => labels[x]);
+  if (t) return t;
+  for (const [re, ts] of GUESS) if (re.test(String(card.title || ''))) { const g = ts.find(x => labels[x]); if (g) return g; }
+  return labels.other ? 'other' : Object.keys(labels)[0] || 'other';
+}

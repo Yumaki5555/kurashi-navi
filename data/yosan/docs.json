@@ -1,0 +1,34 @@
+{
+  "docs": [
+    {
+      "id": "budget_question",
+      "title": "事業についての問い合わせ文",
+      "desc": "予算書・決算書を見たうえで、事業の目的・成果・お金の内訳を担当課に聞く文です。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇市 〇〇課 御中" },
+        { "id": "year", "label": "年度", "placeholder": "令和7年度" },
+        { "id": "project", "label": "事業名", "placeholder": "〇〇事業" },
+        { "id": "amount", "label": "予算額・決算額（わかれば）", "optional": true, "placeholder": "決算額 〇〇円" },
+        { "id": "q_extra", "label": "ほかに聞きたいこと", "type": "textarea", "optional": true },
+        { "id": "deadline", "label": "回答をお願いする期限", "optional": true, "placeholder": "12月10日" },
+        { "id": "name", "label": "あなたの名前と連絡先", "type": "textarea", "placeholder": "〇〇町 〇〇〇〇　電話〇〇〇-〇〇〇〇" }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "{year}の{project}について、次の点を教えてください。", "requires": ["year", "project"] },
+        { "text": "（予算書・決算書では、{amount}と確認しました。）", "requires": ["amount"] },
+        { "text": "１　事業の目的と、成果をどのように測っているか（指標と実績）" },
+        { "text": "２　主な支出の内訳（委託・補助の相手と金額）" },
+        { "text": "３　成果をまとめた資料の有無と、その見方" },
+        { "text": "４　{q_extra}", "requires": ["q_extra"] },
+        { "text": "" },
+        { "text": "お手数ですが、{deadline}までに、メールまたは文書でご回答をお願いいたします。", "requires": ["deadline"] },
+        { "text": "" },
+        { "text": "{name}", "requires": ["name"] }
+      ],
+      "checks": ["予算書・決算書で確かめたことと、聞きたいことを分けた", "団体や個人を非難する表現がない", "写しを手元に残した"],
+      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+    }
+  ]
+}

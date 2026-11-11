@@ -46,13 +46,15 @@ for (const id of ids) {
 
 // ---- 2. 到達できるか・ループがないか ----
 const reach = new Set();
-(function walk(id) { if (!tree.nodes[id] || reach.has(id)) return; reach.add(id); E.targetsOf(tree, id).forEach(walk); })(tree.start);
+const starts = [tree.start, ...Object.values(tree.entries || {})];
+for (const s0 of starts) (function walk(id) { if (!tree.nodes[id] || reach.has(id)) return; reach.add(id); E.targetsOf(tree, id).forEach(walk); })(s0);
 for (const id of ids) if (!reach.has(id)) err(`${id}: どこからもたどり着けない`);
-(function cyc(id, stack) {
+const cyc = function (id, stack) {
   if (!tree.nodes[id]) return;
   if (stack.includes(id)) { err('ループ: ' + [...stack, id].join(' → ')); return; }
   E.targetsOf(tree, id).forEach(t => cyc(t, [...stack, id]));
-})(tree.start, []);
+};
+for (const s0 of starts) cyc(s0, []);
 
 // ---- 3. 全経路をたどる ----
 // 複数選択は：分岐条件に使う質問は全組み合わせ、それ以外は「1つずつ」と「全部」
@@ -91,6 +93,11 @@ function dfs(state) {
       if (state.facts.outcome === 'improved' && r.todo.some(c => !c.onImproved)) err('よくなったのに相談・要望の案内が「次にすること」に出た: ' + JSON.stringify(state.facts));
       if (state.facts.outcome !== 'improved' && r.todo.some(c => c.onImproved)) err('よくなっていないのに見守りの案内が出た: ' + JSON.stringify(state.facts));
       for (const c of cards) if (shown.has(c.id)) for (const x of c.conflicts || []) if (shown.has(x)) err(`同時に出てはいけない ${c.id} と ${x} が出た: ` + JSON.stringify(state.facts));
+      // 同じ行動（key）の案内が、1つの結果に2枚出ないこと
+      const keys = r.todo.map(c => c.key).filter(Boolean);
+      if (new Set(keys).size !== keys.length) err('同じ行動の案内が2枚出た: ' + keys.join(',') + ' ' + JSON.stringify(state.facts));
+      // 選択肢の sets と同じ事実を、あとで聞き直していないこと（自動で進んだ質問は除く）
+      for (const h of state.history) if (!h.auto && h.facts[tree.nodes[h.node].fact] !== undefined) err('分かっていることを聞き直す経路: ' + h.node + ' ' + JSON.stringify(state.facts));
       if (paths % 5000 === 1) finals.push({ facts: state.facts, todo: r.todo.slice(0, 3).map(c => c.id) });
     }
     return;
@@ -103,7 +110,7 @@ function dfs(state) {
     dfs(s);
   }
 }
-dfs(E.begin(tree));
+for (const [name, node] of [['', tree.start], ...Object.entries(tree.entries || {})]) dfs(E.begin(tree, name || undefined));
 info.push(`経路数 ${paths} / 最長 ${maxLen} 問（上限 ${tree.maxQuestions}）`);
 if (cards.length) info.push(`似た事例が出ない経路 ${noCase}`);
 
@@ -111,7 +118,7 @@ if (cards.length) info.push(`似た事例が出ない経路 ${noCase}`);
 const allIds = new Set();
 for (const c of cards) {
   if (allIds.has(c.id)) err('カードIDの重複: ' + c.id); allIds.add(c.id);
-  if (!['do', 'check', 'ifnot', 'dont'].includes(c.section)) err(`${c.id}: section が不正`);
+  if (!['do', 'check', 'ifnot', 'dont', 'cause', 'none'].includes(c.section)) err(`${c.id}: section が不正`);
   if (c.section === 'do') for (const k of ['where', 'check', 'bring', 'script', 'ifNoAnswer']) if (!c[k] || (Array.isArray(c[k]) && !c[k].length)) err(`${c.id}: 今できることに ${k} がない`);
   for (const s of c.sources || []) if (!srcIds.has(s)) warn(`${c.id}: 資料 ${s} が sources.json にない`);
   for (const f of c.facts || []) if (!factIds.has(f)) warn(`${c.id}: 事実 ${f} が facts.json にない`);

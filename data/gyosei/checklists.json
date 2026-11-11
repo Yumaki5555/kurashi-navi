@@ -1,0 +1,62 @@
+{
+  "items": [
+    { "id": "g_cl_log", "priority": 100, "text": "相談・請求した日時・相手（部署・担当者）・方法・回答を記録した", "how": "このサイトの「対応の記録」に、1回ごとに書きます。電話なら、終わってすぐにメモします。" },
+    {
+      "id": "g_cl_reply",
+      "priority": 90,
+      "text": "回答を、メールや文書で残した（口頭なら、その日のうちにメモした）",
+      "when": { "fact": "result", "answered": true },
+      "how": "口頭の回答は、「〇月〇日のお電話で〇〇とうかがいました。違っていればご指摘ください」とメールで送ると、記録になります。",
+      "ask": "回答した課の担当者"
+    },
+    {
+      "id": "g_cl_basis",
+      "priority": 95,
+      "text": "回答の根拠（法令・条例の名前と条、確かめた許可・届出、確かめた事実）を聞いた",
+      "when": { "fact": "result", "in": ["no_problem", "cannot", "will_do_nochange"] },
+      "how": "法令の名前と条番号がわかれば、e-Gov法令検索や自治体の例規集で本文を読めます。",
+      "ask": "回答した課",
+      "script": "判断の根拠となった法令・条例と条文を教えてください。"
+    },
+    {
+      "id": "g_cl_notice",
+      "priority": 95,
+      "text": "決定通知書の日付・理由・教示（審査請求の案内）を確かめた",
+      "when": { "fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"] },
+      "how": "通知書の下の方に「この決定に不服がある場合は…」という案内があるのがふつうです。",
+      "ask": "決定をした課・情報公開の窓口"
+    },
+    {
+      "id": "g_cl_deadline",
+      "priority": 94,
+      "text": "審査請求の期限を、通知書の教示で確かめて、カレンダーに書いた",
+      "when": { "fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"] },
+      "how": "行政不服審査法では、原則として決定を知った日の翌日から3か月です。自分の場合は通知書で確かめます。",
+      "ask": "決定をした課・情報公開の窓口"
+    },
+    {
+      "id": "g_cl_doc",
+      "priority": 85,
+      "text": "欲しい文書を、年度・事業名・文書の種類で具体的に書いた",
+      "when": { "fact": "dis_state", "answered": true },
+      "how": "例：「令和7年度 〇〇事業 委託契約書と実績報告書」",
+      "ask": "情報公開の窓口で、文書の名前の調べ方を相談できます。"
+    },
+    {
+      "id": "g_cl_minutes",
+      "priority": 90,
+      "text": "委員会の会議録（または録画）で、審査の経過と理由を確かめた",
+      "when": { "fact": "did", "eq": "petition" },
+      "how": "議会のホームページの「会議録検索」で、請願の件名や番号で探します。公開まで数か月かかることがあります。",
+      "ask": "議会事務局（議事課など）",
+      "script": "請願第〇号を審査した委員会の記録は、どこで見られますか。"
+    },
+    {
+      "id": "g_cl_split",
+      "priority": 80,
+      "text": "求めることを、すぐできること・調べればわかること・判断が必要なことに分けた",
+      "when": { "any": [{"fact": "did", "eq": "petition"}, {"fact": "result", "eq": "partial"}, {"fact": "want", "answered": true}] }
+    },
+    { "id": "g_cl_want", "priority": 88, "text": "いちばん実現したいことを、1行で書いた", "when": {"fact": "did", "eq": "none"} }
+  ]
+}

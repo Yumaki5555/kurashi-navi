@@ -72,8 +72,29 @@ export function normalizeMulti(tree, node, values) {
 }
 
 // ---- 進行（状態は {node, facts, history} の普通のオブジェクト。保存しやすい） ----
-export function begin(tree) {
-  return { node: tree.start, facts: {}, history: [] };
+// entry：tree.entries の入口名（「次の一手」など）。facts：すでに分かっている答え（記録や前の診断から引き継ぐ）
+export function begin(tree, entry, facts = {}) {
+  const node = (entry && tree.entries?.[entry]) || tree.start;
+  return settle(tree, { node, facts: { ...facts }, history: [] });
+}
+
+// すでに答えが分かっている質問は聞かずに進める（auto:true の履歴として残すので、戻れば選び直せる）
+function known(tree, node, v) {
+  if (v === undefined) return false;
+  const opts = optionsOf(tree, node);
+  if (node.type === 'multi') return Array.isArray(v) && v.length > 0 && v.every(x => opts.some(o => o.value === x));
+  return opts.some(o => o.value === v);
+}
+export function settle(tree, state) {
+  let s = state;
+  for (let i = 0; i < 50; i++) {
+    const node = tree.nodes[s.node];
+    if (!node || !known(tree, node, s.facts[node.fact])) return s;
+    const to = nextOf(tree, s.node, s.facts[node.fact], s.facts);
+    if (!to) return s;
+    s = { node: to, facts: s.facts, history: [...s.history, { node: s.node, facts: s.facts, auto: true }] };
+  }
+  return s;
 }
 
 export function answer(tree, state, value) {
@@ -86,20 +107,24 @@ export function answer(tree, state, value) {
     const ok = optionsOf(tree, node).some(o => o.value === value);
     if (!ok) throw new Error('選択肢にない回答: ' + value);
   }
-  const facts = { ...state.facts, [node.fact]: value };
+  // 選択肢の sets：その答えで同時に分かること（例：「問題ないと言われた」→ 結果＝問題ないと回答）
+  const opt = node.type === 'multi' ? null : optionsOf(tree, node).find(o => o.value === value);
+  const facts = { ...state.facts, ...(opt?.sets || {}), [node.fact]: value };
   const to = nextOf(tree, state.node, value, facts);
   if (!to) throw new Error('行き先がありません: ' + state.node);
-  return {
+  return settle(tree, {
     node: to,
     facts,
     history: [...state.history, { node: state.node, facts: state.facts }]
-  };
+  });
 }
 
+// 戻る：1つ前の質問へ。記録などから引き継いで自動で進んだ質問にも戻れる（引き継いだ答えが違うとき、そこで選び直せる）
 export function back(state) {
   if (!state.history.length) return state;
-  const prev = state.history[state.history.length - 1];
-  return { node: prev.node, facts: prev.facts, history: state.history.slice(0, -1) };
+  const h = state.history.slice();
+  const prev = h.pop();
+  return { node: prev.node, facts: prev.facts, history: h };
 }
 
 // 進み具合：この質問から先に、最も多くて何問あるか（ループは検査で禁止しているが念のため打ち切る）
@@ -157,7 +182,7 @@ export function compose(data, facts) {
   const improved = facts.outcome === 'improved';
   const todo = improved ? all.filter(c => c.onImproved) : all.filter(c => !c.onImproved);
   const recur = improved ? all.filter(c => !c.onImproved) : [];
-  return { todo, recur, check: pick('check'), checklist, cases, ifnot: pick('ifnot'), dont: pick('dont') };
+  return { todo, recur, check: pick('check'), checklist, cases, ifnot: pick('ifnot'), dont: pick('dont'), cause: pick('cause'), none: pick('none') };
 }
 
 // 事例の近さ：同じ状況（A〜E）なら+2、困りごと・理由・施設の種類・望むことなどのタグが重なるごとに+1

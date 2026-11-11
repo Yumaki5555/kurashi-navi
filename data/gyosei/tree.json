@@ -1,0 +1,303 @@
+{
+  "domain": "gyosei",
+  "title": "役所の対応で困っている",
+  "version": 1,
+  "start": "situation",
+  "entries": { "next": "next_did" },
+  "maxQuestions": 8,
+  "recordMap": {
+    "toType": {
+      "disclosure": { "did": "disclosure" },
+      "petition": { "did": "petition" },
+      "giin": { "did": "giin" },
+      "gov": { "target": "gov" },
+      "pref_gov": { "target": "gov" },
+      "kuni": { "target": "other" },
+      "koucho": { "target": "gov" },
+      "board": { "target": "board" },
+      "pref": { "target": "gov" },
+      "teacher": { "target": "school" },
+      "school_lead": { "target": "school" },
+      "school": { "target": "school" },
+      "manager": { "target": "party" },
+      "owner_side": { "target": "party" },
+      "owner": { "target": "party" },
+      "builder": { "target": "party" },
+      "corp": { "target": "party" },
+      "party": { "target": "party" }
+    },
+    "method": { "phone": {"did": "phone"}, "counter": {"did": "phone"}, "mail": {"did": "mail"}, "letter": {"did": "letter"} }
+  },
+  "fromDomain": [
+    { "if": {"all": [{"fact": "from", "in": ["minpaku", "kenchiku"]}, {"fact": "situation", "eq": "D"}]}, "set": {"target": "gov"} },
+    { "if": {"all": [{"fact": "from", "in": ["minpaku", "kenchiku"]}, {"fact": "gov_method", "in": ["phone", "counter"]}]}, "set": {"did": "phone"} },
+    { "if": {"all": [{"fact": "from", "in": ["minpaku", "kenchiku"]}, {"fact": "gov_method", "eq": "mail"}]}, "set": {"did": "mail"} },
+    { "if": {"all": [{"fact": "from", "in": ["minpaku", "kenchiku"]}, {"fact": "gov_method", "eq": "letter"}]}, "set": {"did": "letter"} },
+    { "if": {"fact": "gov_response", "eq": "not_ours"}, "set": {"result": "redirected"} },
+    { "if": {"fact": "gov_response", "eq": "legal_ok"}, "set": {"result": "no_problem"} },
+    { "if": {"fact": "gov_response", "eq": "no_change"}, "set": {"result": "will_do_nochange"} },
+    { "if": {"fact": "gov_response", "eq": "no_reply"}, "set": {"result": "no_reply"} },
+    { "if": {"fact": "gov_response", "eq": "civil"}, "set": {"result": "cannot"} },
+    { "if": {"fact": "recorded", "eq": "yes"}, "set": {"facts_ready": "yes"} },
+    {
+      "if": { "all": [{"fact": "from", "eq": "gakko"}, {"fact": "situation", "eq": "G"}, {"fact": "g_where", "in": ["teacher", "school_lead"]}] },
+      "set": { "target": "school" }
+    },
+    {
+      "if": { "all": [{"fact": "from", "eq": "gakko"}, {"fact": "situation", "eq": "G"}, {"fact": "g_where", "eq": "board"}] },
+      "set": { "target": "board" }
+    },
+    {
+      "if": { "all": [{"fact": "from", "eq": "gakko"}, {"fact": "situation", "eq": "G"}, {"fact": "g_where", "eq": "pref"}] },
+      "set": { "target": "gov" }
+    },
+    { "if": {"fact": "school_response", "eq": "in_school"}, "set": {"result": "will_do_nochange"} },
+    { "if": {"fact": "school_response", "in": ["no_staff", "privacy", "refused"]}, "set": {"result": "cannot"} },
+    { "if": {"fact": "school_response", "eq": "not_ours"}, "set": {"result": "redirected"} },
+    { "if": {"fact": "school_response", "eq": "no_reply"}, "set": {"result": "no_reply"} },
+    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "situation", "eq": "H"}]}, "set": {"did": "petition"} },
+    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "talk"}]}, "set": {"did": "phone"} },
+    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "note"}]}, "set": {"did": "mail"} },
+    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "letter"}]}, "set": {"did": "letter"} }
+  ],
+  "optionSets": {},
+  "nodes": {
+    "situation": {
+      "type": "choice",
+      "fact": "situation",
+      "sum": "困りごと",
+      "text": "役所の対応で、いちばん近いものは？",
+      "help": "相談・問い合わせ・請求・請願をしたあとの困りごとを選んでください。あとから戻って選び直せます。",
+      "options": [
+        {
+          "value": "cannot",
+          "label": "相談・要望したが「対応できない」「権限がない」と言われた",
+          "short": "「対応できない」と言われた",
+          "sets": { "target": "gov", "result": "cannot" },
+          "next": "how"
+        },
+        {
+          "value": "redirected",
+          "label": "「担当ではない」と言われた・たらい回しにされた",
+          "short": "担当ではないと言われた",
+          "sets": { "target": "gov", "result": "redirected" },
+          "next": "how"
+        },
+        {
+          "value": "no_problem",
+          "label": "「問題ない」「法律上は問題ない」と言われたが、根拠がわからない",
+          "short": "「問題ない」と言われた",
+          "sets": { "target": "gov", "result": "no_problem" },
+          "next": "how"
+        },
+        {
+          "value": "will_do",
+          "label": "「指導する」「検討する」と言われたが、何も変わらない",
+          "short": "「指導する」と言われたが変わらない",
+          "sets": { "target": "gov", "result": "will_do_nochange" },
+          "next": "how"
+        },
+        { "value": "no_reply", "label": "問い合わせたのに、回答がない", "short": "回答がない", "sets": {"target": "gov", "result": "no_reply"}, "next": "how" },
+        { "value": "info", "label": "情報や資料を出してもらえない（[[情報公開請求]]の結果を含む）", "short": "情報を出してもらえない", "next": "dis_state" },
+        {
+          "value": "petition",
+          "label": "議会に出した[[請願]]・[[陳情]]が、[[不採択]]になった・扱われなかった",
+          "short": "請願・陳情が通らなかった",
+          "sets": { "did": "petition" },
+          "next": "pet_result"
+        },
+        { "value": "unknown", "label": "何を・どこに頼めばいいか、どんな制度があるかわからない", "short": "制度や頼み先がわからない", "sets": {"did": "none"}, "next": "want" }
+      ]
+    },
+    "next_did": {
+      "type": "choice",
+      "fact": "did",
+      "sum": "最後にしたこと",
+      "text": "これまでに、最後にしたことは何ですか？",
+      "help": "「対応の記録」や前の診断から分かることは、自動で入れています。違うときは選び直してください。",
+      "options": [
+        { "value": "phone", "label": "電話・窓口で相談・問い合わせをした", "short": "電話・窓口で相談した", "next": "target" },
+        { "value": "mail", "label": "メール・問い合わせフォームで伝えた", "short": "メールで伝えた", "next": "target" },
+        { "value": "letter", "label": "文書（手紙・要望書）で改善や回答を求めた", "short": "文書で求めた", "next": "target" },
+        { "value": "disclosure", "label": "[[情報公開請求]]をした（またはしようとしている）", "short": "情報公開請求", "next": "dis_state" },
+        { "value": "petition", "label": "議会に[[陳情]]・[[請願]]を出した", "short": "陳情・請願を出した", "next": "pet_result" },
+        { "value": "giin", "label": "議員に相談した", "short": "議員に相談した", "next": "giin_result" },
+        { "value": "none", "label": "まだ何もしていない・何をすればいいかわからない", "short": "まだ何もしていない", "next": "want" }
+      ]
+    },
+    "target": {
+      "type": "choice",
+      "fact": "target",
+      "sum": "相手",
+      "text": "伝えた相手はどこですか？",
+      "options": [
+        { "value": "party", "label": "施設の管理者・事業者・建築主など、相手方", "short": "相手方（事業者など）", "next": "result_party" },
+        { "value": "gov", "label": "市区町村・都道府県の担当課", "short": "役所の担当課", "next": "result" },
+        { "value": "school", "label": "学校（担任・校長など）", "short": "学校", "next": "result" },
+        { "value": "board", "label": "[[教育委員会]]", "short": "教育委員会", "next": "result" },
+        { "value": "other", "label": "国の機関・そのほかの窓口", "short": "国の機関・その他", "next": "result" }
+      ]
+    },
+    "how": {
+      "type": "choice",
+      "fact": "did",
+      "sum": "伝え方",
+      "text": "どのように伝えましたか？",
+      "help": "何回か伝えた場合は、いちばん最近の方法を選んでください。",
+      "options": [
+        { "value": "phone", "label": "電話・窓口で", "short": "電話・窓口" },
+        { "value": "mail", "label": "メール・問い合わせフォームで", "short": "メール" },
+        { "value": "letter", "label": "文書（手紙・要望書）で", "short": "文書" }
+      ],
+      "next": "result"
+    },
+    "result": {
+      "type": "choice",
+      "fact": "result",
+      "sum": "結果",
+      "text": "どんな結果でしたか？",
+      "options": [
+        { "value": "no_reply", "label": "回答がない", "short": "回答がない" },
+        { "value": "cannot", "label": "「対応できない」「権限がない」と言われた", "short": "対応できないと回答" },
+        { "value": "redirected", "label": "「担当ではない」と言われた・別の窓口を案内された", "short": "担当ではないと回答" },
+        { "value": "no_problem", "label": "「問題ない」と言われた", "short": "問題ないと回答" },
+        { "value": "will_do_nochange", "label": "「指導する・検討する」と言われたが、変わらない", "short": "指導すると言われたが変化なし" },
+        { "value": "partial", "label": "一部はよくなった", "short": "一部よくなった" },
+        { "value": "same", "label": "変化がない", "short": "変化なし" },
+        { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
+      ],
+      "next": [
+        { "if": {"fact": "result", "eq": "no_problem"}, "go": "basis_known" },
+        { "if": {"fact": "result", "in": ["cannot", "will_do_nochange"]}, "go": "reason_given" },
+        { "if": {"fact": "result", "eq": "redirected"}, "go": "redirect_followed" },
+        { "if": {"fact": "result", "eq": "no_reply"}, "go": "deadline_set" },
+        { "go": "facts_ready" }
+      ]
+    },
+    "result_party": {
+      "type": "choice",
+      "fact": "result",
+      "sum": "結果",
+      "text": "相手方の対応は、どうでしたか？",
+      "options": [
+        { "value": "no_reply", "label": "返事がない", "short": "返事がない" },
+        { "value": "refused", "label": "断られた・取り合ってもらえない", "short": "断られた" },
+        { "value": "partial", "label": "一部はよくなった", "short": "一部よくなった" },
+        { "value": "same", "label": "変化がない", "short": "変化なし" },
+        { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
+      ],
+      "next": "facts_ready"
+    },
+    "basis_known": {
+      "type": "yesno",
+      "fact": "basis_known",
+      "sum": "「問題ない」の根拠を聞いたか",
+      "text": "「問題ない」と判断した根拠（どの法令か・どの許可や届出を確かめたか・どんな事実を確かめたか）を聞きましたか？",
+      "next": "concern_specific"
+    },
+    "concern_specific": {
+      "type": "yesno",
+      "fact": "concern_specific",
+      "sum": "心配ごとを具体的に言えるか",
+      "text": "あなたの心配ごとを、交通・騒音・安全など、具体的な影響として説明できますか？",
+      "help": "例：「送迎の車が通学路に止まる」「夜10時以降に人の出入りの音がする」",
+      "next": "in_writing"
+    },
+    "reason_given": {
+      "type": "yesno",
+      "fact": "reason_given",
+      "sum": "理由の説明があったか",
+      "text": "できない（変わらない）理由について、どの法律・条例か、役所の権限の範囲かなどの説明はありましたか？",
+      "next": "in_writing"
+    },
+    "in_writing": { "type": "yesno", "fact": "in_writing", "sum": "回答を文書でもらったか", "text": "回答を、文書やメールでもらいましたか？", "next": "facts_ready" },
+    "redirect_followed": { "type": "yesno", "fact": "redirect_followed", "sum": "案内された窓口に相談したか", "text": "案内された部署・機関に、相談しましたか？", "next": "facts_ready" },
+    "deadline_set": { "type": "yesno", "fact": "deadline_set", "sum": "期限を決めて求めたか", "text": "「〇日までに回答を」と期限を決めて、回答を求めましたか？", "next": "facts_ready" },
+    "facts_ready": { "type": "yesno", "fact": "facts_ready", "sum": "記録や資料をそろえて伝えたか", "text": "日時・内容・回数などの記録や、写真・資料をそろえて伝えましたか？", "next": "ongoing" },
+    "ongoing": { "type": "yesno", "fact": "ongoing", "sum": "今も続いているか", "text": "その困りごと（問題）は、今も続いていますか？", "next": "@result" },
+    "dis_state": {
+      "type": "choice",
+      "fact": "dis_state",
+      "sum": "情報の状況",
+      "text": "今の状況に、いちばん近いものは？",
+      "options": [
+        { "value": "phone_refused", "label": "電話や窓口で聞いたが、教えてもらえなかった", "short": "電話・窓口で教えてもらえない" },
+        { "value": "not_found", "label": "公開されている資料が見つからない", "short": "公開資料が見つからない" },
+        { "value": "how_unknown", "label": "[[情報公開請求]]のしかたや、文書の指定のしかたがわからない", "short": "請求のしかたがわからない" },
+        { "value": "overdue", "label": "請求したのに、決まった期間内に決定（通知）が来ない", "short": "期間内に決定が来ない", "sets": {"did": "disclosure"} },
+        { "value": "nondisclosed", "label": "「[[不開示]]（出さない）」という決定が来た", "short": "不開示の決定", "sets": {"did": "disclosure"} },
+        { "value": "partial", "label": "一部だけ開示された（黒く塗られた部分がある）", "short": "一部だけ開示", "sets": {"did": "disclosure"} },
+        { "value": "not_exist", "label": "「文書が存在しない（[[不存在]]）」という決定が来た", "short": "不存在の決定", "sets": {"did": "disclosure"} },
+        { "value": "insufficient", "label": "開示されたが、知りたいことが書かれていなかった", "short": "開示されたが中身が足りない", "sets": {"did": "disclosure"} }
+      ],
+      "next": [
+        { "if": {"fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"]}, "go": "reason_understood" },
+        { "if": {"fact": "dis_state", "eq": "overdue"}, "go": "extension_notice" },
+        { "go": "which_body" }
+      ]
+    },
+    "which_body": { "type": "yesno", "fact": "which_body", "sum": "持っている役所がわかるか", "text": "その情報を持っていそうな役所（市区町村・都道府県・国・議会など）は、わかりますか？", "next": "doc_specific" },
+    "doc_specific": { "type": "yesno", "fact": "doc_specific", "sum": "文書を具体的に言えるか", "text": "欲しい文書を、「令和7年度の〇〇事業の契約書」のように具体的に言えますか？", "next": "@result" },
+    "reason_understood": { "type": "yesno", "fact": "reason_understood", "sum": "出さない理由がわかるか", "text": "決定通知書に書かれた、出さない理由（どの規定に当たるか）がわかりますか？", "next": "kyouji" },
+    "kyouji": {
+      "type": "yesno",
+      "fact": "kyouji",
+      "sum": "審査請求の案内があるか",
+      "text": "決定通知書に、[[審査請求]]ができることと、その期間の案内（[[教示]]）が書かれていますか？",
+      "next": [{"if": {"fact": "kyouji", "eq": "no"}, "go": "@result"}, {"go": "within_period"}]
+    },
+    "within_period": { "type": "yesno", "fact": "within_period", "sum": "期間内か", "text": "決定を知ってから、通知書に書かれた期間（多くは3か月）の内ですか？", "next": "@result" },
+    "extension_notice": { "type": "yesno", "fact": "extension_notice", "sum": "延長の通知があったか", "text": "「決定の期間を延ばす」という通知は届きましたか？", "next": "request_formal" },
+    "request_formal": {
+      "type": "yesno",
+      "fact": "request_formal",
+      "sum": "正式な請求書で出したか",
+      "text": "請求は、決まった請求書（または電子申請）で出しましたか？",
+      "help": "電話や窓口で「見せてほしい」と頼んだだけでは、正式な請求になっていないことがあります。",
+      "next": "@result"
+    },
+    "pet_result": {
+      "type": "choice",
+      "fact": "pet_result",
+      "sum": "議会での結果",
+      "text": "議会での結果は、どうなりましたか？",
+      "options": [
+        { "value": "rejected", "label": "[[不採択]]になった", "short": "不採択" },
+        { "value": "shelved", "label": "結論が出なかった（審議未了・継続審査）", "short": "審議未了・継続審査" },
+        { "value": "noted", "label": "陳情が、配られただけ・報告されただけで終わった", "short": "配布・報告だけ" },
+        { "value": "adopted", "label": "採択されたが、その後進んでいない", "short": "採択されたが進まない" }
+      ],
+      "next": [{"if": {"fact": "pet_result", "eq": "adopted"}, "go": "ongoing"}, {"go": "minutes_checked"}]
+    },
+    "minutes_checked": { "type": "yesno", "fact": "minutes_checked", "sum": "審査の経過を確認したか", "text": "委員会での審査の様子（[[会議録]]・委員会の記録・録画）を確認しましたか？", "next": "reason_known" },
+    "reason_known": { "type": "yesno", "fact": "reason_known", "sum": "理由がわかるか", "text": "結論の理由（議員の発言や、役所側の説明）がわかりますか？", "next": "new_material" },
+    "new_material": { "type": "yesno", "fact": "new_material", "sum": "新しい資料・事情があるか", "text": "出したあとに、新しい資料や事情（統計の公表、状況の変化など）がありますか？", "next": "request_scope" },
+    "request_scope": { "type": "yesno", "fact": "request_scope", "sum": "求めたことは具体的だったか", "text": "求めた内容は、一つの具体的なこと（例：「市全体の〇〇の人数を毎年公表する」）でしたか？", "next": "ongoing" },
+    "giin_result": {
+      "type": "choice",
+      "fact": "giin_result",
+      "sum": "議員に相談した結果",
+      "text": "議員に相談した結果は？",
+      "options": [
+        { "value": "no_reply", "label": "返事がない", "short": "返事がない" },
+        { "value": "declined", "label": "「難しい」と断られた", "short": "断られた" },
+        { "value": "asked_no_change", "label": "役所に聞いたり議会で質問したりしてくれたが、変わらない", "short": "動いてくれたが変わらない" }
+      ],
+      "next": "facts_ready"
+    },
+    "want": {
+      "type": "choice",
+      "fact": "want",
+      "sum": "したいこと",
+      "text": "いちばんしたいことは何ですか？",
+      "options": [
+        { "value": "know", "label": "事実や資料を知りたい", "short": "事実や資料を知りたい" },
+        { "value": "fix", "label": "役所に対応してほしい・改善してほしい", "short": "対応・改善してほしい" },
+        { "value": "rule", "label": "ルール（条例など）や予算の使い方を変えてほしい", "short": "ルールや予算を変えたい" },
+        { "value": "staff", "label": "職員の対応・態度に困った", "short": "職員の対応に困った" },
+        { "value": "unsure", "label": "まだわからない", "short": "わからない" }
+      ],
+      "next": "@result"
+    }
+  }
+}

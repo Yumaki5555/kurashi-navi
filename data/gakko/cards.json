@@ -1,6 +1,9 @@
 {
   "cards": [
-    { "id": "do_safety", "section": "do", "priority": 100,
+    {
+      "id": "do_safety",
+      "section": "do",
+      "priority": 100,
       "when": { "fact": "danger", "eq": "yes" },
       "title": "まず、お子さんの安全と気持ちを守る",
       "body": "学校への相談より先に、お子さんの命と体を守ることを優先します。夜間や休日でも、電話で相談できる窓口があります。命に関わるときは、ためらわず119・110に電話してください。",
@@ -9,12 +12,18 @@
       "bring": ["お子さんが話した言葉や、様子の変化のメモ", "けががあれば、その写真"],
       "script": "子どもが「学校に行きたくない、消えたい」と言っています。今夜どう接したらよいか、学校を休ませたほうがよいか相談したいです。",
       "ifNoAnswer": "つながらないときは、時間をおいてかけ直すか、法務省の「こどもの人権110番」や、かかりつけ医に相談してください。命に関わるときは119・110に電話します。",
-      "links": [{ "type": "tel", "tel": "0120-078310", "label": "24時間子供SOSダイヤルに電話" }, { "url": "https://www.moj.go.jp/JINKEN/jinken112.html", "label": "こどもの人権110番（法務省）" }],
-      "facts": ["sos_dial"] },
-
-    { "id": "do_record", "section": "do", "priority": 90,
-      "boost": [{ "if": { "fact": "recorded", "eq": "yes" }, "add": -60 }, { "if": { "fact": "done", "in": ["teacher", "school_lead", "board"] }, "add": -30 }],
-      "when": { "any": [{ "fact": "situation", "in": ["A", "B", "C", "D", "E", "F"] }, { "fact": "recorded", "eq": "no" }] },
+      "links": [
+        { "type": "tel", "tel": "0120-078310", "label": "24時間子供SOSダイヤルに電話" },
+        { "url": "https://www.moj.go.jp/JINKEN/jinken112.html", "label": "こどもの人権110番（法務省）" }
+      ],
+      "facts": ["sos_dial"]
+    },
+    {
+      "id": "do_record",
+      "section": "do",
+      "priority": 90,
+      "boost": [{"if": {"fact": "recorded", "eq": "yes"}, "add": -60}, {"if": {"fact": "done", "in": ["teacher", "school_lead", "board"]}, "add": -30}],
+      "when": { "any": [{"fact": "situation", "in": ["A", "B", "C", "D", "E", "F"]}, {"fact": "recorded", "eq": "no"}] },
       "title": "起きたことを、日付つきで記録する",
       "body": "学校や教育委員会に話すとき、「いつ・何が・どのくらい」が分かると受け止めてもらいやすくなります。気持ちではなく、事実を書くのがコツです。",
       "where": "このサイトの「対応の記録」、または手帳・スマートフォンのメモ",
@@ -22,20 +31,26 @@
       "bring": ["学校からのお便り・連絡帳・メール", "けがや持ち物の被害の写真（ほかの子の顔が写らないように）"],
       "script": "記録の例：11月10日（月）帰宅後、子どもが「今日も算数は自習だった。先週から3回目」と話した。",
       "ifNoAnswer": "記録は、相談のたびに役立ちます。相談したときは、その日・相手・回答も残しましょう。",
-      "links": [{ "type": "records" }] },
-
-    { "id": "do_child", "section": "do", "priority": 88,
-      "when": { "any": [{ "fact": "situation", "in": ["B", "C"] }, { "fact": "topic", "in": ["B", "C"] }, { "fact": "problems", "has": "child_role" }] },
+      "links": [{"type": "records"}]
+    },
+    {
+      "id": "do_child",
+      "section": "do",
+      "priority": 88,
+      "when": { "any": [{"fact": "situation", "in": ["B", "C"]}, {"fact": "topic", "in": ["B", "C"]}, {"fact": "problems", "has": "child_role"}] },
       "title": "お子さん本人の気持ちと、望むことを聞く",
       "body": "保護者が動く前に、本人がどうしてほしいかを確かめます。大ごとにされるのを怖がる子もいます。ただし、命や体の危険があるときは、本人が嫌がっても大人が守ります。",
       "where": "家で、落ち着いて話せるとき（責めたり、問い詰めたりしない）",
       "check": "何がいちばんつらいか／学校に伝えてよいか、どこまで話してよいか／どうなってほしいか",
       "bring": ["話を聞いたときのメモ（本人の言葉をそのまま）"],
       "script": "話してくれてありがとう。あなたは悪くないよ。先生に伝えるとしたら、どこまでなら話していい？",
-      "ifNoAnswer": "話したがらないときは無理に聞き出さず、スクールカウンセラーや相談窓口に、保護者だけで相談することもできます。" },
-
-    { "id": "do_a_ask", "section": "do", "priority": 80,
-      "boost": [{ "if": { "fact": "done", "in": ["teacher", "school_lead"] }, "add": -30 }],
+      "ifNoAnswer": "話したがらないときは無理に聞き出さず、スクールカウンセラーや相談窓口に、保護者だけで相談することもできます。"
+    },
+    {
+      "id": "do_a_ask",
+      "section": "do",
+      "priority": 80,
+      "boost": [{"if": {"fact": "done", "in": ["teacher", "school_lead"]}, "add": -30}],
       "when": { "fact": "situation", "eq": "A" },
       "title": "学校に、授業の状況と見通しを聞く",
       "body": "まず、学校が状況をどう受け止めているかを確かめます。原因を決めつけず、「わが子の学習に何が起きているか」を中心に聞くと、話が進みやすくなります。",
@@ -44,9 +59,12 @@
       "bring": ["記録（日付と、お子さんから聞いたこと）", "聞きたいことを1〜3つにしぼったメモ"],
       "script": "子どもから、〇月から〇〇の授業で自習が多いと聞いています。これまでの回数と、遅れた分をどう補う予定か、今後の見通しを教えていただけますか。〇日ごろまでにお返事をいただけると助かります。",
       "ifNoAnswer": "校長あてに同じ質問を文書で出し、回答の日を決めてもらいます。先生や支援員の配置は教育委員会が決めることが多いので、学校で答えが出ないときは教育委員会へ進みます。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }] },
-
-    { "id": "do_a_role", "section": "do", "priority": 85,
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}]
+    },
+    {
+      "id": "do_a_role",
+      "section": "do",
+      "priority": 85,
       "when": { "fact": "problems", "has": "child_role" },
       "title": "わが子が任されている役目を、大人の支援に切り替えてもらう",
       "body": "子どもどうしの助け合いは大切ですが、通訳やお世話を特定の子が続けて担うと、その子の学習や休み時間が削られます。[[日本語指導]]などの支援は、学校が先生や支援員を置いて行う仕組みがあります。",
@@ -55,11 +73,14 @@
       "bring": ["お子さんが話した内容のメモ（いつ・何を頼まれたか）"],
       "script": "子どもが、ほかの子の通訳（お世話）を任されていて、休み時間や自分の勉強の時間が減っているようです。本人の負担になっているので、先生や支援員など大人の対応に切り替えていただけないでしょうか。",
       "ifNoAnswer": "校長に文書で伝え、支援員の配置について教育委員会にも問い合わせます。",
-      "facts": ["nihongo_katei"] },
-
-    { "id": "do_a_board", "section": "do", "priority": 70,
-      "boost": [{ "if": { "fact": "done", "has": "board" }, "add": -20 }],
-      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "scope", "eq": "class" }] },
+      "facts": ["nihongo_katei"]
+    },
+    {
+      "id": "do_a_board",
+      "section": "do",
+      "priority": 70,
+      "boost": [{"if": {"fact": "done", "has": "board"}, "add": -20}],
+      "when": { "all": [{"fact": "situation", "eq": "A"}, {"fact": "scope", "eq": "class"}] },
       "title": "先生や支援員の配置について、教育委員会に聞く・求める",
       "body": "公立の小中学校の先生の任命は都道府県の教育委員会が行い、支援員などは自治体の予算で置かれることが多いため、学校だけでは解決できないことがあります。",
       "where": "市区町村の教育委員会（先生の配置や、学校の指導を担当する課）。私立は学校を運営する法人や、都道府県の私立学校の担当課",
@@ -67,11 +88,14 @@
       "bring": ["学校とのやりとりの記録", "同じことで困っている保護者がいれば、その声"],
       "script": "〇〇小学校の〇年生で、〇月から担任の不在（授業の中断）が続いています。先生や支援員の配置の見通しと、それまで子どもたちの学習をどう補うのかを教えてください。",
       "ifNoAnswer": "文書で問い合わせて、回答の期限をつけます。それでも進まないときは、[[教育委員会]]の会議の傍聴や、議員への相談、陳情・請願を考えます。",
-      "links": [{ "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }],
-      "facts": ["kenpi_ninmei"] },
-
-    { "id": "do_b_report", "section": "do", "priority": 85,
-      "when": { "all": [{ "fact": "situation", "eq": "B" }, { "fact": "problems", "in": ["bullying", "violence", "net"] }] },
+      "links": [{"type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る"}],
+      "facts": ["kenpi_ninmei"]
+    },
+    {
+      "id": "do_b_report",
+      "section": "do",
+      "priority": 85,
+      "when": { "all": [{"fact": "situation", "eq": "B"}, {"fact": "problems", "in": ["bullying", "violence", "net"]}] },
       "title": "学校に「いじめの相談」として、はっきり伝える",
       "body": "「いじめの相談です」と伝えると、学校には事実を確かめて対応する決まりがあります。相手の子を責めるより、わが子に起きていることと、守ってほしいことを中心に伝えます。",
       "where": "担任の先生。担任に言いにくいときは、学年主任・教頭（副校長）・校長・養護の先生・スクールカウンセラーへ",
@@ -79,10 +103,13 @@
       "bring": ["記録（日付・されたこと・お子さんの言葉）", "けがや持ち物の写真、ネットの画面の保存（スクリーンショット）"],
       "script": "子どもが〇月〇日ごろから、〇〇されていると話しています。いじめの相談として受け止め、学校の対策の組織で事実を確かめてください。当面、子どもの安全をどう守っていただけるか、確認の結果をいつ教えていただけるかも教えてください。",
       "ifNoAnswer": "校長あてに文書で伝え、回答の期限をつけます。休みが続いている、心や体に大きな被害があるときは、[[重大事態]]として調べるよう求められます。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }],
-      "facts": ["ijime_def", "ijime_soshiki", "ijime_kakunin"] },
-
-    { "id": "do_b_teacher", "section": "do", "priority": 84,
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}],
+      "facts": ["ijime_def", "ijime_soshiki", "ijime_kakunin"]
+    },
+    {
+      "id": "do_b_teacher",
+      "section": "do",
+      "priority": 84,
       "when": { "fact": "problems", "has": "teacher_conduct" },
       "title": "先生の言動を、校長・教頭に伝える",
       "body": "先生の言動の問題は、その先生本人ではなく、管理する立場の校長・教頭（副校長）に伝えます。体罰は法律で禁止されています。",
@@ -91,10 +118,13 @@
       "bring": ["記録（日付・場面・言われたこと・されたこと）", "けががあれば、写真と診断書"],
       "script": "〇月〇日の〇〇の時間に、〇〇先生から子どもが「〇〇」と言われた（〇〇された）と話しています。事実を確かめていただき、子どもが安心して授業を受けられるよう対応をお願いします。結果をいつごろ教えていただけるかも教えてください。",
       "ifNoAnswer": "学校とのやりとりの記録を添えて、教育委員会に文書で相談します。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }],
-      "facts": ["taibatsu"] },
-
-    { "id": "do_b_injury", "section": "do", "priority": 82,
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}],
+      "facts": ["taibatsu"]
+    },
+    {
+      "id": "do_b_injury",
+      "section": "do",
+      "priority": 82,
       "when": { "fact": "problems", "in": ["injury", "violence"] },
       "title": "けがの経緯と、その後の手続きを確かめる",
       "body": "いつ・どこで・どうしてけがをしたのか、その場でどう対応したのかを、学校に説明してもらいます。",
@@ -102,10 +132,19 @@
       "check": "けがをした時間・場所・状況／その場の手当てと、保護者への連絡の時間／医療費について、学校を通して手続きできるものがあるか／同じことが起きないための対策",
       "bring": ["けがの写真", "病院の領収書・診断書"],
       "script": "〇月〇日に学校でけがをした件で、いつ・どこで・どのように起きたのか、その場でどう対応していただいたのかを教えてください。医療費について学校を通して手続きできるものがあるかも教えてください。",
-      "ifNoAnswer": "校長に文書で説明を求めます。ほかの子の行為によるけがで話し合いがつかないときは、法律の専門家への相談も考えます。" },
-
-    { "id": "do_b_serious", "section": "do", "priority": 78,
-      "when": { "all": [{ "fact": "situation", "eq": "B" }, { "fact": "problems", "in": ["bullying", "violence", "net"] }, { "any": [{ "fact": "danger", "eq": "yes" }, { "fact": "outcome", "in": ["same", "worse", "temporary"] }] }] },
+      "ifNoAnswer": "校長に文書で説明を求めます。ほかの子の行為によるけがで話し合いがつかないときは、法律の専門家への相談も考えます。"
+    },
+    {
+      "id": "do_b_serious",
+      "section": "do",
+      "priority": 78,
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "B" },
+          { "fact": "problems", "in": ["bullying", "violence", "net"] },
+          { "any": [{"fact": "danger", "eq": "yes"}, {"fact": "outcome", "in": ["same", "worse", "temporary"]}] }
+        ]
+      },
       "title": "[[重大事態]]として調べるよう求める",
       "body": "いじめで心や体に大きな被害が出た疑いや、長く学校を休まざるを得ない疑いがあるときは、学校や教育委員会が組織をつくって事実を調べる決まりがあります。調べた結果は、いじめを受けた子と保護者に伝えられます。",
       "where": "校長、または学校を設置している教育委員会（私立は学校を運営する法人）",
@@ -113,11 +152,14 @@
       "bring": ["これまでの記録と、学校とのやりとり", "欠席の日数が分かるもの", "医師の診断書（あれば）"],
       "script": "いじめにより、子どもが〇月から〇日間学校を休んでいます（心や体に〇〇の影響が出ています）。いじめ防止対策推進法の重大事態として調査を行ってください。調査の進め方と、結果を説明していただける時期を教えてください。",
       "ifNoAnswer": "教育委員会に文書で求めます。調べた結果に納得できないときは、自治体の長（市区町村長など）が調べ直すことができる仕組みがあります。",
-      "links": [{ "type": "doc", "doc": "serious_request", "label": "調査の申し入れ書を作る" }],
-      "facts": ["ijime_juudai", "ijime_joho", "ijime_saichosa"] },
-
-    { "id": "do_c_talk", "section": "do", "priority": 80,
-      "when": { "all": [{ "fact": "situation", "eq": "C" }, { "fact": "problems", "in": ["reluctant", "futoko", "other_place"] }] },
+      "links": [{"type": "doc", "doc": "serious_request", "label": "調査の申し入れ書を作る"}],
+      "facts": ["ijime_juudai", "ijime_joho", "ijime_saichosa"]
+    },
+    {
+      "id": "do_c_talk",
+      "section": "do",
+      "priority": 80,
+      "when": { "all": [{"fact": "situation", "eq": "C"}, {"fact": "problems", "in": ["reluctant", "futoko", "other_place"]}] },
       "title": "休んでいる間の学び方と過ごし方を、学校と話し合う",
       "body": "無理に登校させるより、まず安心して過ごせる場所と学び方を考えます。国や自治体は、学校以外の場での学びの大切さと、休む必要があることを踏まえて、本人と保護者を支えることになっています。",
       "where": "担任の先生・養護の先生・スクールカウンセラー。市区町村の[[教育支援センター]]",
@@ -125,9 +167,12 @@
       "bring": ["お子さんの様子の記録（眠り・食欲・朝の様子など）"],
       "script": "子どもが学校に行きづらくなっています。無理に登校させるより、まず安心して過ごせる場所と学び方を相談したいです。別室での登校や、教育支援センターなどの利用について教えてください。",
       "ifNoAnswer": "市区町村の教育委員会に、学校に行きづらい子の支援の窓口を聞きます。",
-      "facts": ["kakuho"] },
-
-    { "id": "do_c_hairyo", "section": "do", "priority": 82,
+      "facts": ["kakuho"]
+    },
+    {
+      "id": "do_c_hairyo",
+      "section": "do",
+      "priority": 82,
       "when": { "fact": "problems", "in": ["accommodation", "medical"] },
       "title": "必要な手立て（[[合理的配慮]]）を、具体的に申し出る",
       "body": "障害のある子から、困りごとを取り除くための配慮を求められたとき、負担が重すぎない範囲で必要な配慮をすることは、公立の学校にも私立の学校にも法律で義務づけられています。何に困っていて、どんな手立てなら学べるかを具体的に伝えるのがコツです。",
@@ -136,11 +181,14 @@
       "bring": ["困っている場面の記録", "医師や専門家の意見書（あれば）"],
       "script": "子どもは〇〇が苦手で、〇〇の場面で困っています。〇〇（例：黒板を写真に撮る、テストの時間を延ばす）の配慮をお願いできないでしょうか。難しい場合は、その理由と、ほかの方法を教えてください。",
       "ifNoAnswer": "申し出を文書で出し、学校の回答も文書でもらいます。それでも進まないときは、教育委員会（私立は都道府県の私立学校の担当課など）に相談します。",
-      "links": [{ "type": "doc", "doc": "hairyo_request", "label": "配慮の申し出書を作る" }],
-      "facts": ["hairyo_public", "hairyo_private"] },
-
-    { "id": "do_d_explain", "section": "do", "priority": 80,
-      "when": { "all": [{ "fact": "situation", "eq": "D" }, { "fact": "problems", "in": ["lunch_change", "diet_policy", "no_explain", "uneven_rules"] }] },
+      "links": [{"type": "doc", "doc": "hairyo_request", "label": "配慮の申し出書を作る"}],
+      "facts": ["hairyo_public", "hairyo_private"]
+    },
+    {
+      "id": "do_d_explain",
+      "section": "do",
+      "priority": 80,
+      "when": { "all": [{"fact": "situation", "eq": "D"}, {"fact": "problems", "in": ["lunch_change", "diet_policy", "no_explain", "uneven_rules"]}] },
       "title": "変更の中身と理由を、学校に確かめる",
       "body": "うわさだけで判断せず、まず何がどう変わったのかを確かめます。給食なら「一部の子への個別の対応」か「全員の献立の変更」か「1回だけの食の体験」かで、意味がまったく違います。",
       "where": "担任の先生・教頭（副校長）。給食のことは栄養教諭や、給食を担当する教育委員会の課",
@@ -148,10 +196,13 @@
       "bring": ["学校からのお便り・献立表", "聞きたいことのメモ"],
       "script": "給食（ルール）について〇〇と聞きました。一部の子への対応なのか全員についての変更なのか、決まった理由と経緯、保護者が意見を伝えられる窓口を教えてください。",
       "ifNoAnswer": "校長あてに文書で質問します。学校には、保護者に学校運営の情報を積極的に伝える決まりがあります。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }],
-      "facts": ["gakko_joho"] },
-
-    { "id": "do_d_allergy", "section": "do", "priority": 90,
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}],
+      "facts": ["gakko_joho"]
+    },
+    {
+      "id": "do_d_allergy",
+      "section": "do",
+      "priority": 90,
       "when": { "fact": "problems", "has": "allergy" },
       "title": "アレルギーの対応を、学校と書面で決める",
       "body": "文部科学省は、学校給食での食物アレルギーへの対応の指針を示しています。医師の診断にもとづいて、学校と対応を具体的に決めておくことが大切です。",
@@ -160,9 +211,12 @@
       "bring": ["主治医の診断にもとづく書類（学校が指定する様式）", "緊急時の薬があれば、その情報"],
       "script": "子どもは〇〇のアレルギーがあります。主治医の書類を出しますので、給食での対応と、もしものときの対応を一緒に確認させてください。",
       "ifNoAnswer": "校長と、給食を担当する教育委員会の課に文書で相談します。",
-      "facts": ["allergy_shishin"] },
-
-    { "id": "do_d_activity", "section": "do", "priority": 82,
+      "facts": ["allergy_shishin"]
+    },
+    {
+      "id": "do_d_activity",
+      "section": "do",
+      "priority": 82,
       "when": { "fact": "problems", "in": ["belief_activity", "bias"] },
       "title": "授業や行事の中身を確かめ、参加の扱いを相談する",
       "body": "学校は特定の政党のための教育をしてはいけません。また公立の学校は、特定の信仰のための教育や活動をしてはいけないと法律で決まっています。一方で、さまざまな考え方や文化を知識として学ぶことは大切にされています。まず中身を確かめましょう。",
@@ -171,10 +225,13 @@
       "bring": ["お便り・教材・プリント", "お子さんから聞いた内容のメモ"],
       "script": "〇〇の授業（行事）で、〇〇をすると聞きました。どんなねらいで、どの教材を使い、何をするのかを教えてください。参加を希望しない場合の扱いも教えてください。",
       "ifNoAnswer": "校長あてに文書で質問します。公立なら、学校とのやりとりを添えて教育委員会にも問い合わせます。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }],
-      "facts": ["kihon_seiji", "kihon_shinko"] },
-
-    { "id": "do_d_rules", "section": "do", "priority": 78,
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}],
+      "facts": ["kihon_seiji", "kihon_shinko"]
+    },
+    {
+      "id": "do_d_rules",
+      "section": "do",
+      "priority": 78,
       "when": { "fact": "problems", "has": "rules" },
       "title": "校則の中身と、見直しの手続きを確かめる",
       "body": "校則は学校ごとに決められています。理由が分からないルールは、まず決められた理由と、見直しの手続きを聞きます。国の生徒指導の手引き（[[生徒指導提要]]）は2022年12月に改訂されています。",
@@ -183,9 +240,12 @@
       "bring": ["生徒手帳・校則の写し"],
       "script": "〇〇のルールについて、決められた理由と、見直しを求めるときの手続きを教えてください。",
       "ifNoAnswer": "生徒会やPTA、学校運営協議会を通して、見直しの話し合いを求めます。",
-      "facts": ["teiyo"] },
-
-    { "id": "do_e_shugaku", "section": "do", "priority": 95,
+      "facts": ["teiyo"]
+    },
+    {
+      "id": "do_e_shugaku",
+      "section": "do",
+      "priority": 95,
       "when": { "fact": "problems", "has": "shugaku" },
       "title": "[[就学援助]]を申し込む",
       "body": "家計が苦しくて学校に通うのがむずかしい家庭には、市区町村が必要な援助をすることが法律で決まっています。対象になる費用や基準、申し込み方は、市区町村ごとに決まっています。",
@@ -194,9 +254,12 @@
       "bring": ["収入が分かる書類（源泉徴収票など）", "振込先が分かるもの（求められた場合）"],
       "script": "家計が苦しく、学校の費用の支払いがむずかしい状況です。就学援助の申し込み方と、対象になるかどうかの目安を教えてください。",
       "ifNoAnswer": "市区町村のホームページで「就学援助」を調べるか、市区町村の生活の困りごとの相談窓口に相談します。",
-      "facts": ["shugaku_enjo"] },
-
-    { "id": "do_e_cost", "section": "do", "priority": 78,
+      "facts": ["shugaku_enjo"]
+    },
+    {
+      "id": "do_e_cost",
+      "section": "do",
+      "priority": 78,
       "when": { "fact": "problems", "in": ["cost", "club", "parent_load"] },
       "title": "費用や負担の中身と、話し合える場を確かめる",
       "body": "費用や負担の決め方を知ると、見直しを求める相手が分かります。一つの家庭だけの問題でなければ、ほかの保護者と一緒に声を上げるほうが届きやすくなります。",
@@ -205,9 +268,12 @@
       "bring": ["お便り・請求書・費用の内訳", "負担の記録（送迎の回数・時間など）"],
       "script": "〇〇の費用（負担）について、内訳と決められた理由を教えてください。家庭の負担を減らす方法を、保護者と一緒に話し合える場はありますか。",
       "ifNoAnswer": "PTAや[[学校運営協議会]]で話題にしてもらうよう頼み、市区町村の教育委員会にも問い合わせます。",
-      "facts": ["unei_kyogikai"] },
-
-    { "id": "do_e_pta", "section": "do", "priority": 76,
+      "facts": ["unei_kyogikai"]
+    },
+    {
+      "id": "do_e_pta",
+      "section": "do",
+      "priority": 76,
       "when": { "fact": "problems", "has": "pta" },
       "title": "PTAの規約を確かめ、役員会に伝える",
       "body": "入会・退会や役員の決め方、会費の使い道は、PTAの規約に書かれています。まず規約を確かめると、話し合いの出発点がはっきりします。",
@@ -215,9 +281,12 @@
       "check": "規約の入会・退会の決まり／役員の決め方／会費の使い道",
       "bring": ["PTAの規約・お便り"],
       "script": "PTAの規約の写しをいただけますか。入会と役員の決め方について確認したいです。",
-      "ifNoAnswer": "総会で質問したり、同じ考えの保護者と一緒に規約の見直しを提案したりします。" },
-
-    { "id": "do_f_plan", "section": "do", "priority": 80,
+      "ifNoAnswer": "総会で質問したり、同じ考えの保護者と一緒に規約の見直しを提案したりします。"
+    },
+    {
+      "id": "do_f_plan",
+      "section": "do",
+      "priority": 80,
       "when": { "fact": "problems", "in": ["merger", "facility"] },
       "title": "計画の資料と、意見を言える場を確かめる",
       "body": "学校の統合や建て替えは、教育委員会の会議や議会での話し合いを経て決まるのが一般的です。教育委員会の会議は、原則として公開されています。",
@@ -226,9 +295,12 @@
       "bring": ["お便りや自治体の広報", "聞きたいことのメモ"],
       "script": "〇〇小学校の統合（建て替え）について、計画の資料と、保護者や住民が意見を伝えられる場、決まるまでの日程を教えてください。",
       "ifNoAnswer": "教育委員会の会議を傍聴し、議員に相談したり、陳情・請願を出したりします。",
-      "facts": ["kaigi_kokai", "setchi_jorei"] },
-
-    { "id": "do_f_route", "section": "do", "priority": 80,
+      "facts": ["kaigi_kokai", "setchi_jorei"]
+    },
+    {
+      "id": "do_f_route",
+      "section": "do",
+      "priority": 80,
       "when": { "fact": "problems", "has": "route" },
       "title": "通学路の危ない場所を、学校と市区町村に伝える",
       "body": "場所・時間帯・何が危ないかを具体的に伝えると、対策を考えてもらいやすくなります。",
@@ -236,9 +308,12 @@
       "check": "危ない場所と時間帯／通学路の点検の予定／対策の見込み（標識・見守り・道順の変更など）",
       "bring": ["危ない場所の地図や写真（人の顔や車のナンバーが写らないように）", "ヒヤリとした出来事の記録"],
       "script": "〇〇小学校の通学路の〇〇の交差点で、朝7時半ごろに車がスピードを出して通り、子どもが危ない目にあいました。安全対策を検討していただけないでしょうか。",
-      "ifNoAnswer": "PTAや自治会と一緒に、学校・市区町村・警察に要望書を出します。" },
-
-    { "id": "do_f_gakudo", "section": "do", "priority": 80,
+      "ifNoAnswer": "PTAや自治会と一緒に、学校・市区町村・警察に要望書を出します。"
+    },
+    {
+      "id": "do_f_gakudo",
+      "section": "do",
+      "priority": 80,
       "when": { "fact": "problems", "has": "gakudo" },
       "title": "学童保育の空きと、ほかの預け先を確かめる",
       "body": "学童保育の申し込みや空きの状況は、市区町村の子ども・子育ての担当課で確かめられます。",
@@ -246,20 +321,26 @@
       "check": "空きの状況と待っている人数／入れなかったときのほかの預け先（放課後の居場所づくりの事業など）／増やす計画",
       "bring": ["申込書類・結果の通知"],
       "script": "学童保育に申し込みましたが、入れませんでした。空きが出る見込みと、ほかの預け先、学童保育を増やす計画があるかを教えてください。",
-      "ifNoAnswer": "同じ状況の保護者と一緒に、市区町村や議会に要望（陳情・請願）を出します。" },
-
-    { "id": "do_scope_class", "section": "do", "priority": 68,
-      "when": { "all": [{ "fact": "scope", "eq": "class" }, { "fact": "situation", "in": ["A", "D", "E"] }] },
+      "ifNoAnswer": "同じ状況の保護者と一緒に、市区町村や議会に要望（陳情・請願）を出します。"
+    },
+    {
+      "id": "do_scope_class",
+      "section": "do",
+      "priority": 68,
+      "when": { "all": [{"fact": "scope", "eq": "class"}, {"fact": "situation", "in": ["A", "D", "E"]}] },
       "title": "同じことで困っている保護者と、まとめて伝える",
       "body": "学校全体のことは、一つの家庭の声より、複数の保護者の声のほうが届きやすくなります。ほかの子や家庭を責める集まりにせず、学校に求めることをそろえるのがコツです。",
       "where": "PTA・クラスの保護者・[[学校運営協議会]]",
       "check": "困っている人がほかにもいるか／学校に求めること（1〜3つ）／代表して話す人",
       "bring": ["それぞれの記録（個人が分からない形にまとめる）"],
       "script": "〇年生の保護者有志として、〇〇について学校に説明をお願いしたいと考えています。一緒に話を聞きに行きませんか。",
-      "ifNoAnswer": "教育委員会への要望、議員への相談、陳情・請願へ進みます。" },
-
-    { "id": "do_g_letter", "section": "do", "priority": 85,
-      "boost": [{ "if": { "fact": "g_method", "eq": "letter" }, "add": -30 }],
+      "ifNoAnswer": "教育委員会への要望、議員への相談、陳情・請願へ進みます。"
+    },
+    {
+      "id": "do_g_letter",
+      "section": "do",
+      "priority": 85,
+      "boost": [{"if": {"fact": "g_method", "eq": "letter"}, "add": -30}],
       "when": { "fact": "situation", "eq": "G" },
       "title": "質問をしぼって、文書で出す（回答の期限をつける）",
       "body": "口頭のやりとりは、後で「言った・言わない」になりがちです。聞きたいことを1〜3つにしぼり、回答の期限をつけて文書で出すと、組織として答えてもらいやすくなります。",
@@ -268,13 +349,28 @@
       "bring": ["これまでのやりとりの記録（日付・相手・回答）"],
       "script": "〇月〇日に〇〇についてご相談しましたが、まだ対応の見通しが分かりません。次の点について、〇月〇日までに文書でご回答ください。1.〇〇 2.〇〇",
       "ifNoAnswer": "回答がなければ、記録を添えて一つ上の相手（教育委員会など）に同じ文書を出します。",
-      "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }, { "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }] },
-
-    { "id": "do_board", "section": "do", "priority": 72,
-      "when": { "any": [
-        { "all": [{ "fact": "situation", "eq": "G" }, { "fact": "g_where", "in": ["teacher", "school_lead"] }] },
-        { "all": [{ "fact": "situation", "in": ["A", "B", "C", "D", "E", "F"] }, { "any": [{ "fact": "school_response", "in": ["in_school", "no_staff", "refused", "not_ours", "no_reply"] }, { "fact": "outcome", "in": ["same", "worse", "temporary"] }] }] }
-      ] },
+      "links": [{"type": "doc", "doc": "school_letter", "label": "学校への手紙を作る"}, {"type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る"}]
+    },
+    {
+      "id": "do_board",
+      "section": "do",
+      "priority": 72,
+      "when": {
+        "any": [
+          { "all": [{"fact": "situation", "eq": "G"}, {"fact": "g_where", "in": ["teacher", "school_lead"]}] },
+          {
+            "all": [
+              { "fact": "situation", "in": ["A", "B", "C", "D", "E", "F"] },
+              {
+                "any": [
+                  { "fact": "school_response", "in": ["in_school", "no_staff", "refused", "not_ours", "no_reply"] },
+                  { "fact": "outcome", "in": ["same", "worse", "temporary"] }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       "title": "学校で進まないときは、教育委員会に文書で相談する",
       "body": "学校で解決しないときは、学校を設置している教育委員会に、学校とのやりとりの記録を添えて相談します。",
       "where": "公立の小中学校は市区町村の教育委員会、公立の高校などは主に都道府県の教育委員会。私立は学校を運営する法人や、都道府県の私立学校の担当課",
@@ -282,9 +378,12 @@
       "bring": ["学校とのやりとりの記録", "学校に出した文書の写し"],
       "script": "〇〇小学校に〇月から〇〇について相談していますが、対応が進みません。これまでの経緯をお伝えしますので、教育委員会としてどう対応していただけるか、〇月〇日ごろまでに教えてください。",
       "ifNoAnswer": "教育委員会の会議の傍聴や、議員への相談、陳情・請願に進みます。",
-      "links": [{ "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }] },
-
-    { "id": "do_g_fear", "section": "do", "priority": 83,
+      "links": [{"type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る"}]
+    },
+    {
+      "id": "do_g_fear",
+      "section": "do",
+      "priority": 83,
       "when": { "fact": "fear", "eq": "yes" },
       "title": "子どもへの影響が心配なときの伝え方",
       "body": "相談したことで子どもが不利になるのは、あってはならないことです。それでも心配なときは、伝え方や伝える相手を工夫できます。",
@@ -293,10 +392,13 @@
       "bring": ["伝えたいことのメモ（個人が分からない書き方にする）"],
       "script": "子どもへの影響が心配なので、今日の相談のことは、〇〇先生と校長先生の間だけにしていただけますか。対応の結果は、私に直接教えてください。",
       "ifNoAnswer": "扱いが変わったと感じたら、日付と内容を記録し、校長や教育委員会に伝えます。",
-      "facts": ["gakko_hyoka", "unei_kyogikai"] },
-
-    { "id": "do_g_info", "section": "do", "priority": 82,
-      "when": { "any": [{ "fact": "school_response", "eq": "privacy" }, { "fact": "topic", "eq": "info" }] },
+      "facts": ["gakko_hyoka", "unei_kyogikai"]
+    },
+    {
+      "id": "do_g_info",
+      "section": "do",
+      "priority": 82,
+      "when": { "any": [{"fact": "school_response", "eq": "privacy"}, {"fact": "topic", "eq": "info"}] },
       "title": "答えられない理由を確かめ、範囲を変えて聞き直す",
       "body": "「個人情報だから」と言われても、個人が分からない形の集計（学校全体や市全体の人数・回数など）なら答えてもらえることがあります。何を、どの範囲で、何のために知りたいのかをはっきりさせて聞き直します。",
       "where": "学校、または教育委員会の担当課",
@@ -304,9 +406,13 @@
       "bring": ["知りたいことを書いたメモ（何を・どの範囲で・何のために）"],
       "script": "個人が分からないよう、学校全体（市全体）の人数（回数）だけを教えていただけますか。それも難しい場合は、答えられない理由を文書で教えてください。",
       "ifNoAnswer": "役所が持っている文書を見たいときは、[[情報公開請求]]ができます。議会への請願が通らなかったことと、情報公開請求で文書を出してもらえなかったことは、別の手続きです。",
-      "links": [{ "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }] },
-
-    { "id": "do_improved", "section": "do", "priority": 95, "onImproved": true,
+      "links": [{"type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る"}]
+    },
+    {
+      "id": "do_improved",
+      "section": "do",
+      "priority": 95,
+      "onImproved": true,
       "when": { "fact": "outcome", "eq": "improved" },
       "title": "よくなった状態が続くか、記録しながら見守る",
       "body": "学年や担任が変わると、また起きることがあります。学校が約束したことと、これまでの記録を残しておきます。",
@@ -315,149 +421,319 @@
       "bring": ["これまでの記録", "学校からの回答（文書・メール）"],
       "script": "記録の例：11月20日 校長と面談。週2回、算数の時間に支援員が入ると約束してくれた。12月の様子を見て、また相談する。",
       "ifNoAnswer": "また起きたら、前回の記録と約束の内容を添えて同じ相手に伝え、改善しなければ次の段階に進みます。",
-      "links": [{ "type": "records" }] },
-
-    { "id": "chk_safety", "section": "check", "priority": 99,
+      "links": [{"type": "records"}]
+    },
+    {
+      "id": "chk_safety",
+      "section": "check",
+      "priority": 99,
       "when": { "fact": "danger", "eq": "yes" },
       "title": "子どもも保護者も、夜間・休日に相談できる窓口があります",
       "body": "24時間子供SOSダイヤル（0120-078310）は、悩んでいる子どもや保護者などが夜間・休日を含めていつでも相談できるよう、教育委員会が用意している窓口です。",
-      "links": [{ "type": "tel", "tel": "0120-078310", "label": "24時間子供SOSダイヤルに電話" }],
-      "facts": ["sos_dial"] },
-
-    { "id": "chk_who_public", "section": "check", "priority": 95,
+      "links": [{"type": "tel", "tel": "0120-078310", "label": "24時間子供SOSダイヤルに電話"}],
+      "facts": ["sos_dial"]
+    },
+    {
+      "id": "chk_who_public",
+      "section": "check",
+      "priority": 95,
       "when": { "fact": "school_type", "eq": "public" },
       "title": "公立の小中学校の相談先",
       "body": "市区町村の[[教育委員会]]が学校を管理しています。担任・校長で進まないことは、市区町村の教育委員会が相談先です。ただし、先生の任命は都道府県の教育委員会が行います（政令指定都市などでは扱いが異なります）。",
-      "facts": ["kenpi_ninmei"] },
-    { "id": "chk_who_hs", "section": "check", "priority": 95,
+      "facts": ["kenpi_ninmei"]
+    },
+    {
+      "id": "chk_who_hs",
+      "section": "check",
+      "priority": 95,
       "when": { "fact": "school_type", "eq": "public_hs" },
       "title": "公立の高校・特別支援学校などの相談先",
-      "body": "多くは都道府県が設置していて、都道府県の[[教育委員会]]が相談先です。市立の高校などは、その市の教育委員会になります。学校のホームページや入学時の書類で、どこが設置しているかを確かめましょう。" },
-    { "id": "chk_who_private", "section": "check", "priority": 95,
+      "body": "多くは都道府県が設置していて、都道府県の[[教育委員会]]が相談先です。市立の高校などは、その市の教育委員会になります。学校のホームページや入学時の書類で、どこが設置しているかを確かめましょう。"
+    },
+    {
+      "id": "chk_who_private",
+      "section": "check",
+      "priority": 95,
       "when": { "fact": "school_type", "eq": "private" },
       "title": "私立・国立の学校の相談先",
       "body": "私立の学校は、教育委員会の担当ではありません。学校を運営する法人（学校法人）のほか、私立の小中学校・高校などは都道府県知事が所管していて、都道府県の私立学校の担当課が相談先になります。国立の学校は、その学校を設置している大学などが相談先です。",
-      "facts": ["shiritsu_shokatsu"] },
-    { "id": "chk_who_preschool", "section": "check", "priority": 95,
+      "facts": ["shiritsu_shokatsu"]
+    },
+    {
+      "id": "chk_who_preschool",
+      "section": "check",
+      "priority": 95,
       "when": { "fact": "school_type", "eq": "preschool" },
       "title": "保育園・幼稚園・こども園の相談先",
-      "body": "施設の種類や、公立か私立かで担当が分かれます。保育園や認定こども園は市区町村の保育・子育ての担当課、公立の幼稚園は市区町村の教育委員会が窓口になることが多いので、まず施設に、どこが担当かを聞くのが近道です。" },
-    { "id": "chk_who_unknown", "section": "check", "priority": 95,
+      "body": "施設の種類や、公立か私立かで担当が分かれます。保育園や認定こども園は市区町村の保育・子育ての担当課、公立の幼稚園は市区町村の教育委員会が窓口になることが多いので、まず施設に、どこが担当かを聞くのが近道です。"
+    },
+    {
+      "id": "chk_who_unknown",
+      "section": "check",
+      "priority": 95,
       "when": { "fact": "school_type", "eq": "unknown" },
       "title": "学校の種類で、相談先が変わります",
       "items": ["公立の小中学校：市区町村の教育委員会", "公立の高校・特別支援学校など：主に都道府県の教育委員会", "私立の学校：学校を運営する法人、都道府県の私立学校の担当課（教育委員会ではありません）", "保育園・こども園：市区町村の保育・子育ての担当課"],
-      "facts": ["shiritsu_shokatsu"] },
-
-    { "id": "chk_scope", "section": "check", "priority": 90,
-      "when": { "any": [{ "fact": "scope", "eq": "class" }, { "fact": "situation", "eq": "F" }, { "fact": "topic", "in": ["info", "F"] }] },
+      "facts": ["shiritsu_shokatsu"]
+    },
+    {
+      "id": "chk_scope",
+      "section": "check",
+      "priority": 90,
+      "when": { "any": [{"fact": "scope", "eq": "class"}, {"fact": "situation", "eq": "F"}, {"fact": "topic", "in": ["info", "F"]}] },
       "title": "学校全体のことは、人や予算の仕組みの問題になりやすい",
       "body": "先生や支援員の数、学校の設備、学童保育などは、教育委員会や自治体の予算で決まります。学校に求めるだけでなく、教育委員会や議会に届ける方法があります。",
       "items": ["教育委員会への文書での問い合わせ・要望", "教育委員会の会議の傍聴（原則として公開されています）", "保護者や地域の人が学校の運営に意見を言える[[学校運営協議会]]", "議員への相談、議会への陳情・請願、自治体の計画へのパブリックコメント"],
-      "facts": ["kaigi_kokai", "unei_kyogikai"] },
-    { "id": "chk_scope_mine", "section": "check", "priority": 88,
+      "facts": ["kaigi_kokai", "unei_kyogikai"]
+    },
+    {
+      "id": "chk_scope_mine",
+      "section": "check",
+      "priority": 88,
       "when": { "fact": "scope", "eq": "mine" },
       "title": "わが子だけのことは、個別の対応を求める",
-      "body": "わが子だけに起きていることは、担任 → 学年主任・教頭（副校長） → 校長 → 教育委員会の順に、わが子への具体的な対応を求めます。一つ上の相手に進むときは、それまでの記録を添えます。" },
-
-    { "id": "chk_ijime", "section": "check", "priority": 92,
-      "when": { "any": [{ "all": [{ "fact": "situation", "eq": "B" }, { "fact": "problems", "in": ["bullying", "violence", "net"] }] }, { "fact": "topic", "eq": "B" }] },
+      "body": "わが子だけに起きていることは、担任 → 学年主任・教頭（副校長） → 校長 → 教育委員会の順に、わが子への具体的な対応を求めます。一つ上の相手に進むときは、それまでの記録を添えます。"
+    },
+    {
+      "id": "chk_ijime",
+      "section": "check",
+      "priority": 92,
+      "when": {
+        "any": [{"all": [{"fact": "situation", "eq": "B"}, {"fact": "problems", "in": ["bullying", "violence", "net"]}]}, {"fact": "topic", "eq": "B"}]
+      },
       "title": "法律での「いじめ」と、学校の対応の決まり",
       "body": "法律では、同じ学校の子など一定の関係にある子からの行為で、受けた子が心や体の苦痛を感じているものを「いじめ」としています。インターネットを通じたものも含みます。学校は[[いじめ対策の組織]]を置き、いじめを受けていると思われるときは、すぐに事実を確かめて、学校を設置している教育委員会などに報告することになっています。",
-      "facts": ["ijime_def", "ijime_soshiki", "ijime_kakunin"] },
-    { "id": "chk_juudai", "section": "check", "priority": 88,
-      "when": { "any": [{ "all": [{ "fact": "situation", "eq": "B" }, { "fact": "problems", "in": ["bullying", "violence", "net"] }] }, { "fact": "topic", "eq": "B" }] },
+      "facts": ["ijime_def", "ijime_soshiki", "ijime_kakunin"]
+    },
+    {
+      "id": "chk_juudai",
+      "section": "check",
+      "priority": 88,
+      "when": {
+        "any": [{"all": [{"fact": "situation", "eq": "B"}, {"fact": "problems", "in": ["bullying", "violence", "net"]}]}, {"fact": "topic", "eq": "B"}]
+      },
       "title": "[[重大事態]]とは",
       "body": "いじめで命・心や体・財産に大きな被害が出た疑いがあるとき、またはいじめで長く学校を休まざるを得ない疑いがあるときは「重大事態」として、学校や教育委員会が組織をつくって事実を調べます。結果は、いじめを受けた子と保護者に伝えられます。公立の学校では、自治体の長が調べ直すこともできます。",
-      "facts": ["ijime_juudai", "ijime_joho", "ijime_saichosa"] },
-    { "id": "chk_taibatsu", "section": "check", "priority": 86,
-      "when": { "any": [{ "fact": "problems", "has": "teacher_conduct" }, { "fact": "topic", "eq": "B" }] },
+      "facts": ["ijime_juudai", "ijime_joho", "ijime_saichosa"]
+    },
+    {
+      "id": "chk_taibatsu",
+      "section": "check",
+      "priority": 86,
+      "when": { "any": [{"fact": "problems", "has": "teacher_conduct"}, {"fact": "topic", "eq": "B"}] },
       "title": "体罰は、法律で禁止されています",
       "body": "校長や先生は、教育のために必要なときに子どもを叱ったり罰を与えたり（懲戒）できますが、体罰は法律で禁止されています。",
-      "facts": ["taibatsu"] },
-
-    { "id": "chk_kakuho", "section": "check", "priority": 90,
-      "when": { "any": [{ "all": [{ "fact": "situation", "eq": "C" }, { "fact": "problems", "in": ["reluctant", "futoko", "other_place"] }] }, { "fact": "topic", "eq": "C" }] },
+      "facts": ["taibatsu"]
+    },
+    {
+      "id": "chk_kakuho",
+      "section": "check",
+      "priority": 90,
+      "when": {
+        "any": [
+          { "all": [{"fact": "situation", "eq": "C"}, {"fact": "problems", "in": ["reluctant", "futoko", "other_place"]}] },
+          { "fact": "topic", "eq": "C" }
+        ]
+      },
       "title": "学校に行きづらい子の学びを支える決まり",
       "body": "国や自治体は、学校以外の場での学びの大切さと、一人ひとりの休む必要を踏まえて、本人と保護者に情報を伝えたり助言したりする支援をすることになっています。",
-      "facts": ["kakuho"] },
-    { "id": "chk_hairyo", "section": "check", "priority": 88,
-      "when": { "any": [{ "fact": "problems", "in": ["accommodation", "medical"] }, { "fact": "topic", "eq": "C" }] },
+      "facts": ["kakuho"]
+    },
+    {
+      "id": "chk_hairyo",
+      "section": "check",
+      "priority": 88,
+      "when": { "any": [{"fact": "problems", "in": ["accommodation", "medical"]}, {"fact": "topic", "eq": "C"}] },
       "title": "[[合理的配慮]]は、学校の義務です",
       "body": "障害のある子から、困りごとを取り除くための配慮を求められたとき、負担が重すぎない範囲で必要な配慮をすることは、公立の学校にも私立の学校にも法律で義務づけられています。",
-      "facts": ["hairyo_public", "hairyo_private"] },
-
-    { "id": "chk_lunch_kinds", "section": "check", "priority": 90,
-      "when": { "any": [{ "fact": "problems", "in": ["lunch_change", "diet_policy", "no_explain"] }, { "fact": "topic", "eq": "D" }] },
+      "facts": ["hairyo_public", "hairyo_private"]
+    },
+    {
+      "id": "chk_lunch_kinds",
+      "section": "check",
+      "priority": 90,
+      "when": { "any": [{"fact": "problems", "in": ["lunch_change", "diet_policy", "no_explain"]}, {"fact": "topic", "eq": "D"}] },
       "title": "給食の変更は、4つに分けて考える",
       "body": "「給食が変わった」と聞いたときは、次のどれに当たるかを確かめると、何を聞けばよいか、何を求めればよいかがはっきりします。",
-      "items": ["一部の子への個別の対応（その子の分だけ、食材を取り除いたり別のおかずにしたりする）", "全員の献立の変更（ある食材を全員の献立から外す・減らすなど）", "1回だけの食の体験（行事や、食文化を学ぶ授業の一部など）", "特定の基準を満たした食材や調味料の使用（費用や仕入れ方が変わることがある）"] },
-    { "id": "chk_neutral", "section": "check", "priority": 88,
-      "when": { "any": [{ "fact": "problems", "in": ["belief_activity", "bias"] }, { "fact": "topic", "eq": "D" }] },
+      "items": [
+        "一部の子への個別の対応（その子の分だけ、食材を取り除いたり別のおかずにしたりする）",
+        "全員の献立の変更（ある食材を全員の献立から外す・減らすなど）",
+        "1回だけの食の体験（行事や、食文化を学ぶ授業の一部など）",
+        "特定の基準を満たした食材や調味料の使用（費用や仕入れ方が変わることがある）"
+      ]
+    },
+    {
+      "id": "chk_neutral",
+      "section": "check",
+      "priority": 88,
+      "when": { "any": [{"fact": "problems", "in": ["belief_activity", "bias"]}, {"fact": "topic", "eq": "D"}] },
       "title": "学校が守る、政治と信仰の中立",
       "body": "学校は、特定の政党を支持したり反対したりするための教育や政治的な活動をしてはいけません。また公立の学校は、特定の信仰のための教育や活動をしてはいけません。一方で、信仰に対する寛容な態度や一般的な教養は、教育で大切にされると法律に書かれています。",
-      "facts": ["kihon_seiji", "kihon_shinko"] },
-    { "id": "chk_rules", "section": "check", "priority": 80,
+      "facts": ["kihon_seiji", "kihon_shinko"]
+    },
+    {
+      "id": "chk_rules",
+      "section": "check",
+      "priority": 80,
       "when": { "fact": "problems", "in": ["rules", "uneven_rules"] },
       "title": "ルールが違うときは、理由と判断の基準を聞く",
-      "body": "一部の子だけルールが違うときは、体調・障害・家庭の事情などによる個別の配慮のことがあります。その子の事情は個人情報なので詳しくは聞けませんが、判断の基準や、ほかの子への影響については説明を求められます。" },
-
-    { "id": "chk_school_info", "section": "check", "priority": 80,
-      "when": { "any": [{ "fact": "situation", "in": ["A", "D", "E"] }, { "fact": "topic", "in": ["A", "D", "E", "info"] }, { "fact": "school_response", "in": ["privacy", "refused"] }] },
+      "body": "一部の子だけルールが違うときは、体調・障害・家庭の事情などによる個別の配慮のことがあります。その子の事情は個人情報なので詳しくは聞けませんが、判断の基準や、ほかの子への影響については説明を求められます。"
+    },
+    {
+      "id": "chk_school_info",
+      "section": "check",
+      "priority": 80,
+      "when": {
+        "any": [
+          { "fact": "situation", "in": ["A", "D", "E"] },
+          { "fact": "topic", "in": ["A", "D", "E", "info"] },
+          { "fact": "school_response", "in": ["privacy", "refused"] }
+        ]
+      },
       "title": "学校には、保護者に情報を伝える決まりがあります",
       "body": "学校は、教育活動など学校運営の状況を自分で評価して改善し（[[学校評価]]）、保護者や地域の人に学校運営の情報を積極的に伝えることになっています（小学校の決まりで、中学校などにも当てはめられています）。",
-      "facts": ["gakko_hyoka", "gakko_joho"] },
-    { "id": "chk_nihongo", "section": "check", "priority": 80,
+      "facts": ["gakko_hyoka", "gakko_joho"]
+    },
+    {
+      "id": "chk_nihongo",
+      "section": "check",
+      "priority": 80,
       "when": { "fact": "problems", "in": ["support_load", "child_role"] },
       "title": "[[日本語指導]]の仕組み",
       "body": "日本語で学ぶことがむずかしい子には、その子の日本語の力に応じて、通常の授業とは別の「特別の教育課程」で指導することができます。どのくらいの時間、誰が指導しているかを聞くと、先生の手が回らない理由や、必要な人の配置が見えてきます。",
-      "facts": ["nihongo_katei"] },
-    { "id": "chk_staff", "section": "check", "priority": 78,
-      "when": { "any": [{ "fact": "problems", "in": ["teacher_absent", "unsettled", "support_load", "pace"] }, { "fact": "topic", "in": ["A", "info"] }] },
+      "facts": ["nihongo_katei"]
+    },
+    {
+      "id": "chk_staff",
+      "section": "check",
+      "priority": 78,
+      "when": { "any": [{"fact": "problems", "in": ["teacher_absent", "unsettled", "support_load", "pace"]}, {"fact": "topic", "in": ["A", "info"]}] },
       "title": "先生や支援員の配置は、誰が決めるか",
       "body": "公立の小中学校の先生の任命は都道府県の教育委員会が行い、支援員などは自治体の予算で置かれることが多いため、学校の判断だけでは増やせないことがあります。学校に聞いても答えが出ないときは、教育委員会に聞くのが近道です。",
-      "facts": ["kenpi_ninmei"] },
-    { "id": "chk_shugaku", "section": "check", "priority": 90,
+      "facts": ["kenpi_ninmei"]
+    },
+    {
+      "id": "chk_shugaku",
+      "section": "check",
+      "priority": 90,
       "when": { "fact": "problems", "has": "shugaku" },
       "title": "[[就学援助]]は、法律にもとづく仕組みです",
       "body": "経済的な理由で学校に通うのがむずかしいと認められる子の保護者に、市区町村は必要な援助をしなければならないと、法律で決まっています。",
-      "facts": ["shugaku_enjo"] },
-    { "id": "chk_f", "section": "check", "priority": 85,
-      "when": { "any": [{ "fact": "problems", "in": ["merger", "facility"] }, { "fact": "topic", "eq": "F" }] },
+      "facts": ["shugaku_enjo"]
+    },
+    {
+      "id": "chk_f",
+      "section": "check",
+      "priority": 85,
+      "when": { "any": [{"fact": "problems", "in": ["merger", "facility"]}, {"fact": "topic", "eq": "F"}] },
       "title": "学校の統合や設置は、条例と会議で決まる",
       "body": "公立の学校のような公の施設をつくることや管理のしかたは、条例で決めることになっています。統合や閉校は、教育委員会の会議や議会での話し合いを経て決まるのが一般的です。教育委員会の会議は、人事に関することなどを除いて公開されます。",
-      "facts": ["setchi_jorei", "kaigi_kokai"] },
-    { "id": "chk_g_record", "section": "check", "priority": 85,
+      "facts": ["setchi_jorei", "kaigi_kokai"]
+    },
+    {
+      "id": "chk_g_record",
+      "section": "check",
+      "priority": 85,
       "when": { "fact": "situation", "eq": "G" },
       "title": "相談は「記録」と「期限」で前に進む",
-      "body": "同じ相談を繰り返さないために、相談のたびに、日付・相手（部署と名前）・伝えたこと・回答・次の約束を残します。回答の期限を自分から提案するのも有効です。" },
-
-    { "id": "ifn_ladder", "section": "ifnot", "priority": 100,
+      "body": "同じ相談を繰り返さないために、相談のたびに、日付・相手（部署と名前）・伝えたこと・回答・次の約束を残します。回答の期限を自分から提案するのも有効です。"
+    },
+    {
+      "id": "ifn_ladder",
+      "section": "ifnot",
+      "priority": 100,
       "title": "段階を一つずつ上げる",
       "body": "うまくいかないときは、次の順に進むと、同じ相談を繰り返さずに済みます。",
-      "items": ["担任 → 学年主任・教頭（副校長） → 校長の順に、記録を添えて伝える", "校長あてに文書で質問し、回答の期限をつける", "教育委員会（私立は学校を運営する法人や、都道府県の私立学校の担当課）に文書で相談する", "教育委員会の会議の傍聴や、PTA・学校運営協議会での話し合い", "議員に相談する・議会に陳情や請願を出す", "学校の外の相談窓口（法務局の人権相談、法律の専門家など）に相談する"],
-      "links": [{ "type": "records" }] },
-    { "id": "ifn_juudai", "section": "ifnot", "priority": 90,
-      "when": { "any": [{ "all": [{ "fact": "situation", "eq": "B" }, { "fact": "problems", "in": ["bullying", "violence", "net"] }] }, { "fact": "topic", "eq": "B" }] },
+      "items": [
+        "担任 → 学年主任・教頭（副校長） → 校長の順に、記録を添えて伝える",
+        "校長あてに文書で質問し、回答の期限をつける",
+        "教育委員会（私立は学校を運営する法人や、都道府県の私立学校の担当課）に文書で相談する",
+        "教育委員会の会議の傍聴や、PTA・学校運営協議会での話し合い",
+        "議員に相談する・議会に陳情や請願を出す",
+        "学校の外の相談窓口（法務局の人権相談、法律の専門家など）に相談する"
+      ],
+      "links": [{"type": "records"}]
+    },
+    {
+      "id": "ifn_juudai",
+      "section": "ifnot",
+      "priority": 90,
+      "when": {
+        "any": [{"all": [{"fact": "situation", "eq": "B"}, {"fact": "problems", "in": ["bullying", "violence", "net"]}]}, {"fact": "topic", "eq": "B"}]
+      },
       "title": "学校の調査に納得できないとき",
       "body": "重大事態の調査の結果に納得できないときは、公立の学校なら自治体の長（市区町村長・知事）に、私立の学校なら都道府県知事に、調べ直しを求めることを考えます。調べ直すかどうかは、長が必要と認めたときに決まります。",
-      "facts": ["ijime_saichosa"] },
-    { "id": "ifn_change", "section": "ifnot", "priority": 85,
-      "when": { "any": [{ "fact": "scope", "eq": "class" }, { "fact": "situation", "eq": "F" }, { "fact": "topic", "in": ["info", "E", "F"] }, { "fact": "problems", "in": ["cost", "club", "parent_load"] }] },
+      "facts": ["ijime_saichosa"]
+    },
+    {
+      "id": "ifn_change",
+      "section": "ifnot",
+      "priority": 85,
+      "when": {
+        "any": [
+          { "fact": "scope", "eq": "class" },
+          { "fact": "situation", "eq": "F" },
+          { "fact": "topic", "in": ["info", "E", "F"] },
+          { "fact": "problems", "in": ["cost", "club", "parent_load"] }
+        ]
+      },
       "title": "仕組みを変える：陳情・請願・パブコメ・署名",
       "body": "人の配置や予算、学校の配置など、仕組みの問題は、議会や自治体の計画に意見を届ける方法があります。",
       "items": ["議員に相談する", "議会に陳情・請願を出す（ほかの保護者と一緒に出すと届きやすい）", "自治体の教育の計画や予算に、パブリックコメントで意見を出す", "署名を集める"],
-      "links": [{ "type": "pubcome" }, { "type": "shomei" }] },
-    { "id": "ifn_info", "section": "ifnot", "priority": 80,
-      "when": { "any": [{ "fact": "topic", "eq": "info" }, { "fact": "school_response", "in": ["privacy", "refused"] }] },
+      "links": [{"type": "pubcome"}, {"type": "shomei"}]
+    },
+    {
+      "id": "ifn_info",
+      "section": "ifnot",
+      "priority": 80,
+      "when": { "any": [{"fact": "topic", "eq": "info"}, {"fact": "school_response", "in": ["privacy", "refused"]}] },
       "title": "[[情報公開請求]]で、役所にある文書を確かめる",
-      "body": "教育委員会などが持っている文書は、多くの自治体で、条例にもとづく情報公開請求で見ることができます。ただし、持っていない資料を新しく作ってもらう手続きではありません。出してもらえなかったときは、決定の通知に書かれた理由と、不服を申し立てる方法を確かめます。" },
-
-    { "id": "dont_main", "section": "dont", "priority": 100,
+      "body": "教育委員会などが持っている文書は、多くの自治体で、条例にもとづく情報公開請求で見ることができます。ただし、持っていない資料を新しく作ってもらう手続きではありません。出してもらえなかったときは、決定の通知に書かれた理由と、不服を申し立てる方法を確かめます。"
+    },
+    {
+      "id": "dont_main",
+      "section": "dont",
+      "priority": 100,
       "title": "お子さんと、ほかの子どもたちを守るために",
-      "items": ["ほかの子やその家庭に、直接問いただしたり詰め寄ったりしない", "子どもや家庭が分かる情報（名前・写真・クラスなど）をネットに出さない", "見た目や話す言葉、家庭の文化や信仰などで、子どもを決めつけない", "確かめていないことを、ほかの保護者に広めない", "お子さんに、特定の子を避けるように言わない", "先生をどなったり、長い時間責め続けたりしない（話が進みにくくなります）"] },
-    { "id": "dont_child", "section": "dont", "priority": 90,
-      "when": { "any": [{ "fact": "situation", "in": ["B", "C"] }, { "fact": "topic", "in": ["B", "C"] }] },
+      "items": [
+        "ほかの子やその家庭に、直接問いただしたり詰め寄ったりしない",
+        "子どもや家庭が分かる情報（名前・写真・クラスなど）をネットに出さない",
+        "見た目や話す言葉、家庭の文化や信仰などで、子どもを決めつけない",
+        "確かめていないことを、ほかの保護者に広めない",
+        "お子さんに、特定の子を避けるように言わない",
+        "先生をどなったり、長い時間責め続けたりしない（話が進みにくくなります）"
+      ]
+    },
+    {
+      "id": "dont_child",
+      "section": "dont",
+      "priority": 90,
+      "when": { "any": [{"fact": "situation", "in": ["B", "C"]}, {"fact": "topic", "in": ["B", "C"]}] },
       "title": "お子さんを追い詰めないために",
-      "items": ["「やり返しなさい」「気にしすぎ」と言わない", "本人の気持ちを聞かずに、大ごとにしない（命や体の危険があるときは別）", "登校を無理に急がせない", "保護者が一人で抱え込まない（相談窓口は保護者も使えます）"] }
+      "items": ["「やり返しなさい」「気にしすぎ」と言わない", "本人の気持ちを聞かずに、大ごとにしない（命や体の危険があるときは別）", "登校を無理に急がせない", "保護者が一人で抱え込まない（相談窓口は保護者も使えます）"]
+    },
+    {
+      "id": "do_h_next",
+      "section": "do",
+      "priority": 100,
+      "when": { "fact": "situation", "eq": "H" },
+      "title": "議会での結果から、次の一手を探す",
+      "body": "請願・陳情の結果（不採択・審議未了など）、審査の経過、新しい資料の有無を答えると、理由の見立てと、次に取れる手段をご案内します。不採択は「問題がない」と確定した、という意味ではありません。",
+      "where": "このサイトの「次の一手を探す」",
+      "check": "請願の番号・件名、審査した委員会と日付、結果",
+      "bring": ["請願書の写し", "議会からの通知（あれば）"],
+      "script": "（「次の一手を探す」で、質問に答えてください）",
+      "ifNoAnswer": "根拠のある手段が残っていないときは、そのことをお知らせします。",
+      "links": [{"type": "next"}]
+    },
+    {
+      "id": "chk_stats",
+      "section": "check",
+      "priority": 85,
+      "when": { "any": [{"fact": "situation", "eq": "H"}, {"fact": "topic", "eq": "info"}, {"fact": "problems", "has": "support_load"}] },
+      "title": "公表されている統計と、出してもらえない情報の違い",
+      "body": "文部科学省は、[[日本語指導]]が必要な児童生徒の人数などを、全国・都道府県ごとに公表しています。市全体の集計（人数・指導の体制・支援員の配置）は、教育委員会が持っていれば、問い合わせや情報公開請求で求められます。一方、特定の子どもや家庭がわかる情報は、個人情報として出せないのがふつうです。求めるのは「集計」にしましょう。",
+      "facts": ["mext_nihongo", "nihongo_katei"]
+    }
   ]
 }

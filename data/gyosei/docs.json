@@ -1,0 +1,119 @@
+{
+  "docs": [
+    {
+      "id": "ask_basis",
+      "title": "回答の根拠・理由を確かめる問い合わせ文",
+      "desc": "役所から「できない」「問題ない」「指導する」などの回答を受けたあとに、その根拠と、確かめた事実を文書で聞く文です。メールにも使えます。",
+      "fields": [
+        { "id": "to", "label": "あて先", "placeholder": "〇〇市 〇〇課 御中（課長 〇〇様）" },
+        { "id": "date_prev", "label": "前に相談した日", "type": "date", "optional": true },
+        { "id": "topic", "label": "相談した内容", "type": "textarea", "placeholder": "〇〇町〇丁目の〇〇について、夜間の騒音が続いていること" },
+        { "id": "answer", "label": "受けた回答", "type": "textarea", "placeholder": "「法律上は問題ない」とのお答えでした" },
+        { "id": "concern", "label": "特に心配していること", "type": "textarea", "optional": true, "placeholder": "送迎の車が通学路に止まること" },
+        { "id": "deadline", "label": "回答をお願いする期限", "optional": true, "placeholder": "12月10日" },
+        { "id": "name", "label": "あなたの名前と連絡先", "type": "textarea", "placeholder": "〇〇町 〇〇〇〇　電話〇〇〇-〇〇〇〇" }
+      ],
+      "body": [
+        { "text": "{to}", "requires": ["to"] },
+        { "text": "" },
+        { "text": "{date_prev}に、次のことについてご相談しました。", "requires": ["date_prev"] },
+        { "text": "相談した内容：{topic}", "requires": ["topic"] },
+        { "text": "いただいた回答：{answer}", "requires": ["answer"] },
+        { "text": "" },
+        { "text": "今後の対応を考えるため、次の点を教えてください。" },
+        { "text": "１　判断の根拠とした法令・条例と、その条文" },
+        { "text": "２　確認された許可・届出などの手続きと、その番号・日付（あれば）" },
+        { "text": "３　確認された事実（現地の確認の有無と、その日付など）" },
+        { "text": "４　権限を持つ機関がほかにあれば、その名前" },
+        { "text": "５　私が特に心配している「{concern}」は、判断の対象に含まれているか", "requires": ["concern"] },
+        { "text": "" },
+        { "text": "お手数ですが、{deadline}までに、メールまたは文書でご回答をお願いいたします。", "requires": ["deadline"] },
+        { "text": "" },
+        { "text": "{name}", "requires": ["name"] }
+      ],
+      "checks": ["事実だけを書き、推測や決めつけを書いていない", "職員個人を責める表現がない", "聞きたいことを番号つきで並べた", "写しを手元に残した", "送った日と方法を「対応の記録」に書いた"],
+      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+    },
+    {
+      "id": "disclosure_memo",
+      "title": "情報公開請求の「請求する文書」の書き方メモ",
+      "desc": "情報公開請求書の「請求する文書の名称・内容」の欄に書く文を作ります。請求書そのものは、請求先の自治体・機関の様式を使ってください。",
+      "fields": [
+        { "id": "body_name", "label": "請求先", "placeholder": "〇〇市（〇〇市長）" },
+        { "id": "year", "label": "年度・期間", "placeholder": "令和7年度" },
+        { "id": "dept", "label": "作った課（わかれば）", "optional": true, "placeholder": "〇〇課" },
+        { "id": "project", "label": "事業・件名", "placeholder": "〇〇事業" },
+        { "id": "doc_kinds", "label": "文書の種類", "placeholder": "契約書、仕様書、実績報告書" },
+        { "id": "exclude", "label": "いらないもの（あれば）", "optional": true, "placeholder": "個人の氏名・住所は不要" }
+      ],
+      "body": [
+        { "text": "請求先：{body_name}", "requires": ["body_name"] },
+        { "text": "" },
+        { "text": "請求する文書：" },
+        { "text": "{year}に{dept}が作成または取得した、{project}に関する{doc_kinds}", "requires": ["year", "dept", "project", "doc_kinds"] },
+        { "text": "{year}に作成または取得された、{project}に関する{doc_kinds}", "requires": ["year", "project", "doc_kinds"], "unless": ["dept"] },
+        { "text": "（{exclude}）", "requires": ["exclude"] }
+      ],
+      "checks": ["「情報」ではなく「文書」を指定した（年度・件名・文書の種類）", "個人が特定される情報を求めていない（必要なければ不要と書いた）", "請求先が、その文書を持っている機関か確かめた", "請求した日と受付の控えを記録した"],
+      "links": [{"type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手順"}]
+    },
+    {
+      "id": "giin_memo",
+      "title": "議員に相談するための1枚メモ",
+      "desc": "議員に、経過と役所の回答、お願いしたいことを短く伝えるメモです。",
+      "fields": [
+        { "id": "name", "label": "あなたの名前と住所（町名まで）", "placeholder": "〇〇町 〇〇〇〇" },
+        { "id": "problem", "label": "困りごと（1〜2行）", "type": "textarea", "placeholder": "〇〇の夜間の騒音が、〇月から週3回ほど続いている" },
+        { "id": "timeline", "label": "これまでの経過", "type": "textarea", "placeholder": "11/5 〇〇課に電話「確認する」→ 11/20 メール、回答なし" },
+        { "id": "gov_answer", "label": "役所の回答", "type": "textarea", "optional": true, "placeholder": "「法律上は問題ない」" },
+        { "id": "ask", "label": "議員にお願いしたいこと", "type": "textarea", "placeholder": "担当課に、確認の状況を聞いていただきたい" },
+        { "id": "contact", "label": "連絡先", "placeholder": "電話〇〇〇-〇〇〇〇／メール" }
+      ],
+      "body": [
+        { "text": "【ご相談】{problem}", "requires": ["problem"] },
+        { "text": "相談者：{name}", "requires": ["name"] },
+        { "text": "" },
+        { "text": "■ これまでの経過" },
+        { "text": "{timeline}", "requires": ["timeline"] },
+        { "text": "■ 役所の回答" },
+        { "text": "{gov_answer}", "requires": ["gov_answer"] },
+        { "text": "■ お願いしたいこと" },
+        { "text": "{ask}", "requires": ["ask"] },
+        { "text": "" },
+        { "text": "連絡先：{contact}", "requires": ["contact"] }
+      ],
+      "checks": ["1枚に収まる長さにした", "事実と、自分の考えを分けて書いた", "ほかの人の個人情報を書いていない", "お願いしたいことを1〜2つにしぼった"]
+    },
+    {
+      "id": "petition_review",
+      "title": "請願・陳情の振り返りメモ",
+      "desc": "結果が出た請願・陳情について、求めたこと・審査の経過・理由・次に求めることを整理するメモです。",
+      "fields": [
+        { "id": "title", "label": "件名と番号", "placeholder": "請願第〇号 〇〇についての請願" },
+        { "id": "submitted", "label": "出した日・議会", "placeholder": "令和8年6月 〇〇市議会" },
+        { "id": "committee", "label": "審査した委員会と日付", "optional": true, "placeholder": "文教委員会 令和8年9月10日" },
+        { "id": "result", "label": "結果", "placeholder": "不採択" },
+        { "id": "asked", "label": "求めたこと", "type": "textarea", "placeholder": "〇〇の実態を調査し、公表すること" },
+        { "id": "reasons", "label": "結論の理由として確認できたこと", "type": "textarea", "optional": true, "placeholder": "会議録：〇〇議員「個人情報の扱いが課題」、教育委員会「全国調査に回答済み」" },
+        { "id": "new_facts", "label": "その後の新しい資料・事情", "type": "textarea", "optional": true },
+        { "id": "next_ask", "label": "次に求めること（具体的に）", "type": "textarea", "optional": true, "placeholder": "市全体の人数と支援員の配置を、年1回公表すること" }
+      ],
+      "body": [
+        { "text": "【振り返り】{title}", "requires": ["title"] },
+        { "text": "出した日・議会：{submitted}", "requires": ["submitted"] },
+        { "text": "審査：{committee}", "requires": ["committee"] },
+        { "text": "結果：{result}", "requires": ["result"] },
+        { "text": "" },
+        { "text": "■ 求めたこと" },
+        { "text": "{asked}", "requires": ["asked"] },
+        { "text": "■ 結論の理由として確認できたこと" },
+        { "text": "{reasons}", "requires": ["reasons"] },
+        { "text": "■ その後の新しい資料・事情" },
+        { "text": "{new_facts}", "requires": ["new_facts"] },
+        { "text": "■ 次に求めること" },
+        { "text": "{next_ask}", "requires": ["next_ask"] }
+      ],
+      "checks": ["理由は、会議録や議員の説明で確かめたことだけを書いた", "個人が特定される情報を求めていない", "次に求めることは、何を・いつまでに・どのくらいかがわかる"]
+    }
+  ]
+}
