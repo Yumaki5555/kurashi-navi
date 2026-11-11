@@ -15,7 +15,7 @@
       "links": [ { "type": "records" } ]
     },
     {
-      "id": "do_improved", "section": "do", "priority": 95,
+      "id": "do_improved", "section": "do", "priority": 95, "onImproved": true,
       "when": { "fact": "outcome", "eq": "improved" },
       "title": "よくなった状態が続くか、記録しながら見守る",
       "body": "改善しても、宿泊者が入れ替わるとまた起きることがあります。再び起きたときにすぐ伝えられるよう、相手の連絡先とこれまでの記録を残しておきます。",
@@ -206,7 +206,7 @@
     },
     {
       "id": "do_d_no_change", "section": "do", "priority": 85,
-      "when": { "any": [ { "fact": "gov_response", "eq": "no_change" }, { "all": [ { "fact": "done", "has": "gov" }, { "fact": "outcome", "in": ["same", "worse", "temporary"] } ] } ] },
+      "when": { "any": [ { "fact": "gov_response", "eq": "no_change" }, { "all": [ { "fact": "done", "has": "gov" }, { "fact": "outcome", "in": ["partial", "same", "worse", "temporary"] } ] } ] },
       "title": "指導の内容と、その後の対応を確かめる",
       "body": "指導のあとも続いていることを、記録で示して伝えます。改善しない場合に自治体が取れる手段もあります。",
       "where": "前に相談した担当課",
@@ -353,7 +353,7 @@
     },
     {
       "id": "chk_limits", "section": "check", "priority": 80,
-      "when": { "any": [ { "fact": "gov_response", "in": ["legal_ok", "no_change"] }, { "fact": "outcome", "in": ["same", "worse"] } ] },
+      "when": { "any": [ { "fact": "gov_response", "in": ["legal_ok", "no_change"] }, { "fact": "outcome", "in": ["partial", "same", "worse"] } ] },
       "title": "役所ができること・できないこと",
       "body": "届出済みでルールを守っている施設は、役所が営業そのものを止められないことがあります。その場合でも、苦情への対応を事業者に求めることはできます。止めるための仕組みがないなら、管理組合のルールや、地域のルール（条例）づくりを考えます。",
       "facts": ["jutaku_kantoku", "jutaku_complaint"]
@@ -389,7 +389,7 @@
     },
     {
       "id": "ifn_rule", "section": "ifnot", "priority": 60,
-      "when": { "any": [ { "fact": "gov_response", "eq": "legal_ok" }, { "fact": "outcome", "in": ["same", "worse"] }, { "fact": "situation", "in": ["A", "E"] } ] },
+      "when": { "any": [ { "fact": "gov_response", "eq": "legal_ok" }, { "fact": "outcome", "in": ["partial", "same", "worse"] }, { "fact": "situation", "in": ["A", "E"] } ] },
       "title": "ルールそのものを変える",
       "body": "今のルールでは止められないときは、地域のルールを変えることを考えます。診断で「自治体の民泊ルールを変えたい」を選ぶと、進め方をご案内します。",
       "links": [ { "type": "pubcome" }, { "type": "shomei" }, { "type": "todokeru-guide", "guide": "petition", "label": "請願・陳情の出し方（声を届ける）" } ]

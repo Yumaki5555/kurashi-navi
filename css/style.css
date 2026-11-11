@@ -69,6 +69,8 @@ dd.script{background:var(--accent-bg);padding:10px 12px;border-radius:var(--r)}
 .src summary{cursor:pointer;color:var(--sub)}
 .term{font:inherit;color:var(--accent);background:none;border:0;border-bottom:1px dashed var(--accent);padding:0;cursor:pointer}
 .termbox{background:var(--accent-bg);padding:10px 12px;border-radius:var(--r);margin:8px 0;font-size:.95rem}
+.opt{display:grid;gap:4px}.opt-terms{display:flex;flex-wrap:wrap;gap:4px 14px;padding:0 6px;font-size:.92rem}.opt-terms .term{padding:4px 0}
+.savebar{position:sticky;top:0;z-index:20;max-width:720px;margin:0 auto;padding:10px 12px;border-radius:0 0 var(--r) var(--r);font-size:.92rem}.savebar.ng{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger)}.savebar.ok{background:var(--ok-bg);color:var(--ok)}.savebar .btn{margin:4px 4px 0 0}
 .checklist{list-style:none;padding:0;margin:8px 0}
 .checklist li{border-bottom:1px solid var(--line);padding:8px 0}
 .checklist label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}

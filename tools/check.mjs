@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import * as E from '../js/engine.js';
 import { renderDoc, docLines } from '../js/docs.js';
+import { ladderState, isPlanned } from '../js/records.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const domain = process.argv[2] || 'minpaku';
@@ -85,7 +86,10 @@ function dfs(state) {
       const r = E.compose(data, state.facts);
       for (const sec of ['todo', 'check', 'checklist', 'ifnot', 'dont']) if (!r[sec].length) { emptySec[sec] = (emptySec[sec] || 0) + 1; if (emptySec[sec] <= 3) err(`結果の「${sec}」が空: ` + JSON.stringify(state.facts)); }
       if (!r.cases.length) noCase++;
-      const shown = new Set([...r.todo, ...r.check, ...r.ifnot, ...r.dont].map(c => c.id));
+      const shown = new Set([...r.todo, ...r.recur, ...r.check, ...r.ifnot, ...r.dont].map(c => c.id));
+      // 「よくなった」なら見守りの案内だけを先に出す。そうでなければ見守りの案内は出さない
+      if (state.facts.outcome === 'improved' && r.todo.some(c => !c.onImproved)) err('よくなったのに相談・要望の案内が「次にすること」に出た: ' + JSON.stringify(state.facts));
+      if (state.facts.outcome !== 'improved' && r.todo.some(c => c.onImproved)) err('よくなっていないのに見守りの案内が出た: ' + JSON.stringify(state.facts));
       for (const c of cards) if (shown.has(c.id)) for (const x of c.conflicts || []) if (shown.has(x)) err(`同時に出てはいけない ${c.id} と ${x} が出た: ` + JSON.stringify(state.facts));
       if (paths % 5000 === 1) finals.push({ facts: state.facts, todo: r.todo.slice(0, 3).map(c => c.id) });
     }
@@ -145,6 +149,28 @@ for (const d of docs) {
   for (const line of d.body) for (const m of line.text.matchAll(/\{([a-z_]+)\}/g)) {
     if (!d.fields.some(f => f.id === m[1])) err(`文書 ${d.id}: 欄 ${m[1]} が fields にない`);
     if (!(line.requires || []).includes(m[1])) err(`文書 ${d.id}: 「${line.text.slice(0, 16)}…」は ${m[1]} を使うのに requires にない`);
+  }
+}
+
+// ---- 7. 対応記録の判定：予定（これから・先の日付）を「済んだ」に数えないか ----
+const ladder = opt(`data/${domain}/ladder.json`);
+if (ladder) {
+  const T = '2026-11-11', LATER = '2026-12-01';
+  for (const k of ['todo', 'doing', 'answered', 'done']) if (!ladder.states?.[k]) err(`段階: 記録の状況「${k}」の名前がない`);
+  const st = ladder.steps.find(s => s.toTypes?.length && !s.methods && !s.showIf);
+  if (!st) err('段階: 検査に使える段階がない');
+  else {
+    const rec = (state, date = T, toName = '') => ({ toType: st.toTypes[0], method: 'phone', state, date, toName });
+    const doneOf = recs => ladderState(ladder, {}, recs, T).done.some(s => s.id === st.id);
+    if (doneOf([rec('todo')])) err(`段階 ${st.id}: 「これから」の記録で済んだことになる`);
+    if (doneOf([rec('doing', LATER)])) err(`段階 ${st.id}: 先の日付の記録で済んだことになる`);
+    if (!doneOf([rec('doing')])) err(`段階 ${st.id}: 実際にした記録で済んだことにならない`);
+    if (!doneOf([rec('answered')])) err(`段階 ${st.id}: 「回答があった」の記録で済んだことにならない`);
+    const rep = recs => ladderState(ladder, {}, recs, T).repeated.length;
+    if (rep([rec('todo'), rec('todo')])) err('段階: 予定2件を「繰り返し相談」と数えた');
+    if (rep([rec('doing', T, 'A課'), rec('done', T, 'B課')])) err('段階: 別の部署への相談を「繰り返し相談」と数えた');
+    if (!rep([rec('doing', T, 'A課'), rec('done', T, 'A 課')])) err('段階: 同じ部署への2回の相談を数えない');
+    if (!isPlanned(rec('doing', LATER), T) || isPlanned(rec('done'), T)) err('段階: 予定の判定が違う');
   }
 }
 

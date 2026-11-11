@@ -5,6 +5,9 @@ export const PREFIX = 'kurashi-navi:';
 const KEY = PREFIX + 'files';
 const SET = PREFIX + 'settings';
 let memory = { files: [] }, memSet = {};
+// 保存に失敗したら、端末の中の古い内容ではなく、画面で使っている最新の内容（memory）を読むようにする
+let dirty = false;
+export let lastOk = true; // 直前の保存がうまくいったか（画面で知らせるため）
 
 function ls() { try { return window.localStorage; } catch { return null; } }
 
@@ -15,13 +18,17 @@ export function available() {
 }
 
 export function loadAll() {
+  if (dirty) return memory;
   try { const v = JSON.parse(ls()?.getItem(KEY) || 'null'); if (v && Array.isArray(v.files)) return v; } catch { /* 読めないときは一時保存を使う */ }
   return memory;
 }
 
 function saveAll(db) {
   memory = db;
-  try { ls()?.setItem(KEY, JSON.stringify(db)); return true; } catch { return false; }
+  const s = ls();
+  try { if (!s) throw new Error('保存場所がありません'); s.setItem(KEY, JSON.stringify(db)); dirty = false; lastOk = true; }
+  catch { dirty = true; lastOk = false; }
+  return lastOk;
 }
 
 export const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -74,7 +81,7 @@ export function restore(text) {
 }
 
 export function clearAll() {
-  memory = { files: [] }; memSet = {};
+  memory = { files: [] }; memSet = {}; dirty = false; lastOk = true;
   const s = ls();
   if (!s) return;
   const keys = [];

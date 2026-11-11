@@ -151,7 +151,13 @@ export function compose(data, facts) {
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
     .map(x => x.c);
-  return { todo: pick('do'), check: pick('check'), checklist, cases, ifnot: pick('ifnot'), dont: pick('dont') };
+  // 「よくなった」と答えた人には、見守りの案内（onImproved）だけを「次にすること」に出し、
+  // ほかの相談・要望の案内は「また起きたとき・ほかの困りごとが残るとき」（recur）へ回す
+  const all = pick('do');
+  const improved = facts.outcome === 'improved';
+  const todo = improved ? all.filter(c => c.onImproved) : all.filter(c => !c.onImproved);
+  const recur = improved ? all.filter(c => !c.onImproved) : [];
+  return { todo, recur, check: pick('check'), checklist, cases, ifnot: pick('ifnot'), dont: pick('dont') };
 }
 
 // 事例の近さ：同じ状況（A〜E）なら+2、困りごと・理由・施設の種類・望むことなどのタグが重なるごとに+1

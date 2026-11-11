@@ -18,7 +18,7 @@
     "other": "その他"
   },
   "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
-  "states": { "todo": "これから", "doing": "回答待ち・対応中", "done": "終わった" },
+  "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
   "steps": [
     { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
     { "id": "check_plan", "title": "計画や許可の記録を確かめる", "body": "現地の看板、建築計画概要書、用途地域などで、事実を確かめます。", "showIf": { "fact": "situation", "in": ["A", "C"] }, "doneIf": { "any": [{ "fact": "checked_plan", "eq": "yes" }, { "fact": "checked_record", "eq": "yes" }] } },

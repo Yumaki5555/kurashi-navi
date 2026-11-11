@@ -144,6 +144,7 @@
       "text": "伝えたあと、様子は変わりましたか？",
       "options": [
         { "value": "improved", "label": "よくなった", "short": "よくなった" },
+        { "value": "partial", "label": "一部はよくなったが、まだ困っている", "short": "一部よくなった" },
         { "value": "temporary", "label": "一時的によくなったが、元に戻った", "short": "一時的によくなった" },
         { "value": "same", "label": "変わらない", "short": "変わらない" },
         { "value": "worse", "label": "悪くなった", "short": "悪くなった" }

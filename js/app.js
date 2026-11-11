@@ -2,7 +2,7 @@
 import * as E from './engine.js';
 import * as S from './store.js';
 import { renderDoc } from './docs.js';
-import { STATUS, ladderState, currentStatus, recordsText } from './records.js';
+import { STATUS, STATUS_OUTCOME, ladderState, currentStatus, recordsText, isPlanned } from './records.js';
 
 const main = document.getElementById('main');
 const G = { sources: {}, links: {}, domains: [], areas: null, lists: null, focus: null };
@@ -13,6 +13,11 @@ let cur = null; // { file, data }
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = s => esc(s).replace(/\[\[([^\]]+)\]\]/g, (_, t) => `<button type="button" class="term" data-act="term" data-term="${t}">${t}</button>`);
 const plain = s => String(s ?? '').replace(/\[\[([^\]]+)\]\]/g, '$1');
+// 回答ボタンの中にボタンを入れられない（HTMLの決まり）ので、用語の説明ボタンは回答ボタンの外に並べる
+const termBtns = s => {
+  const ts = [...new Set([...String(s ?? '').matchAll(/\[\[([^\]]+)\]\]/g)].map(m => m[1]))];
+  return ts.length ? `<span class="opt-terms">${ts.map(t => `<button type="button" class="term" data-act="term" data-term="${esc(t)}">「${esc(t)}」とは</button>`).join('')}</span>` : '';
+};
 const today = () => new Date().toLocaleDateString('sv-SE');
 const fmtDate = iso => (iso ? new Date(iso).toLocaleDateString('ja-JP') : '');
 async function getJSON(p) { try { const r = await fetch(p, { cache: 'no-cache' }); return r.ok ? await r.json() : null; } catch { return null; } }
@@ -60,7 +65,21 @@ function openFile(id) {
   if (!file) { location.hash = '#/'; return null; }
   return file;
 }
-function save() { if (cur?.file) S.putFile(cur.file); }
+function save() { if (cur?.file) { S.putFile(cur.file); saved(); } }
+// 保存できなかったときは、画面の上に知らせ続ける（画面を切り替えても消えない場所に出す）
+let savedTimer = 0;
+function saved() {
+  const bar = document.getElementById('savebar');
+  if (!bar) return;
+  clearTimeout(savedTimer);
+  if (!S.lastOk) {
+    bar.className = 'savebar ng noprint'; bar.hidden = false;
+    bar.innerHTML = '<b>この端末に保存できませんでした。</b>（保存できる量がいっぱい、プライベートモードなどの理由が考えられます）入力した内容は、この画面を開いている間は残っていますが、閉じると消えます。<button class="btn slim" data-act="backup">バックアップを保存（ファイル）</button>するか、文をコピーして残してください。';
+  } else if (!bar.hidden && bar.classList.contains('ng')) {
+    bar.className = 'savebar ok noprint'; bar.textContent = '保存できました。';
+    savedTimer = setTimeout(() => (bar.hidden = true), 4000);
+  }
+}
 function setView(html, title) {
   main.innerHTML = html;
   document.title = (title ? title + '｜' : '') + '暮らしの問題解決ナビ';
@@ -120,8 +139,8 @@ function viewQuestion() {
   const opts = E.optionsOf(tree, node);
   let body;
   if (node.type === 'yesno') body = `<div class="yn">${opts.map(o => `<button class="btn big${prev === o.value ? ' chosen' : ''}" data-act="ans" data-v="${o.value}">${o.label}</button>`).join('')}</div>`;
-  else if (node.type === 'choice') body = `<div class="stack">${opts.map(o => `<button class="btn big left${prev === o.value ? ' chosen' : ''}" data-act="ans" data-v="${o.value}">${rich(o.label)}</button>`).join('')}</div>`;
-  else body = `<fieldset class="stack"><legend class="sr">${esc(plain(node.text))}</legend>${opts.map(o => `<label class="btn big left check"><input type="checkbox" value="${o.value}"${Array.isArray(prev) && prev.includes(o.value) ? ' checked' : ''}${o.exclusive ? ' data-ex="1"' : ''}> <span>${rich(o.label)}</span></label>`).join('')}</fieldset>
+  else if (node.type === 'choice') body = `<div class="stack">${opts.map(o => `<div class="opt"><button class="btn big left${prev === o.value ? ' chosen' : ''}" data-act="ans" data-v="${o.value}">${esc(plain(o.label))}</button>${termBtns(o.label)}</div>`).join('')}</div>`;
+  else body = `<fieldset class="stack"><legend class="sr">${esc(plain(node.text))}</legend>${opts.map(o => `<div class="opt"><label class="btn big left check"><input type="checkbox" value="${o.value}"${Array.isArray(prev) && prev.includes(o.value) ? ' checked' : ''}${o.exclusive ? ' data-ex="1"' : ''}> <span>${esc(plain(o.label))}</span></label>${termBtns(o.label)}</div>`).join('')}</fieldset>
     <p class="err" id="err" role="alert"></p><button class="btn big primary" data-act="multi">次へ</button>`;
   setView(`
     <a class="btn danger slim" href="#/emergency">今まさに危険なことが起きている</a>
@@ -184,9 +203,9 @@ function linksBlock(links = []) {
   }).join('')}</div>`;
 }
 
-function todoCard(c, i) {
+function todoCard(c, i, open = i === 0) {
   const script = plain(c.script);
-  return `<details class="card todo"${i === 0 ? ' open' : ''}><summary><span class="num">${i + 1}</span>${rich(c.title)}</summary>
+  return `<details class="card todo"${open ? ' open' : ''}><summary><span class="num">${i + 1}</span>${rich(c.title)}</summary>
     ${c.body ? `<p>${rich(c.body)}</p>` : ''}
     <dl>
       <dt>どこへ</dt><dd>${rich(c.where)}</dd>
@@ -232,7 +251,10 @@ function regionBlock() {
 function viewResult() {
   const { file, data } = cur;
   if (file.state.node !== E.RESULT) { location.hash = `#/f/${file.id}/q`; return; }
-  const facts = file.state.facts;
+  const st = currentStatus(file);
+  // 記録の画面で選んだ「今の状態」があれば、診断のときの答え（その後どうなったか）より優先する
+  const outcome = STATUS_OUTCOME[st];
+  const facts = outcome ? { ...file.state.facts, outcome } : file.state.facts;
   const r = E.compose(data, facts);
   const sum = E.summarize(data.tree, file.state);
   const lad = ladderState(data.ladder, facts, file.records);
@@ -244,13 +266,15 @@ function viewResult() {
     <p class="note">この結果は、対応の仕方を整理するためのもので、法的な判断ではありません。</p>
     <details class="card sum"><summary>あなたの状況（答えた内容）</summary><ul>${sum.map(s => `<li>${esc(s.label)}：<b>${esc(s.value)}</b></li>`).join('')}</ul>
       <button class="btn slim" data-act="edit">答えを直す</button></details>
-    <section><h2>次にすること</h2>${r.todo.map(todoCard).join('')}</section>
+    ${outcome ? `<p class="note">「対応の記録」で今の状態を「${esc(STATUS.find(s => s.value === st).label)}」にしているので、それに合わせた案内を出しています。<a href="#/f/${file.id}/records">状態を変える</a></p>` : ''}
+    <section><h2>次にすること</h2>${r.todo.map((c, i) => todoCard(c, i)).join('')}</section>
+    ${r.recur.length ? `<section><h2>また起きたとき・ほかの困りごとが残るとき</h2><p class="help">今は必要ありません。再び起きたときや、別の困りごとが残っているときに開いてください。</p>${r.recur.map((c, i) => todoCard(c, i, false)).join('')}</section>` : ''}
     ${regionBlock()}
     <section><h2>まず確認すること</h2>${r.check.map(c => infoCard(c)).join('')}</section>
     <section><h2>チェックリスト <small>${nDone} / ${r.checklist.length}</small></h2>
       <ul class="checklist">${r.checklist.map(i => `<li><label><input type="checkbox" data-act="check" data-id="${i.id}"${checked[i.id] ? ' checked' : ''}> ${rich(i.text)}</label></li>`).join('')}</ul></section>
     <section><h2>やってはいけないこと</h2>${r.dont.map(c => infoCard(c, true)).join('')}</section>
-    <section><h2>似た問題の事例</h2>${r.cases.length ? r.cases.map(caseItem).join('') : '<p class="note">似た事例は、確認でき次第追加します。</p>'}
+    <section><h2>似た問題の事例</h2>${r.cases.length ? r.cases.map(c => caseItem(c, file.domain)).join('') : '<p class="note">似た事例は、確認でき次第追加します。</p>'}
       <a class="btn" href="#/cases/${file.domain}">事例集をすべて見る</a></section>
     <section><h2>解決しなかったら</h2>
       ${lad.next ? `<div class="box"><b>次の段階：${esc(lad.next.title)}</b><p>${rich(lad.next.body)}</p>${linksBlock(lad.next.links)}</div>` : ''}
@@ -262,8 +286,9 @@ function viewResult() {
     </div>`, '診断の結果');
 }
 
-function caseItem(c) {
-  return `<a class="case" href="#/case/${cur?.file?.domain || 'minpaku'}/${c.id}"><span class="tag o-${c.outcome}">${OUTCOME[c.outcome]}</span>
+// 事例の分野は、表示している一覧の分野を必ず渡す（開いている相談の分野を使うと、別の分野の事例に入れない）
+function caseItem(c, domain) {
+  return `<a class="case" href="#/case/${domain}/${c.id}"><span class="tag o-${c.outcome}">${OUTCOME[c.outcome]}</span>
     <b>${esc(c.title)}</b><span class="meta">${esc(c.place?.pref || '')}${esc(c.place?.city || '')}・${esc(c.period || '')}</span><span>${esc(c.lesson || '')}</span></a>`;
 }
 
@@ -284,7 +309,7 @@ async function viewCases(domain, q = {}) {
     <p class="note">一次資料（自治体・議会・裁判所など）で確認できた事例だけを載せています。確認できない点は「不明」としています。</p>
     <div class="row"><select data-act="cfilter" data-k="o" aria-label="結果で絞り込む"><option value="">結果：すべて</option>${Object.entries(OUTCOME).map(([k, v]) => `<option value="${k}"${k === out ? ' selected' : ''}>${v}</option>`).join('')}</select>
     <select data-act="cfilter" data-k="k" aria-label="資料の種類で絞り込む"><option value="">資料：すべて</option>${Object.entries(KIND).map(([k, v]) => `<option value="${k}"${k === kind ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
-    ${list.length ? list.map(caseItem).join('') : '<p class="note">該当する事例はまだありません。</p>'}`, '事例集');
+    ${list.length ? list.map(c => caseItem(c, domain)).join('') : '<p class="note">該当する事例はまだありません。</p>'}`, '事例集');
 }
 
 async function viewCase(domain, id) {
@@ -339,7 +364,7 @@ function viewDoc(docId) {
     <h1>${esc(d.title)}</h1><p class="help">${esc(d.desc)}</p>
     <section class="card plainc"><h2>1. 事実を入れる</h2><p class="note">わかることだけ入れてください。空欄の項目は、文章に出てきません。</p>${d.fields.map(field).join('')}</section>
     <section class="card plainc"><h2>2. できた下書き（ここで直せます）</h2>
-      ${saved?.edited ? '<p class="warn">手で直した下書きです。上の欄を変えても反映されません。<button class="btn slim" data-act="regen">欄の内容で作り直す</button></p>' : ''}
+      <p class="warn" id="editwarn" role="status"${saved?.edited ? '' : ' hidden'}>手で直した下書きです。これからは上の欄を変えても、この下書きには反映されません（手で直した内容はそのまま残ります）。<button class="btn slim" data-act="regen">欄の内容で作り直す</button></p>
       <textarea id="doctext" data-act="doctext" rows="14">${esc(text)}</textarea>
       <div class="row"><button class="btn" data-act="copydoc">コピー</button><button class="btn" data-act="savedoc">テキストで保存</button><button class="btn" data-act="print">印刷・PDF</button></div></section>
     <section class="card plainc"><h2>3. 出す前の確認</h2><ul class="checklist">${(d.checks || []).map(c => `<li><label><input type="checkbox"> ${esc(c)}</label></li>`).join('')}</ul></section>
@@ -359,7 +384,8 @@ function viewRecords(editId) {
   let next = '';
   if (st === 'resolved') next = '<div class="box ok"><b>解決したと記録されています。</b><p>記録は残しておくと、また起きたときに役立ちます。</p></div>';
   else if (lad.next) next = `<div class="box"><b>次の段階：${esc(lad.next.title)}</b><p>${rich(lad.next.body)}</p>${linksBlock(lad.next.links)}</div>`;
-  if (lad.repeated.length && st !== 'resolved') next += `<p class="warn">${lad.repeated.map(t => esc(L.toType[t])).join('・')}には2回以上相談しています。同じ相談を繰り返すより、回答の内容を記録して、次の段階に進むことを考えましょう。</p>`;
+  if (lad.repeated.length && st !== 'resolved') next += `<p class="warn">${lad.repeated.map(t => esc((L.toType[t.toType] || '') + (t.toName ? `（${t.toName}）` : ''))).join('・')}には2回以上相談しています。同じ相談を繰り返すより、回答の内容を記録して、次の段階に進むことを考えましょう。</p>`;
+  if (lad.planned.length) next += `<p class="note">予定（まだしていないこと）の記録が${lad.planned.length}件あります。予定は「済んだこと」に数えていません。実際にしたら、その記録の「直す」から状況を変えてください。</p>`;
   setView(`<p class="crumb"><a href="#/f/${file.id}/result">診断の結果</a></p>
     <h1>対応の記録</h1>
     <p class="note">この端末の中だけに保存されます。共有の端末では、終わったら<a href="#/data">データを削除</a>してください。</p>
@@ -380,7 +406,7 @@ function viewRecords(editId) {
         <button class="btn big primary" type="submit">${editId ? '直した内容を保存' : '記録を保存'}</button>${editId ? ` <a class="btn" href="#/f/${file.id}/records">やめる</a>` : ''}
       </form></section>
     <section><h2>これまでの記録（${rs.length}件）</h2>
-      ${rs.map(r => `<article class="card plainc rec"><b>${esc(r.date)}　${esc(L.toType[r.toType] || '')}${r.toName ? '（' + esc(r.toName) + '）' : ''}</b><span class="meta">${esc(L.method[r.method] || '')}・${esc(L.state[r.state] || '')}</span>
+      ${rs.map(r => `<article class="card plainc rec"><b>${esc(r.date)}　${esc(L.toType[r.toType] || '')}${r.toName ? '（' + esc(r.toName) + '）' : ''}</b><span class="meta">${isPlanned(r) ? '<span class="tag">予定</span> ' : ''}${esc(L.method[r.method] || '')}・${esc(L.state[r.state] || '')}</span>
         ${r.content ? `<p><small>内容</small><br>${esc(r.content)}</p>` : ''}${r.response ? `<p><small>回答</small><br>${esc(r.response)}</p>` : ''}${r.next ? `<p><small>次にすること</small><br>${esc(r.next)}</p>` : ''}
         <div class="row"><a class="btn slim" href="#/f/${file.id}/records/${r.id}">直す</a><button class="btn slim" data-act="delrec" data-id="${r.id}">削除</button></div></article>`).join('') || '<p class="note">まだ記録はありません。</p>'}</section>
     <div class="row"><button class="btn" data-act="savetxt">テキストで保存</button><button class="btn" data-act="print">印刷・PDF</button></div>`, '対応の記録');
@@ -452,7 +478,7 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]');
   if (!t || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type !== 'button')) return;
   const act = t.dataset.act;
-  if (act === 'new') { const data = await loadDomain(t.dataset.domain); const f = S.createFile(t.dataset.domain, E.begin(data.tree)); location.hash = `#/f/${f.id}/q`; }
+  if (act === 'new') { const data = await loadDomain(t.dataset.domain); const f = S.createFile(t.dataset.domain, E.begin(data.tree)); saved(); location.hash = `#/f/${f.id}/q`; }
   else if (act === 'ans') doAnswer(t.dataset.v);
   else if (act === 'multi') {
     const v = [...main.querySelectorAll('fieldset input:checked')].map(x => x.value);
@@ -470,12 +496,15 @@ document.addEventListener('click', async e => {
   else if (act === 'copy') copy(t.dataset.text, t);
   else if (act === 'copydoc') copy(document.getElementById('doctext').value, t);
   else if (act === 'savedoc') download(`下書き_${new Date().toLocaleDateString('sv-SE')}.txt`, document.getElementById('doctext').value);
-  else if (act === 'regen') { const id = location.hash.split('/')[4]; cur.file.docs[id].edited = false; save(); viewDoc(id); }
+  else if (act === 'regen') {
+    if (!confirm('手で直した部分は消えて、上の欄の内容で下書きを作り直します。よろしいですか？')) return;
+    const id = location.hash.split('/')[4]; cur.file.docs[id].edited = false; save(); viewDoc(id);
+  }
   else if (act === 'print') window.print();
   else if (act === 'savetxt') download(`対応の記録_${new Date().toLocaleDateString('sv-SE')}.txt`, recordsText(cur.file, recLabels()));
   else if (act === 'delrec') { cur.file.records = cur.file.records.filter(r => r.id !== t.dataset.id); save(); viewRecords(); }
   else if (act === 'histback') history.length > 1 ? history.back() : (location.hash = '#/');
-  else if (act === 'delfile') { S.removeFile(t.dataset.id); viewData(false); }
+  else if (act === 'delfile') { S.removeFile(t.dataset.id); saved(); viewData(false); }
   else if (act === 'backup') download(`暮らしの問題解決ナビ_バックアップ_${new Date().toLocaleDateString('sv-SE')}.json`, S.backupText(), 'application/json');
   else if (act === 'wipe') viewData(true);
   else if (act === 'wipe2') { S.clearAll(); viewData(false); document.getElementById('msg').textContent = 'このサイトの記録をすべて削除しました。'; }
@@ -493,7 +522,7 @@ document.addEventListener('change', async e => {
   else if (act === 'city') { const p = (G.areas?.prefs || []).find(x => x.code === cur.file.region?.pref); const c = p?.cities.find(([k]) => k === t.value); cur.file.region = { ...cur.file.region, code: c ? c[0] : '', cityName: c ? c[1] : '' }; save(); viewResult(); main.querySelector('.region')?.scrollIntoView(); }
   else if (act === 'status') { cur.file.statusLog = [...(cur.file.statusLog || []), { date: today(), status: t.value }]; save(); viewRecords(); }
   else if (act === 'cfilter') { const q = new URLSearchParams(location.hash.split('?')[1] || ''); t.value ? q.set(t.dataset.k, t.value) : q.delete(t.dataset.k); location.hash = location.hash.split('?')[0] + (q.toString() ? '?' + q : ''); }
-  else if (act === 'restore' && t.files[0]) { try { const n = S.restore(await t.files[0].text()); viewData(false); document.getElementById('msg').textContent = `${n}件の相談を戻しました。`; } catch (er) { document.getElementById('msg').textContent = er.message; } }
+  else if (act === 'restore' && t.files[0]) { try { const n = S.restore(await t.files[0].text()); saved(); viewData(false); document.getElementById('msg').textContent = S.lastOk ? `${n}件の相談を戻しました。` : `${n}件の相談を画面に戻しましたが、この端末には保存できませんでした。`; } catch (er) { document.getElementById('msg').textContent = er.message; } }
 });
 
 document.addEventListener('input', e => {
@@ -505,7 +534,11 @@ document.addEventListener('input', e => {
   if (act === 'field') {
     sv.values[t.dataset.f] = t.value;
     if (!sv.edited) document.getElementById('doctext').value = renderDoc(d, sv.values);
-  } else { sv.edited = true; sv.text = t.value; }
+  } else {
+    // 最初に手で直したときに、その場で「以後は欄の変更が反映されない」ことを知らせる
+    if (!sv.edited) { const w = document.getElementById('editwarn'); if (w) w.hidden = false; }
+    sv.edited = true; sv.text = t.value;
+  }
   save();
 });
 
@@ -514,6 +547,7 @@ document.addEventListener('submit', e => {
   e.preventDefault();
   const fd = Object.fromEntries(new FormData(e.target));
   if (!fd.date || !fd.toType) { document.getElementById('err').textContent = '日付と相手の種類を入れてください'; return; }
+  if (fd.date > today() && fd.state !== 'todo') { document.getElementById('err').textContent = '日付が今日より先です。まだしていないことなら、「この件の状況」を「これからする（予定）」にしてください。'; return; }
   const id = e.target.dataset.id;
   const recs = cur.file.records || [];
   if (id) Object.assign(recs.find(r => r.id === id), fd); else recs.push({ id: S.newId(), ...fd });
