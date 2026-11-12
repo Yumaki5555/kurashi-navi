@@ -38,6 +38,7 @@
 node tools/check.mjs <分野>     # 全経路の検査（行き止まり・ループ・問数・空の結果・断定表現・聞き直し・文書ひな形）
 node tools/scenarios.mjs        # 利用者を想定したテスト（ケースA〜K）。詳細は tools/scenarios-report.txt
 node tools/acceptance.mjs       # 受け入れテスト（保存・複数タブ・復元・再開など。実際のブラウザの保存領域は使わない）
+node tools/preopen-cases.mjs    # 民泊の開業前（近所に民泊ができるらしい）の利用場面テスト。詳細は tools/preopen-report.txt
 node tools/screens.mjs <保存先> <幅>  # スマホ幅の画面写真（テスト用サーバー 8791 を起動してから。使い捨ての保存領域で撮る）
 node tools/verify-laws.mjs      # e-Gov の条文と、事実データの言い回しの照合
 node tools/import-regions.mjs   # 自治体一覧と施設一覧の出典を取り込み直す（元サイトは読み取りのみ）
