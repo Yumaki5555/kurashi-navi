@@ -618,12 +618,21 @@ async function viewCase(domain, id, q = {}) {
   const data = await loadDomain(domain);
   const c = data.cases.find(x => x.id === id);
   if (!c) return viewCases(domain);
-  // 値がない行（不明）は出さない
-  const row = (k, v) => (v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : '');
+  // 値がない行（不明）は出さない。「何が起きた → どう動いた → どうなった」の3つに分けて見せる
+  const row = (k, v) => (v ? `<dt>${k}</dt><dd>${v}</dd>` : '');
+  const step = (n, h, body) => (body ? `<section class="cstep"><h2><span class="num">${n}</span>${h}</h2><dl>${body}</dl></section>` : '');
+  const laws = (c.laws || []).length ? `<span class="laws">${c.laws.map(l => `<span class="law">${esc(l)}</span>`).join('')}</span>` : '';
+  const where = [(c.place?.pref || '') + (c.place?.city || ''), c.period].filter(Boolean).map(esc).join('・');
   const back = q.r && S.getFile(q.r);
+  // 結果の欄は、見出しの札（結果の種類）と同じ内容なら出さない
   setView(`<p class="crumb"><a href="#/cases/${domain}">事例集</a></p>
-    <h1>${esc(c.title)}</h1><p>${caseTag(c)}</p>
-    <dl class="case-detail">${row('地域', (c.place?.pref || '') + (c.place?.city || ''))}${row('時期', c.period)}${row('最初の状況', c.situation)}${row('問題の概要', c.issue)}${row('住民や行政・議会の対応', c.response)}${row('使われた法律・条例・制度', (c.laws || []).join('、'))}${row('結果', c.result || c.outcomeLabel || OUTCOME[c.outcome])}${row('その後の動き', c.after)}${row('参考になる点', c.lesson)}</dl>
+    <h1>${esc(c.title)}</h1><p class="case-head">${caseTag(c)}<span class="meta">${where}</span></p>
+    ${c.lesson ? `<div class="box point"><b>この事例から分かること</b><p>${esc(c.lesson)}</p></div>` : ''}
+    <div class="case-detail">
+    ${step(1, '何が起きていたか', row('最初の状況', esc(c.situation || '')) + row('問題点', esc(c.issue || '')))}
+    ${step(2, 'だれが、どう動いたか', row('住民や行政・議会の対応', esc(c.response || '')) + row('使われた法律・条例・制度', laws))}
+    ${step(3, 'どうなったか', row('結果', esc(c.result || '')) + row('その後の動き', esc(c.after || '')) || `<dd>${esc(c.outcomeLabel || OUTCOME[c.outcome])}</dd>`)}
+    </div>
     <h2>根拠資料</h2><ul>${c.sources.map(s => { const x = G.sources[s.sourceId] || {}; return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title || s.sourceId)}</a><br><small>${[KIND[x.kind || s.kind], x.publisher, x.published && '公表 ' + x.published, (x.checked || c.checked) && '確認日 ' + (x.checked || c.checked)].filter(Boolean).map(esc).join('・')}</small></li>`; }).join('')}</ul>
     ${back ? `<a class="btn big" href="#/f/${q.r}/result">結果に戻る</a>` : `<a class="btn big primary" href="#/start/${domain}">この分野で診断する</a>`}`, c.title);
 }

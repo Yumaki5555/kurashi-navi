@@ -81,7 +81,13 @@ dd.script{background:var(--accent-bg);padding:10px 12px;border-radius:var(--r)}
 .files .meta{display:block}
 .case{display:block;border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:12px 14px;margin:10px 0;text-decoration:none;color:var(--fg)}
 .case b,.case .meta{display:block}
-.case-detail dd{margin-bottom:6px}
+.case-head{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:0 0 4px}.case-head .tag{margin:0}
+.box.point{background:var(--accent-bg);border-color:var(--accent);border-left-width:5px}.box.point b{color:var(--accent)}.box.point p{margin:4px 0 0;font-size:1.02rem}
+.cstep{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:4px 16px 14px;margin:14px 0}
+.cstep h2{border:0;margin:.6em 0 .2em;padding:0;display:flex;align-items:center;gap:10px;font-size:1.08rem}
+.cstep .num{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--card);font-size:.9rem}
+.cstep dl{margin:0}.cstep dt{margin-top:12px}.cstep dd{margin:2px 0 0;line-height:1.85}
+.laws{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.law{border:1px solid var(--line);border-radius:6px;padding:1px 10px;font-size:.92rem;background:var(--bg)}
 .points{padding-left:1.2em}
 .field{display:block;margin:12px 0}
 .field>span{display:block;font-weight:700}
