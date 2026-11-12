@@ -133,6 +133,7 @@ for (const c of cases) {
   if (!c.sources?.length) err(`事例 ${c.id}: 資料がない`);
   for (const s of c.sources || []) if (!srcIds.has(s.sourceId)) err(`事例 ${c.id}: 資料 ${s.sourceId} が sources.json にない`);
   if (!['resolved', 'partial', 'unresolved', 'unknown'].includes(c.outcome)) err(`事例 ${c.id}: outcome が不正`);
+  if (c.matchIf) try { E.test(c.matchIf, {}); } catch (e) { err(`事例 ${c.id}: matchIf が不正 ${e.message}`); }
 }
 const terms = new Set(glossary.map(g => g.term));
 const allText = JSON.stringify({ tree, cards, checklists, docs });

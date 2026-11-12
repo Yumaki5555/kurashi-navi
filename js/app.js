@@ -538,6 +538,7 @@ function viewResult() {
   const lad = ladderState(cur.data.ladder, file.state.facts, file.records);
   const rounds = file.rounds || [];
   const nth = isRound ? rounds.findIndex(x => x.id === c.roundId) + 1 : 0;
+  const caseDom = isRound ? N.NEXT_DOMAIN : file.domain;
   const T = { facts, vars: infoVals() };
   const other = [
     more(`そのほかにできること（${rest.length}件）`, rest.map((x, i) => todoCard(x, i + 3, false, chosen, T)).join('')),
@@ -549,7 +550,8 @@ function viewResult() {
     !isRound && lad.next ? more(`この分野の次の段階：${esc(lad.next.title)}`, `<p>${rich(lad.next.body)}</p>${linksBlock(lad.next.links)}`) : '',
     r.ifnot.filter(x => !/段階/.test(x.title)).map(x => infoCard(x, T)).join(''),
     isRound ? '' : regionInfo(top.concat(rest).some(x => x.region === 'list')),
-    isRound ? '' : more('似た問題の事例', (r.cases.length ? r.cases.map(x => caseItem(x, file.domain, file.id)).join('') : '<p class="note">似た事例は、確認でき次第追加します。</p>') + `<a class="btn" href="#/cases/${file.domain}">事例集をすべて見る</a>`)
+    // 次の一手では「役所の対応」の事例を出す（事例のページから、この回の次の一手に戻れるよう回のIDも渡す）
+    more('似た問題の事例', (r.cases.length ? r.cases.map(x => caseItem(x, caseDom, isRound ? `${file.id}&n=${c.roundId}` : file.id)).join('') : '<p class="note">似た事例は、確認でき次第追加します。</p>') + `<a class="btn" href="#/cases/${caseDom}">事例集をすべて見る</a>`)
   ].join('');
   setView(`
     <p class="crumb"><a href="#/">トップ</a>${isRound ? ` › <a href="#/f/${file.id}/result">${esc(fileName(file))}</a>` : ''}</p>
@@ -624,6 +626,9 @@ async function viewCase(domain, id, q = {}) {
   const laws = (c.laws || []).length ? `<span class="laws">${c.laws.map(l => `<span class="law">${esc(l)}</span>`).join('')}</span>` : '';
   const where = [(c.place?.pref || '') + (c.place?.city || ''), c.period].filter(Boolean).map(esc).join('・');
   const back = q.r && S.getFile(q.r);
+  // 次の一手の画面から来たとき（n＝回のID）は、その回に戻る
+  const backRound = back && q.n && (back.rounds || []).some(x => x.id === q.n);
+  const backBtn = backRound ? `<a class="btn big" href="#/f/${q.r}/next/${q.n}">次の一手に戻る</a>` : `<a class="btn big" href="#/f/${q.r}/result">結果に戻る</a>`;
   // 結果の欄は、見出しの札（結果の種類）と同じ内容なら出さない
   setView(`<p class="crumb"><a href="#/cases/${domain}">事例集</a></p>
     <h1>${esc(c.title)}</h1><p class="case-head">${caseTag(c)}<span class="meta">${where}</span></p>
@@ -634,7 +639,7 @@ async function viewCase(domain, id, q = {}) {
     ${step(3, 'どうなったか', row('結果', esc(c.result || '')) + row('その後の動き', esc(c.after || '')) || `<dd>${esc(c.outcomeLabel || OUTCOME[c.outcome])}</dd>`)}
     </div>
     <h2>根拠資料</h2><ul>${c.sources.map(s => { const x = G.sources[s.sourceId] || {}; return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title || s.sourceId)}</a><br><small>${[KIND[x.kind || s.kind], x.publisher, x.published && '公表 ' + x.published, (x.checked || c.checked) && '確認日 ' + (x.checked || c.checked)].filter(Boolean).map(esc).join('・')}</small></li>`; }).join('')}</ul>
-    ${back ? `<a class="btn big" href="#/f/${q.r}/result">結果に戻る</a>` : `<a class="btn big primary" href="#/start/${domain}">この分野で診断する</a>`}`, c.title);
+    ${back ? backBtn : `<a class="btn big primary" href="#/start/${domain}">この分野で診断する</a>`}`, c.title);
 }
 
 // ---------- 画面：文書 ----------

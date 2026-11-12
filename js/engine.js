@@ -210,8 +210,9 @@ export function compose(data, facts) {
 }
 
 // 事例の近さ：同じ状況（A〜E）なら+2、困りごと・理由・施設の種類・望むことなどのタグが重なるごとに+1
+// matchIf：状況（situation）を聞かない入口（例：役所の「次の一手」）でも同じ場面として扱うための条件。当てはまれば同じ状況と同じ+2
 export function caseScore(c, facts) {
-  let s = (c.routes || []).includes(facts.situation) ? 2 : 0;
+  let s = ((c.routes || []).includes(facts.situation) || (c.matchIf && test(c.matchIf, facts))) ? 2 : 0;
   const tags = new Set([...(facts.problems || []), ...(facts.rule_goal || []), ...(facts.reasons || []), facts.facility, facts.goal].filter(Boolean));
   if (facts.situation === 'C') tags.add('unlicensed');
   if (facts.situation === 'D' || facts.gov_response) tags.add('gov_response');
