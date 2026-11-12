@@ -181,13 +181,14 @@ function factLabel(tree, state, fact) {
 function infoVals() {
   const { file, data } = cur, st = file.state, t = data.tree, L = recLabels();
   const done = (file.records || []).filter(r => !isPlanned(r)).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-  const last = N.latestDone(file.records);
+  const last = N.latestDone(file.records), lastRound = (file.rounds || []).filter(x => x.done).at(-1);
   const v = {
     place: '', since: '',
     problems: factLabel(t, st, 'problems'),
     know: factLabel(t, st, 'know') || factLabel(t, st, 'reasons'),
     history: [factLabel(t, st, 'done'), ...done.map(r => [fmtDay(r.date), L.toType[r.toType], L.method[r.method]].filter(Boolean).join(' '))].filter(Boolean).join('、'),
-    lastResponse: last?.response || factLabel(t, st, 'gov_response')
+    // 前回の回答：いちばん新しい記録の回答（なければ回答の種類）→ 次の一手の「結果」→ 最初の診断の答え
+    lastResponse: last?.response || L.result[last?.resultType] || (lastRound && cur.next ? factLabel(cur.next.tree, lastRound.state, 'result') : '') || factLabel(t, st, 'gov_response')
   };
   for (const k of INFO) if (k in (file.info || {})) v[k] = file.info[k];
   return v;
@@ -217,19 +218,31 @@ function regionLine() {
   const r = cur.file.region;
   return `<details class="region-line"><summary>地域：${r ? esc(regionName(r)) : 'まだ選んでいません'} <small>（${r ? '変える' : '選ぶと窓口が出ます'}）</small></summary>${regionSelects(r)}</details>`;
 }
-// 「どこへ」に添える地域の窓口：役所あての案内なら担当課と電話、施設の確認の案内なら公開されている一覧
-function whereExtra(c, where) {
+// 「どこへ」に添える地域の窓口：役所あての案内なら担当課と電話、施設の確認の案内なら公開されている一覧。
+// region：'list' 施設の一覧／'gov' 担当課／'concern' 困りごと（騒音・ごみなど）を受け持つ別の担当／'none' 出さない（議員・情報公開の窓口など）
+// 戻り値の contacts：担当課を出したか（出したときは、一般的な説明を1行にたたむ）
+const FACILITY = ['jutaku', 'ryokan', 'tokku'];
+const contactsHtml = cs => `<ul class="contacts">${cs.map(x => `<li>${esc(x.dept)}${x.tel ? ` <a href="${telHref(x.tel)}">${esc(x.tel)}</a>` : ''}${x.url ? ` <a href="${esc(x.url)}" target="_blank" rel="noopener">ページ↗</a>` : ''}</li>`).join('')}</ul>`;
+function whereExtra(c, where, T) {
   const r = cur.file.region;
-  if (c.region === 'list') { const ls = regionLists(r); return ls.length ? listsHtml(ls) : ''; }
-  const gov = c.region === 'gov' || (c.region === undefined && /自治体|保健所|担当課|担当窓口|役所|市区町村/.test(plain(where)));
-  if (!gov || !r) return '';
+  if (c.region === 'list') { const ls = regionLists(r); return { html: ls.length ? listsHtml(ls) : '' }; }
+  if (c.region === 'none' || !r) return { html: '' };
   const a = focusArea(r);
-  if (a) {
-    const hs = c.handles || ['jutaku', 'ryokan', 'tokku'];
-    const cs = a.contacts.filter(x => !x.handles?.length || x.handles.some(h => hs.includes(h))).slice(0, 3);
-    if (cs.length) return `<ul class="contacts">${cs.map(x => `<li>${esc(x.dept)}${x.tel ? ` <a href="${telHref(x.tel)}">${esc(x.tel)}</a>` : ''}${x.url ? ` <a href="${esc(x.url)}" target="_blank" rel="noopener">ページ↗</a>` : ''}</li>`).join('')}</ul>`;
+  // 別の窓口：困りごとを受け持つ課だけ。宿泊施設の窓口（前に相談した窓口）と、記録した相手は出さない。なければ一般的な説明だけ
+  if (c.region === 'concern') {
+    const ps = [].concat(T?.facts?.problems || []), nm = s => String(s || '').replace(/\s/g, '');
+    const asked = (cur.file.records || []).map(x => nm(x.toName)).filter(Boolean);
+    const cs = (a?.contacts || []).filter(x => x.handles?.some(h => ps.includes(h)) && !x.handles.some(h => FACILITY.includes(h)) && !asked.some(n => nm(x.dept).includes(n) || n.includes(nm(x.dept))));
+    return cs.length ? { html: contactsHtml(cs.slice(0, 3)), contacts: true } : { html: '' };
   }
-  return (c.links || []).some(l => l.type === 'todokeru-contacts') ? '' : linksBlock([{ type: 'todokeru-contacts' }]);
+  const gov = c.region === 'gov' || (c.region === undefined && /自治体|保健所|担当課|担当窓口|役所|市区町村/.test(plain(where)));
+  if (!gov) return { html: '' };
+  if (a) {
+    const hs = c.handles || FACILITY;
+    const cs = a.contacts.filter(x => !x.handles?.length || x.handles.some(h => hs.includes(h))).slice(0, 3);
+    if (cs.length) return { html: contactsHtml(cs), contacts: true };
+  }
+  return { html: (c.links || []).some(l => l.type === 'todokeru-contacts') ? '' : linksBlock([{ type: 'todokeru-contacts' }]) };
 }
 function regionInfo(listed = false) {
   const r = cur.file.region;
@@ -316,7 +329,10 @@ function pendingInherited(c, st) {
   if (c.roundId === 'main') return [];
   const tree = c.tree, init = c.state.history[0]?.facts ?? c.state.facts, seen = new Set([st.node]), q = [st.node];
   while (q.length) for (const t of E.targetsOf(tree, q.shift())) if (tree.nodes[t] && !seen.has(t)) { seen.add(t); q.push(t); }
-  return [...seen].filter(id => { const n = tree.nodes[id]; return id !== st.node && n.sum && E.known(tree, n, init[n.fact]) && !st.history.some(h => h.node === id); });
+  // 並びは質問の定義の順（流れの順）にそろえる
+  const order = Object.keys(tree.nodes);
+  return [...seen].filter(id => { const n = tree.nodes[id]; return id !== st.node && n.sum && E.known(tree, n, init[n.fact]) && !st.history.some(h => h.node === id); })
+    .sort((a, b) => order.indexOf(a) - order.indexOf(b));
 }
 
 // ---------- 画面：質問 ----------
@@ -326,7 +342,8 @@ function viewQuestion() {
   if (!n || n > (last || full.history.length)) { swap(last ? qHash(c, last) : resultHash(c)); return; }
   const st = E.stateAt(full, n);
   const node = tree.nodes[st.node];
-  const asked = st.history.filter(h => !h.auto).length, max = asked + E.maxRemaining(tree, st.node);
+  // 質問の番号は URL と同じ（引き継いで聞かなかった質問も数える）。最大の問数は入口から数えた値で、途中で変えない
+  const asked = st.history.filter(h => !h.auto).length, max = E.maxRemaining(tree, full.history[0]?.node || full.node);
   const opts = E.optionsOf(tree, node, st.facts);
   const cv = c.holder.prev?.[st.node] ?? st.facts[node.fact];
   // 答えの印：まだ答えていない質問で、前の診断の答えに合う選択肢（例：最初の診断の「これまでにしたこと」）
@@ -337,15 +354,22 @@ function viewQuestion() {
   else if (node.type === 'choice') body = `<div class="stack">${opts.map(o => `<div class="opt"><button class="btn big left${on(o.value) ? ' chosen' : ''}" data-act="ans" data-v="${esc(o.value)}">${esc(plain(o.label))}</button>${termBtns(o.label)}</div>`).join('')}</div>`;
   else body = `<fieldset class="stack"><legend class="sr">${esc(plain(node.text))}</legend>${opts.map(o => `<div class="opt"><label class="btn big left check"><input type="checkbox" value="${o.value}"${on(o.value) ? ' checked' : ''}${o.exclusive ? ' data-ex="1"' : ''}> <span>${esc(plain(o.label))}</span></label>${termBtns(o.label)}</div>`).join('')}</fieldset>
     <p class="err" id="err" role="alert"></p><button class="btn big primary" data-act="multi">次へ</button>`;
-  // 記録や前の診断から引き継いだ答え（聞かずに進めた質問）は1行で見せ、「直す」でその質問へ
-  const autos = st.history.map((h, i) => ({ h, i })).filter(x => x.h.auto), pend = pendingInherited(c, st);
-  const item = (id, f) => `${tree.nodes[id].sum}「${E.labelOf(tree, id, f[tree.nodes[id].fact])}」`;
-  const init = c.state.history[0]?.facts ?? c.state.facts;
-  const inherited = autos.length || pend.length ? `<p class="note">引き継いだ内容：${autos.length ? `${esc(autos.map(({ h }) => item(h.node, h.facts)).join('／'))} <a href="${qHash(c, autos[0].i + 1)}?edit=1">直す</a>` : ''}${autos.length && pend.length ? '／' : ''}${pend.length ? `${esc(pend.map(id => item(id, init)).join('／'))} <button class="linklike" data-act="uninherit" data-n="${pend.join(',')}">直す</button>` : ''}</p>` : '';
+  // 記録や前の診断から引き継いだ答え（聞かずに進めた質問・これから聞かずに進める質問）は、最初に聞く質問にだけ、
+  // 質問の順に「見出し「答え」直す」で並べる（結果の「答えた内容」と同じ形）
+  let inherited = '';
+  if (!asked) {
+    const item = (id, f) => esc(`${tree.nodes[id].sum}「${E.labelOf(tree, id, f[tree.nodes[id].fact])}」`);
+    const init = c.state.history[0]?.facts ?? c.state.facts;
+    const items = [
+      ...st.history.map((h, i) => (h.auto ? `${item(h.node, h.facts)} <a href="${qHash(c, i + 1)}?edit=1">直す</a>` : '')).filter(Boolean),
+      ...pendingInherited(c, st).map(id => `${item(id, init)} <button class="linklike" data-act="uninherit" data-n="${id}">直す</button>`)
+    ];
+    if (items.length) inherited = `<p class="note">引き継いだ内容：${items.join('／')}</p>`;
+  }
   setView(`
     ${DOM(cur.file.domain)?.emergency ? '<a class="btn danger slim" href="#/emergency">今まさに危険なことが起きている</a>' : ''}
     ${c.roundId !== 'main' ? `<p class="crumb"><a href="#/f/${cur.file.id}/result">${esc(fileName(cur.file))}</a> › 次の一手</p>` : ''}
-    <div class="progress" aria-label="進み具合"><span>質問 ${asked + 1} / 最大 ${max}</span><div class="bar"><i style="width:${Math.round(((asked + 1) / max) * 100)}%"></i></div></div>
+    <div class="progress" aria-label="進み具合"><span>質問 ${n} / 最大 ${max}</span><div class="bar"><i style="width:${Math.min(100, Math.round((n / max) * 100))}%"></i></div></div>
     ${inherited}
     ${cur.edit ? '<p class="note">直したら、ほかの答えはそのままで結果に戻ります。</p>' : ''}
     ${hint.length ? '<p class="note">前の診断の答えに合うものに印を付けています。違うときは選び直してください。</p>' : ''}
@@ -368,6 +392,8 @@ function doAnswer(value) {
   c.holder.state = state;
   c.holder.done = state.node === E.RESULT;
   if (c.roundId === 'main' && !file.titleCustom) file.title = autoTitle(file, c.tree) || file.title;
+  // まだ保存していない回は、1問目に答えたこの時点で相談に加える
+  if (draft?.round === c.holder) { file.rounds = [...(file.rounds || []), draft.round]; draft = null; }
   save();
   if (state.node !== E.RESULT) { go(qHash(c, state.history.length + 1) + (cur.edit ? '?edit=1' : '')); return; }
   // 最初の診断で、分野が「次の一手」へ続けると決めている答え（startNextIf）なら、そのまま次の一手を始める
@@ -375,12 +401,15 @@ function doAnswer(value) {
   go(resultHash(c));
 }
 
+// 「次の一手を探す」：新しい回は画面の中だけに作り（draft）、1問目に答えたときに保存する（押しただけでは「途中」を残さない）。
+// 聞く質問がなく、すぐ結果になるときだけ、その場で保存する
+let draft = null;
 function startRound() {
   const file = cur.file;
   const r = N.newRound(cur.next.tree, file, S.newId());
   r.done = r.state.node === E.RESULT;
-  file.rounds = [...(file.rounds || []), r];
-  save();
+  if (r.done) { file.rounds = [...(file.rounds || []), r]; draft = null; save(); }
+  else draft = { fileId: file.id, round: r };
   const base = `#/f/${file.id}/next/${r.id}`;
   swap(r.done ? base : `${base}/q/${r.state.history.length + 1}`);
 }
@@ -437,10 +466,12 @@ const fill = (v, T) => fillText(v, T?.facts || {}, T?.vars || {});
 const partsOf = (xs, T) => (xs || []).filter(x => typeof x === 'string' || E.test(x.when, T?.facts || {})).map(x => fill(typeof x === 'string' ? x : x.t, T));
 function todoCard(c, i, open, chosen, T) {
   const where = fill(c.where, T), script = fill(c.script, T), check = fill(c.check, T), bring = partsOf(c.bring, T);
+  // 地域の担当課が出るときは、一般的な説明を1行にたたむ（押すと全文）
+  const ex = whereExtra(c, where, T);
   return `<details class="card todo"${open ? ' open' : ''}><summary><span class="num">${i + 1}</span>${rich(fill(c.title, T))}</summary>
     ${c.body ? `<p>${rich(fill(c.body, T))}</p>` : ''}
     <dl>
-      <dt>どこへ</dt><dd>${rich(where)}${whereExtra(c, where)}</dd>
+      <dt>どこへ</dt><dd>${ex.contacts ? `${ex.html}<details class="gen"><summary>${esc(plain(where))}</summary></details>` : rich(where) + ex.html}</dd>
       ${check ? `<dt>確認すること</dt><dd>${rich(check)}</dd>` : ''}
       ${bring.length ? `<dt>用意するもの</dt><dd><ul>${bring.map(b => `<li>${rich(b)}</li>`).join('')}</ul></dd>` : ''}
       ${script ? `<dt>聞き方・伝え方の例</dt><dd class="script">${rich(script)}<br><button class="btn slim" data-act="copy" data-text="${esc(plain(script))}">この文をコピー</button></dd>` : ''}
@@ -469,11 +500,30 @@ function nowText(sum) {
   return sum.filter(s => pick.has(s)).map(s => (/^(状況|困りごと)$/.test(s.label) ? s.value : `${s.label}：${s.value}`)).join('／');
 }
 
+// 次の一手の答え（最後にしたこと・相手・結果）を、結果を出したときに対応の記録へ1件入れる。
+// 同じ内容（相手の種類・方法・回答の種類）の記録があれば入れない。入れた記録は auto（記録の画面で分かるようにする）。
+// 答えを直したら、手を入れていない自動の記録だけ合わせて直す。消した記録は入れ直さない
+function autoRecord(round) {
+  const file = cur.file, recs = file.records || [];
+  const v = N.recordFromRound(cur.next.tree, round.state.facts, recLabels());
+  const mine = round.autoRec && recs.find(x => x.id === round.autoRec);
+  const same = x => x.toType === v.toType && (x.method || '') === v.method && (x.resultType || '') === v.resultType;
+  const state = !v?.resultType || v.resultType === 'no_reply' ? 'doing' : 'answered';
+  if (!v || (round.autoRec && !mine) || (mine && (!mine.auto || same(mine)))) return false;
+  if (mine) { Object.assign(mine, v, { state }); return true; }
+  if (recs.some(x => !isPlanned(x) && same(x))) return false;
+  const id = S.newId();
+  file.records = [...recs, { id, date: today(), toType: v.toType, toName: '', method: v.method, content: '', response: '', resultType: v.resultType, next: '', state, auto: true, round: round.id }];
+  round.autoRec = id;
+  return true;
+}
+
 // 結果の画面：主役は「今の状況」「次にすること」「次の一手」の3つ。ほかは「ほかの情報」1つにまとめて閉じておく
 function viewResult() {
   const c = ctx(), file = cur.file;
   if (c.state.node !== E.RESULT) { swap(qHash(c, c.state.history.length + 1)); return; }
   const isRound = c.roundId !== 'main';
+  if (isRound && autoRecord(c.holder)) save();
   const st = currentStatus(file);
   // 記録の画面で選んだ「今の状態」があれば、最初の診断の「その後どうなったか」より優先する
   const outcome = !isRound && STATUS_OUTCOME[st];
@@ -709,7 +759,7 @@ function viewRecords(editId) {
     <section><h2>次の一手</h2>${next || '<p class="note">記録をつけると、次の一手をご案内します。</p>'}
       ${st !== 'resolved' && !['partial', 'same', 'worse'].includes(st) ? `<a class="btn" href="#/f/${file.id}/next/new">次の一手を探す（記録を引き継ぎます）</a>` : ''}</section>
     <section><h2>これまでの記録（${rs.length}件）</h2>
-      ${rs.map(r => `<article class="card plainc rec"><b>${esc(r.date)}</b>　${isPlanned(r) ? '<span class="tag">予定</span>' : ''}${esc([(L.toType[r.toType] || '') + (r.toName ? `（${r.toName}）` : ''), L.method[r.method], L.result[r.resultType], L.state[r.state]].filter(Boolean).join('・'))}
+      ${rs.map(r => `<article class="card plainc rec"><b>${esc(r.date)}</b>　${isPlanned(r) ? '<span class="tag">予定</span>' : ''}${r.auto ? '<span class="tag">次の一手の答えから自動で追加</span>' : ''}${esc([(L.toType[r.toType] || '') + (r.toName ? `（${r.toName}）` : ''), L.method[r.method], L.result[r.resultType], L.state[r.state]].filter(Boolean).join('・'))}
         ${r.content ? `<p><small>したこと・伝えた内容</small><br>${esc(r.content)}</p>` : ''}${r.response ? `<p><small>回答</small><br>${esc(r.response)}</p>` : ''}${r.next ? `<p><small>次にすること</small><br>${esc(r.next)}</p>` : ''}
         <div class="row"><a class="btn slim" href="#/f/${file.id}/records/${r.id}">直す</a><button class="btn slim" data-act="delrec" data-id="${r.id}">削除</button></div></article>`).join('') || '<p class="note">まだ記録はありません。</p>'}</section>
     <div class="row"><button class="btn" data-act="savetxt">テキストで保存</button><button class="btn" data-act="print">印刷・PDF</button></div>
@@ -785,7 +835,7 @@ async function route() {
           if (open) { swap(`#/f/${file.id}/next/${open.id}/q`); return; }
           return startRound();
         }
-        cur.round = rounds.find(r => r.id === d) || null;
+        cur.round = rounds.find(r => r.id === d) || (draft?.fileId === file.id && draft.round.id === d ? draft.round : null);
         if (!cur.round) { swap(`#/f/${file.id}/result`); return; }
         if (e === 'q') { cur.qn = +f || 0; return viewQuestion(); }
         return viewResult();
@@ -947,7 +997,8 @@ document.addEventListener('submit', e => {
   if (fd.date > today() && fd.state !== 'todo') { document.getElementById('err').textContent = '日付が今日より先です。まだしていないことなら、「この件の状況」を「これからする（予定）」にしてください。'; return; }
   const id = e.target.dataset.id;
   const recs = cur.file.records || [];
-  if (id) Object.assign(recs.find(r => r.id === id), fd); else recs.push({ id: S.newId(), ...fd });
+  // 自動で追加した記録も、直して保存したら自分の記録として扱う（auto を外す）
+  if (id) { const r = recs.find(x => x.id === id); Object.assign(r, fd); delete r.auto; } else recs.push({ id: S.newId(), ...fd });
   cur.file.records = recs; save();
   location.hash = `#/f/${cur.file.id}/records`;
   if (!id) viewRecords();

@@ -129,6 +129,7 @@
     },
     {
       "id": "do_other_route",
+      "region": "concern",
       "section": "do",
       "key": "other_route",
       "priority": 82,
@@ -163,6 +164,7 @@
     },
     {
       "id": "do_route",
+      "region": "none",
       "section": "do",
       "key": "find_office",
       "priority": 92,
@@ -196,6 +198,7 @@
     },
     {
       "id": "do_koucho",
+      "region": "none",
       "section": "do",
       "key": "koucho",
       "priority": 85,
@@ -281,6 +284,7 @@
     },
     {
       "id": "do_giin",
+      "region": "none",
       "section": "do",
       "key": "giin",
       "priority": 70,
@@ -309,6 +313,7 @@
     },
     {
       "id": "do_disclosure_records",
+      "region": "none",
       "section": "do",
       "key": "disclosure",
       "priority": 66,
@@ -327,6 +332,7 @@
     },
     {
       "id": "do_search_public",
+      "region": "none",
       "section": "do",
       "key": "search_public",
       "priority": 95,
@@ -341,6 +347,7 @@
     },
     {
       "id": "do_disclosure_request",
+      "region": "none",
       "section": "do",
       "key": "disclosure",
       "priority": 90,
@@ -359,6 +366,7 @@
     },
     {
       "id": "do_specify",
+      "region": "none",
       "section": "do",
       "key": "specify_doc",
       "priority": 86,
@@ -520,6 +528,7 @@
     },
     {
       "id": "do_stats_gakko",
+      "region": "none",
       "section": "do",
       "key": "public_stats",
       "priority": 78,
@@ -542,6 +551,7 @@
     },
     {
       "id": "do_stats",
+      "region": "none",
       "section": "do",
       "key": "public_stats",
       "priority": 76,
@@ -630,6 +640,7 @@
     },
     {
       "id": "do_channels",
+      "region": "none",
       "section": "do",
       "key": "other_channels",
       "priority": 56,
@@ -769,6 +780,7 @@
     },
     {
       "id": "do_lawyer",
+      "region": "none",
       "section": "do",
       "key": "lawyer",
       "priority": 40,

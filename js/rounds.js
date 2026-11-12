@@ -43,9 +43,10 @@ export function factsFromDomain(tree, domain, facts = {}, first = true) {
 // 新しい「次の一手」に最初から入れておく答え。
 // 分野の診断から：変わらない事実（建物・困りごと・したこと。tree.carry）はいつも引き継ぐ。
 // 1回目で、まだ実際の記録がなければ、相談の結果なども分野の診断の答えから。記録があれば、いちばん新しい記録から。
+// 次の一手の答えから自動で作った記録（auto）は使わない（その回の答えそのものなので、次の回で同じ答えを聞かずに進めないため）
 export function prefill(tree, file, today = localToday()) {
   const f = { from: file.domain };
-  const rec = latestDone(file.records, today);
+  const rec = latestDone((file.records || []).filter(r => !r.auto), today);
   const first = !(file.rounds || []).length;
   const main = file.domain !== NEXT_DOMAIN && file.state?.node === E.RESULT ? file.state.facts : null;
   if (main) {
@@ -85,6 +86,23 @@ export function splitActions(todo, used) {
   const fresh = [], tried = [];
   for (const c of todo) (c.key && used.has(c.key) ? tried : fresh).push(c);
   return { fresh, tried };
+}
+
+// 次の一手の答え（最後にしたこと・相手・結果）を、対応の記録の形（相手の種類・方法・相手の回答の種類）にする。
+// recordMap の逆。labels（記録の選択肢）にないものは使わない。何もしていなければ null
+const PREFER_DID = { owner: ['owner_side'] };
+const PREFER_TARGET = { party: ['manager', 'owner', 'builder', 'corp', 'party'], school: ['school', 'school_lead', 'teacher'], other: ['other'] };
+const PARTY_TO_RESULT = { refused: 'cannot' };
+export function recordFromRound(tree, facts, labels) {
+  if (!facts.did || facts.did === 'none') return null;
+  const m = tree.recordMap?.toType || {}, mm = tree.recordMap?.method || {};
+  const byDid = Object.keys(m).filter(k => m[k].did === facts.did);
+  const byTarget = Object.keys(m).filter(k => !m[k].did && m[k].target === facts.target);
+  const toType = [...(PREFER_DID[facts.did] || []), ...byDid, ...(PREFER_TARGET[facts.target] || []), ...byTarget, 'other'].find(k => k in labels.toType);
+  if (!toType) return null;
+  const method = Object.keys(mm).find(k => mm[k].did === facts.did && k in labels.method) || '';
+  const rt = facts.target === 'party' ? PARTY_TO_RESULT[facts.result] || facts.result : facts.result;
+  return { toType, method, resultType: rt in labels.result ? rt : '' };
 }
 
 // 案内カードの記録の「相手の種類」：カードの recType のうち、その分野の記録に使えるもの。

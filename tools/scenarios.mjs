@@ -1,4 +1,4 @@
-// 利用者を想定したテスト（ケースA〜J）。使い方: node tools/scenarios.mjs
+// 利用者を想定したテスト（ケースA〜K）。使い方: node tools/scenarios.mjs
 // 診断の進み方・結果・「次の一手」・保存と復元を、画面を通さずに確かめる。詳細は tools/scenarios-report.txt に保存。
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -283,7 +283,22 @@ caseRun('J', () => {
   ok('J 画面：未確認の民泊の地域も「要確認」と表示', /if \(!area\) info \+=[\s\S]{0,120}要確認/.test(app));
 });
 
-const head = `ケースA〜J：OK ${pass} / NG ${fail}`;
+// ---- K. 次の一手の答えを記録にする／分野ごとの呼び方 ----
+caseRun('K', () => {
+  const L = { toType: D.minpaku.ladder.recordTypes, method: D.minpaku.ladder.methods, result: Object.fromEntries(E.optionsOf(NX.tree, NX.tree.nodes.result, {}).map(o => [o.value, o.short])) };
+  const v = N.recordFromRound(NX.tree, { did: 'phone', target: 'gov', result: 'no_problem' }, L);
+  ok('K 電話・役所・問題ない → 担当課・電話・問題ないと回答', v?.toType === 'gov' && v.method === 'phone' && v.resultType === 'no_problem', JSON.stringify(v));
+  const p = N.recordFromRound(NX.tree, { did: 'owner', target: 'party', result: 'refused' }, L);
+  ok('K 管理組合に伝えた・断られた → 管理組合など・対応できない', p?.toType === 'owner_side' && p.resultType === 'cannot', JSON.stringify(p));
+  ok('K 何もしていなければ記録にしない', N.recordFromRound(NX.tree, { did: 'none' }, L) === null);
+  const st = run(D.minpaku.tree, { situation: 'B', b_problems: ['noise'], b_ongoing: 'yes', b_building: 'house', b_know: ['contact'], b_done: ['manager'], b_outcome: 'same' }).st;
+  const rec = { id: 'a', date: PAST, toType: 'gov', method: 'phone', resultType: 'no_problem', state: 'answered', auto: true };
+  ok('K 自動で入れた記録は、次の回の答えに使わない', N.prefill(NX.tree, mainFile('minpaku', st, { records: [rec], rounds: [{ id: 'r1' }] })).did === undefined);
+  const lab = (id, from) => E.optionsOf(NX.tree, NX.tree.nodes[id], { from }).map(o => o.label).join('／');
+  ok('K 民泊の流れでは「建築主」を出さない', !/建築主/.test(lab('next_did', 'minpaku') + lab('target', 'minpaku')) && /建築主/.test(lab('target', 'kenchiku')));
+});
+
+const head = `ケースA〜K：OK ${pass} / NG ${fail}`;
 writeFileSync(path.join(ROOT, 'tools/scenarios-report.txt'), [head, '', ...log].join('\n') + '\n');
 console.log(head + '（詳細: tools/scenarios-report.txt）');
 for (const l of log.filter(l => l.startsWith('NG'))) console.log(l);

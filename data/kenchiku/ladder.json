@@ -20,7 +20,7 @@
   "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
   "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
   "steps": [
-    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
     { "id": "check_plan", "title": "計画や許可の記録を確かめる", "body": "現地の看板、建築計画概要書、用途地域などで、事実を確かめます。", "showIf": { "fact": "situation", "in": ["A", "C"] }, "doneIf": { "any": [{ "fact": "checked_plan", "eq": "yes" }, { "fact": "checked_record", "eq": "yes" }] } },
     { "id": "owner", "title": "建築主・施工者・管理者に伝える", "body": "看板などに書かれた連絡先に、困りごとと、お願いしたいことを伝えます。", "showIf": { "fact": "situation", "in": ["A", "B"] }, "toTypes": ["owner", "builder"], "doneIf": { "fact": "done", "in": ["owner", "builder"] }, "links": [{ "type": "doc", "doc": "owner_letter", "label": "連絡文を作る" }] },
     { "id": "gov", "title": "市区町村の担当課に相談する", "body": "建築・都市計画・環境・農地など、困りごとに合った担当課に相談します。", "toTypes": ["gov"], "doneIf": { "any": [{ "fact": "done", "has": "gov" }, { "fact": "situation", "eq": "D" }] }, "links": [{ "type": "todokeru-contacts" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" }] },

@@ -20,7 +20,7 @@
   "methods": { "phone": "電話", "counter": "面談・窓口", "mail": "メール・連絡帳・アプリ", "letter": "文書（郵送・手渡し）", "other": "その他" },
   "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
   "steps": [
-    { "id": "record", "title": "記録をつける", "body": "日付と、起きたこと・お子さんの言葉を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "record", "title": "記録をつける", "body": "日付と、起きたこと・お子さんの言葉を記録します。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
     { "id": "teacher", "title": "担任の先生に伝える", "body": "起きていることと、してほしいことを1〜3つにしぼって伝えます。", "toTypes": ["teacher", "counselor"], "doneIf": { "any": [{ "fact": "done", "has": "teacher" }, { "fact": "g_where", "in": ["teacher", "school_lead", "board", "pref"] }] }, "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }] },
     { "id": "school_lead", "title": "校長・教頭に文書で伝える", "body": "担任で進まないときは、記録を添えて校長あてに文書で伝え、回答の期限をつけます。", "toTypes": ["school_lead"], "doneIf": { "any": [{ "fact": "done", "has": "school_lead" }, { "fact": "g_where", "in": ["school_lead", "board", "pref"] }] }, "links": [{ "type": "doc", "doc": "school_letter", "label": "学校への手紙を作る" }] },
     { "id": "board", "title": "教育委員会（私立は都道府県の担当課など）に相談する", "body": "学校で進まないときは、学校を設置している教育委員会に、学校とのやりとりの記録を添えて相談します。", "toTypes": ["board", "pref", "corp"], "doneIf": { "any": [{ "fact": "done", "has": "board" }, { "fact": "g_where", "in": ["board", "pref"] }] }, "links": [{ "type": "todokeru-contacts" }, { "type": "doc", "doc": "board_request", "label": "教育委員会への文書を作る" }] },

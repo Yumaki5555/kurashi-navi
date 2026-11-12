@@ -114,5 +114,6 @@ section.start .btn{flex:1 1 200px}
 .region-line{margin:4px 0 10px}
 .region-line>summary{cursor:pointer;color:var(--sub)}
 .contacts,.lists{margin:6px 0 0;padding-left:1.2em}
+.gen{margin-top:4px}.gen>summary{cursor:pointer;color:var(--sub);font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gen[open]>summary{white-space:normal}
 .fix{font-size:.85rem;margin-left:4px}
 .linklike{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;font:inherit;cursor:pointer}

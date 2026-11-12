@@ -17,7 +17,7 @@
   "methods": { "phone": "電話", "counter": "窓口", "mail": "メール・フォーム", "letter": "文書（郵送・手渡し）", "other": "その他" },
   "states": { "todo": "これからする（予定）", "doing": "した・回答待ち", "answered": "した・回答があった", "done": "した・この相手とのやりとりは終わった" },
   "steps": [
-    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。下の「記録を追加する」から始められます。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
+    { "id": "record", "title": "記録をつける", "body": "日時と内容を記録します。", "anyRecord": true, "doneIf": { "fact": "recorded", "eq": "yes" } },
     { "id": "manager", "title": "施設の管理者・運営者に伝える", "body": "標識などに書かれた連絡先に、困りごとと改善してほしいことを伝えます。", "showIf": { "fact": "situation", "in": ["B", "C"] }, "toTypes": ["manager"], "doneIf": { "fact": "done", "has": "manager" }, "links": [ { "type": "doc", "doc": "manager_letter", "label": "連絡文を作る" } ] },
     { "id": "owner_side", "title": "管理組合・管理会社・大家さんに伝える", "body": "同じ建物の中なら、建物のルールで対応できることがあります。", "showIf": { "fact": "building", "in": ["same_condo", "same_rental"] }, "toTypes": ["owner_side"], "doneIf": { "fact": "done", "has": "owner_side" } },
     { "id": "gov", "title": "市区町村の担当課に相談する", "body": "民泊の担当課（旅館業なら保健所）に、施設の確認と事業者への指導をお願いします。", "toTypes": ["gov"], "doneIf": { "any": [ { "fact": "done", "has": "gov" }, { "fact": "situation", "eq": "D" } ] }, "links": [ { "type": "todokeru-contacts" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" } ] },

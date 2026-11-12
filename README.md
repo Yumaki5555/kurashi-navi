@@ -36,7 +36,7 @@
 ## 検査・更新
 ```
 node tools/check.mjs <分野>     # 全経路の検査（行き止まり・ループ・問数・空の結果・断定表現・聞き直し・文書ひな形）
-node tools/scenarios.mjs        # 利用者を想定したテスト（ケースA〜J）。詳細は tools/scenarios-report.txt
+node tools/scenarios.mjs        # 利用者を想定したテスト（ケースA〜K）。詳細は tools/scenarios-report.txt
 node tools/verify-laws.mjs      # e-Gov の条文と、事実データの言い回しの照合
 node tools/import-regions.mjs   # 自治体一覧と施設一覧の出典を取り込み直す（元サイトは読み取りのみ）
 ```

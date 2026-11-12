@@ -27,11 +27,16 @@ export function test(cond, facts) {
 }
 
 // ---- 質問 ----
-// facts を渡すと、画面に出す選択肢だけにする（when：分野や答えに合わないものを出さない／hidden：古い答えの表示用に残すだけ）
+// facts を渡すと、画面に出す選択肢だけにする（when：分野や答えに合わないものを出さない／hidden：古い答えの表示用に残すだけ／
+// alt：[{when, label}] 分野ごとの呼び方。例：民泊では「建築主」を出さない）
 export function optionsOf(tree, node, facts) {
   if (node.type === 'yesno') return YESNO;
   const base = (node.options || tree.optionSets?.[node.optionSet] || []).concat(node.extraOptions || []);
-  return facts ? base.filter(o => !o.hidden && test(o.when, facts)) : base;
+  if (!facts) return base;
+  return base.filter(o => !o.hidden && test(o.when, facts)).map(o => {
+    const a = o.alt?.find(x => test(x.when, facts));
+    return a ? { ...o, ...a, when: o.when } : o;
+  });
 }
 
 export function labelOf(tree, nodeId, value) {
