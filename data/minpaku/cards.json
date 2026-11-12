@@ -77,7 +77,7 @@
       "bring": ["困りごとの記録",{"t":"管理者とのやりとりの記録","when":{"fact":"done","has":"manager"}},"施設の場所"],
       "script": ["「{place|〇〇町}の民泊と思われる施設について相談です。〇月から{problems|〇〇}の困りごとが続き",{"t":"、管理者に伝えても改善しません。","when":{"fact":"done","has":"manager"}},{"t":"ています。","when":{"not":{"fact":"done","has":"manager"}}},"届出の状況と、今後どのように対応していただけるか教えてください」"],
       "ifNoAnswer": "「担当ではない」と言われたら「どちらの部署の担当ですか」と聞きます。相談した日時・部署・名前・回答を記録し、改善しなければ文書で問い合わせます。",
-      "links": [ { "type": "todokeru-contacts" }, { "type": "todokeru-guide", "guide": "phone", "label": "電話のかけ方（声を届ける）" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" } ],
+      "links": [ { "type": "todokeru-contacts" }, { "type": "todokeru-guide", "guide": "phone", "section": "ch4", "label": "自治体への電話のコツ（声を届ける）" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" } ],
       "facts": ["jutaku_kantoku", "ryokan_kyoka"]
     },
     {
@@ -227,7 +227,7 @@
       "bring": ["前回の相談の日時と内容"],
       "script": ["「〇月〇日に",{"t":"お電話で","when":{"fact":"gov_method","eq":"phone"}},{"t":"窓口で","when":{"fact":"gov_method","eq":"counter"}},{"t":"メールで","when":{"fact":"gov_method","eq":"mail"}},{"t":"文書で","when":{"fact":"gov_method","eq":"letter"}},"相談した件について、〇月〇日までに、文書（またはメール）でご回答をお願いします」"],
       "ifNoAnswer": "期限を過ぎても回答がなければ、地元の議員に相談する、都道府県や国の相談窓口に伝える、といった方法があります。",
-      "links": [ { "type": "doc", "doc": "gov_request", "label": "問い合わせの文書を作る" }, { "type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方（声を届ける）" } ]
+      "links": [ { "type": "doc", "doc": "gov_request", "label": "問い合わせの文書を作る" }, { "type": "todokeru-guide", "guide": "email", "section": "ch4", "label": "自治体へのメールの送り方（声を届ける）" } ]
     },
     {
       "id": "do_e_check_rule", "section": "do", "priority": 90,

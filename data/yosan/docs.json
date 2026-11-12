@@ -28,7 +28,7 @@
         { "text": "{name}", "requires": ["name"] }
       ],
       "checks": ["予算書・決算書で確かめたことと、聞きたいことを分けた", "団体や個人を非難する表現がない", "写しを手元に残した"],
-      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+      "links": [{"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}]
     }
   ]
 }

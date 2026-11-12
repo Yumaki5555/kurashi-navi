@@ -55,6 +55,7 @@ footer.site{max-width:720px;margin:0 auto;padding:16px;color:var(--sub);font-siz
 .card{border:1px solid var(--line);background:var(--card);border-radius:var(--r);padding:0 14px;margin:10px 0}
 .card.plainc{padding:4px 14px 12px}
 .card.plainc h2{border:0;margin-top:.6em}
+.deliver h3{margin:0 0 .2em}.deliver .help{margin:.2em 0 0}.deliver .links{margin:8px 0 2px}
 .card>summary{padding:12px 0;cursor:pointer;font-weight:700;list-style-position:outside;margin-left:1em}
 .card[open]>summary{border-bottom:1px solid var(--line);margin-bottom:8px}
 .card.todo{border-left:5px solid var(--accent)}

@@ -181,6 +181,33 @@ if (ladder) {
   }
 }
 
+// ---- 8. 「声を届ける」の電話・メールのページは、いちばん上が文章づくりの画面。
+//         このサイトで作った文章を作り直させないよう、必ず読むところの見出し（section）へ飛ばす ----
+// 見出しの名前は「声を届ける」の公開版で確認したもの（2026-11-12）。向こうが変わったら、ここも直す
+const CH = ['ch0', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7'];
+const TODOKERU_SECTIONS = { phone: ['manual', 'checklist', 'fear-tips', ...CH], email: ['manual', 'checklist', 'call-target', 'mail', 'form', 'post', ...CH] };
+const guideLinks = [];
+const collectGuide = (o, where) => {
+  if (Array.isArray(o)) o.forEach(x => collectGuide(x, where));
+  else if (o && typeof o === 'object') { if (o.type === 'todokeru-guide') guideLinks.push([where, o]); Object.values(o).forEach(v => collectGuide(v, where)); }
+};
+collectGuide(tree, "tree"); cards.forEach(c => collectGuide(c, c.id)); docs.forEach(d => collectGuide(d, d.id)); collectGuide(ladder, "ladder"); collectGuide(opt("data/actions.json"), "actions");
+for (const [w, l] of guideLinks) {
+  const ok = TODOKERU_SECTIONS[l.guide];
+  if (ok && !ok.includes(l.section)) err(`${w}: 声を届けるの ${l.guide} ページへのリンクに、飛び先の見出し（section）がない・知らない名前: ${l.section ?? 'なし'}`);
+}
+const appSrc = readFileSync(path.join(ROOT, 'js/app.js'), 'utf8');
+for (const m of appSrc.matchAll(/\{[^{}]*type: 'todokeru-guide'[^{}]*\}/g)) {
+  const g = m[0].match(/guide: '([^']+)'/)?.[1], s = m[0].match(/section: '([^']+)'/)?.[1];
+  if (TODOKERU_SECTIONS[g] && !TODOKERU_SECTIONS[g].includes(s)) err(`js/app.js: 声を届けるの ${g} ページへのリンクに、飛び先の見出しがない: ${m[0].slice(0, 60)}`);
+}
+// 下書きの中の「ほかの下書きへ」ボタンの行き先と、（共通）の欄の名前
+const INFO_KEYS = JSON.parse((appSrc.match(/const INFO = (\[[^\]]*\])/)?.[1] || '[]').replace(/'/g, '"'));
+for (const d of docs) {
+  for (const l of [...(d.links || []), ...(d.deliver || []).flatMap(g => g.links || [])]) if (l.type === 'doc' && !docs.some(x => x.id === l.doc)) err(`文書 ${d.id}: 行き先の下書き ${l.doc} がない`);
+  for (const f of d.fields) if (f.info && !INFO_KEYS.includes(f.info)) err(`文書 ${d.id}: 共通の欄 ${f.info} が js/app.js の INFO にない（保存されない）`);
+}
+
 // ---- 出力 ----
 const out = [`検査日時 ${TODAY.toISOString()}  分野 ${domain}`, ...info, '', `エラー ${errors.length} 件`, ...errors.slice(0, 200), '', `注意 ${warns.length} 件`, ...warns.slice(0, 200), '', '抜き取り（5000経路ごと）', ...finals.map(f => JSON.stringify(f))];
 writeFileSync(path.join(ROOT, 'tools/report.txt'), out.join('\n'));

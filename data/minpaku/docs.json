@@ -32,17 +32,17 @@
     },
     {
       "id": "gov_memo",
-      "title": "自治体への相談メモ（電話・窓口・メール用）",
-      "desc": "電話や窓口で伝える要点のメモです。メールで送るときは、「声を届ける」の文面づくりに貼りつけて使えます。",
+      "title": "自治体への相談メモ（電話・窓口用）",
+      "desc": "電話や窓口で、手元に置いて見ながら話すための要点メモです。メールで送るときは、いちばん下の「メール用の文書を作る」へ進んでください。場所や様子などの（共通）の欄は、そのまま引き継がれます。",
       "fields": [
         { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）", "info": "place" },
         { "id": "problems", "label": "困っていること", "prefill": {"fact": "problems"}, "info": "problems" },
         { "id": "period", "label": "いつから・どのくらい", "placeholder": "9月ごろから、週に2〜3回", "info": "since" },
-        { "id": "detail", "label": "具体的な様子", "type": "textarea" },
+        { "id": "detail", "label": "具体的な様子", "type": "textarea", "info": "detail" },
         { "id": "know", "label": "施設について分かっていること", "optional": true, "prefill": {"fact": "know"}, "info": "know" },
         { "id": "done_before", "label": "これまでにしたこと", "optional": true, "prefill": {"fact": "done"}, "info": "history" },
         { "id": "response_before", "label": "前回の回答", "optional": true, "prefill": {"fact": "gov_response"}, "info": "lastResponse" },
-        { "id": "ask", "label": "確認したいこと・お願いしたいこと", "type": "textarea", "placeholder": "届出や許可の有無、事業者への指導の予定、結果を教えてもらえるか" }
+        { "id": "ask", "label": "確認したいこと・お願いしたいこと", "type": "textarea", "placeholder": "届出や許可の有無、事業者への指導の予定、結果を教えてもらえるか", "info": "ask" }
       ],
       "body": [
         { "text": "【相談の要点】" },
@@ -56,10 +56,9 @@
         { "text": "確認したいこと：{ask}", "requires": ["ask"] }
       ],
       "checks": ["事実と、自分の推測を分けて書いた", "聞きたいことを1〜3つにしぼった", "相談したら、日時・部署・名前・回答を記録する"],
-      "links": [
-        { "type": "todokeru-guide", "guide": "phone", "label": "電話のかけ方（声を届ける）" },
-        { "type": "todokeru-guide", "guide": "email", "label": "メールの文面づくり（声を届ける）" },
-        { "type": "todokeru-contacts" }
+      "deliver": [
+        {"title": "電話・窓口で伝える", "note": "このメモを印刷するか、画面に出したまま、見ながら話します。話したら、日時・部署・名前・回答を記録しておきます。", "links": [{"type": "todokeru-contacts", "label": "電話先・窓口を探す"}, {"type": "todokeru-guide", "guide": "phone", "section": "ch4", "label": "自治体への電話のコツ"}, {"type": "records"}]},
+        {"title": "メールで送る", "note": "メールの本文は「お願い・問い合わせ」の文書で作ります。（共通）の欄に入れた内容は、そのまま引き継がれます。", "links": [{"type": "doc", "doc": "gov_request", "label": "メール用の文書を作る", "primary": true}, {"type": "todokeru-guide", "guide": "email", "section": "ch4", "label": "自治体へのメールの送り方"}]}
       ]
     },
     {
@@ -72,7 +71,7 @@
         { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）", "info": "place" },
         { "id": "problems", "label": "困っていること", "prefill": {"fact": "problems"}, "info": "problems" },
         { "id": "period", "label": "時期・回数", "placeholder": "9月ごろから、週に2〜3回", "info": "since" },
-        { "id": "detail", "label": "具体的な様子", "type": "textarea" },
+        { "id": "detail", "label": "具体的な様子", "type": "textarea", "info": "detail" },
         {
           "id": "done_before",
           "label": "これまでの対応",
@@ -81,7 +80,7 @@
           "placeholder": "10月5日に電話で相談し、指導すると回答をいただいた",
           "info": "history"
         },
-        { "id": "request", "label": "お願い・問い合わせたいこと", "type": "textarea", "placeholder": "事業者への指導の内容と結果を教えてください" },
+        { "id": "request", "label": "お願い・問い合わせたいこと", "type": "textarea", "placeholder": "事業者への指導の内容と結果を教えてください", "info": "ask" },
         { "id": "reply_by", "label": "回答の期限", "optional": true, "placeholder": "12月10日" },
         { "id": "reply_how", "label": "回答の方法", "optional": true, "placeholder": "文書（郵送）／メール" },
         { "id": "name", "label": "差出人（名前・連絡先）", "type": "textarea", "optional": true }
@@ -103,7 +102,7 @@
         { "text": "{name}", "requires": ["name"] }
       ],
       "checks": ["事実だけを書き、確かめていないことを「違反」と書いていない", "日時・回数が記録と合っている", "求める回答（何を・いつまでに・どの方法で）がはっきりしている", "出す前に写しを保存した"],
-      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方（声を届ける）"}, {"type": "todokeru-contacts"}]
+      "links": [{"type": "todokeru-guide", "guide": "email", "section": "ch4", "label": "自治体へのメールの送り方（声を届ける）"}, {"type": "todokeru-contacts"}]
     },
     {
       "id": "disclosure_draft",

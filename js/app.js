@@ -109,12 +109,11 @@ function migrate() {
 function migrateOpen(file) {
   let ch = false;
   if (!file.title && file.state?.history?.length) { file.title = autoTitle(file, cur.data.tree); ch = !!file.title; }
-  if (!file.info) {
-    file.info = {}; ch = true;
-    for (const [id, sv] of Object.entries(file.docs || {})) {
-      const d = allDocs().find(x => x.id === id);
-      for (const f of d?.fields || []) if (f.info && !(f.info in file.info) && filled(sv.values?.[f.id])) file.info[f.info] = sv.values[f.id];
-    }
+  if (!file.info) { file.info = {}; ch = true; }
+  // あとから共通の欄になった項目（様子・お願いなど）も、下書きに入れてあった値を引き継ぐ
+  for (const [id, sv] of Object.entries(file.docs || {})) {
+    const d = allDocs().find(x => x.id === id);
+    for (const f of d?.fields || []) if (f.info && !(f.info in file.info) && filled(sv.values?.[f.id])) { file.info[f.info] = sv.values[f.id]; ch = true; }
   }
   if (ch) S.putFile(file, false);
 }
@@ -169,7 +168,7 @@ const qHash = (c, n) => `${c.base}/q/${n}`;
 const lastQ = st => (st.node === E.RESULT ? null : st.history.length + 1);
 
 // ---------- 相談の共通情報（場所・困りごとなど。下書き・結果の例文で使い回す） ----------
-const INFO = ['place', 'problems', 'since', 'know', 'history', 'lastResponse'];
+const INFO = ['place', 'problems', 'since', 'detail', 'ask', 'know', 'history', 'lastResponse'];
 function factLabel(tree, state, fact) {
   const id = state.history.map(h => h.node).find(n => tree.nodes[n]?.fact === fact);
   const v = state.facts[fact];
@@ -183,7 +182,7 @@ function infoVals() {
   const done = (file.records || []).filter(r => !isPlanned(r)).sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   const last = N.latestDone(file.records), lastRound = (file.rounds || []).filter(x => x.done).at(-1);
   const v = {
-    place: '', since: '',
+    place: '', since: '', detail: '', ask: '',
     problems: factLabel(t, st, 'problems'),
     know: factLabel(t, st, 'know') || factLabel(t, st, 'reasons'),
     history: [factLabel(t, st, 'done'), ...done.map(r => [fmtDay(r.date), L.toType[r.toType], L.method[r.method]].filter(Boolean).join(' '))].filter(Boolean).join('、'),
@@ -432,7 +431,8 @@ function linkHref(l) {
   const L = G.links, r = cur?.file?.region, f = cur?.file;
   switch (l.type) {
     case 'todokeru-contacts': return L.todokeru + '#/contacts' + (r ? `?tab=area&code=${r.code || r.pref}` : '');
-    case 'todokeru-guide': return L.todokeru + '#/guide/' + l.guide;
+    // section：声を届けるのページの中の見出し（文章づくりの画面を飛ばして、読むところへ直接）
+    case 'todokeru-guide': return L.todokeru + '#/guide/' + l.guide + (l.section ? '?s=' + encodeURIComponent(l.section) : '');
     case 'minpaku-map': { const q = new URLSearchParams(); if (r?.prefName) q.set('pref', r.prefName); if (r?.cityName) q.set('city', r.cityName); return L.minpakuMap + (q.toString() ? '?' + q : ''); }
     case 'pubcome': return L.pubcome;
     case 'shomei': return L.shomei;
@@ -450,7 +450,7 @@ function linksBlock(links = []) {
   return `<div class="links">${links.map(l => {
     const ext = !INTERNAL.includes(l.type);
     const label = l.label || G.links.labels?.[l.type] || (l.type === 'next' ? '次の一手を探す' : 'ひらく');
-    return `<a class="btn${l.type === 'next' ? ' primary' : ''}" href="${esc(linkHref(l))}"${ext ? ' target="_blank" rel="noopener"' : ''}>${esc(label)}${ext ? ' ↗' : ''}</a>`;
+    return `<a class="btn${l.type === 'next' || l.primary ? ' primary' : ''}" href="${esc(linkHref(l))}"${ext ? ' target="_blank" rel="noopener"' : ''}>${esc(label)}${ext ? ' ↗' : ''}</a>`;
   }).join('')}</div>`;
 }
 
@@ -685,8 +685,8 @@ function viewDocs() {
     <p class="note">入力した事実だけで文章を組み立てます。入力していないことは書きません。出す前に必ず読み直して直してください。</p>
     ${top.length ? `<h2>おすすめ（今の段階に合うもの）</h2><div class="stack">${top.map(item).join('')}</div><h2>ほかの下書き</h2>` : ''}
     <div class="stack">${others.map(item).join('')}</div>
-    <h2>届け方は「声を届ける」で</h2><p class="help">電話のかけ方、メール・手紙の送り方、情報公開請求・請願・陳情・パブコメの手続きは、姉妹サイト「声を届ける」で詳しく案内しています。</p>
-    ${linksBlock([{ type: 'todokeru-guide', guide: 'phone', label: '電話のかけ方' }, { type: 'todokeru-guide', guide: 'email', label: 'メール・手紙の送り方' }, { type: 'todokeru-contacts', label: '窓口を探す' }])}`, '文書の下書き');
+    <h2>届け方は「声を届ける」で</h2><p class="help">文章はこのサイトで作れます。どこへ送るか（窓口）と、電話のかけ方、メール・手紙の送り方、情報公開請求・請願・陳情・パブコメの手続きは、姉妹サイト「声を届ける」で詳しく案内しています。</p>
+    ${linksBlock([{ type: 'todokeru-guide', guide: 'phone', section: 'manual', label: '電話のかけ方' }, { type: 'todokeru-guide', guide: 'email', section: 'manual', label: 'メール・手紙の送り方' }, { type: 'todokeru-contacts', label: '窓口を探す' }])}`, '文書の下書き');
 }
 
 function viewDoc(docId) {
@@ -710,7 +710,16 @@ function viewDoc(docId) {
       <textarea id="doctext" data-act="doctext" rows="14">${esc(text)}</textarea>
       <div class="row"><button class="btn" data-act="copydoc">コピー</button><button class="btn" data-act="savedoc">テキストで保存</button><button class="btn" data-act="print">印刷・PDF</button></div></section>
     <section class="card plainc"><h2>3. 出す前の確認</h2><ul class="checklist">${(d.checks || []).map(c => `<li><label><input type="checkbox"> ${esc(c)}</label></li>`).join('')}</ul></section>
-    ${d.links ? `<h2>届け方</h2>${linksBlock(d.links)}` : ''}`, d.title);
+    ${deliverBlock(d)}`, d.title);
+}
+// 4. 伝える・届ける：電話・メールなど届け方ごとに分けたボタン（deliver）か、ボタンだけ（links）
+function deliverBlock(d) {
+  const groups = d.deliver || (d.links ? [{ links: d.links }] : []);
+  if (!groups.length) return '';
+  const toTodokeru = groups.some(g => g.links.some(l => l.type.startsWith('todokeru')));
+  return `<section class="card plainc noprint"><h2>4. ${d.deliver ? '伝える' : '届ける'}</h2>
+    ${groups.map(g => g.title ? `<div class="box deliver"><h3>${esc(g.title)}</h3>${g.note ? `<p class="help">${esc(g.note)}</p>` : ''}${linksBlock(g.links)}</div>` : linksBlock(g.links)).join('')}
+    ${toTodokeru ? '<p class="note">↗（右上向きの矢印）の付いたボタンは、別のサイトが開きます。姉妹サイト「声を届ける」では、窓口と伝え方を見られます。文章はこのページで完成しているので、作り直す必要はありません。</p>' : ''}</section>`;
 }
 
 // ---------- 画面：記録 ----------

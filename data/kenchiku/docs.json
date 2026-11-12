@@ -120,8 +120,8 @@
   },
   {
    "id": "gov_memo",
-   "title": "自治体への相談メモ（電話・窓口・メール用）",
-   "desc": "電話や窓口で伝える要点のメモです。メールで送るときは、「声を届ける」の文面づくりに貼りつけて使えます。",
+   "title": "自治体への相談メモ（電話・窓口用）",
+   "desc": "電話や窓口で、手元に置いて見ながら話すための要点メモです。メールで送るときは、いちばん下の「メール用の文書を作る」へ進んでください。場所や様子などの（共通）の欄は、そのまま引き継がれます。",
    "fields": [
     {
      "id": "place",
@@ -146,7 +146,8 @@
     {
      "id": "detail",
      "label": "具体的な様子",
-     "type": "textarea"
+     "type": "textarea",
+     "info": "detail"
     },
     {
      "id": "know",
@@ -179,7 +180,8 @@
      "id": "ask",
      "label": "確認したいこと・お願いしたいこと",
      "type": "textarea",
-     "placeholder": "建築確認や許可の有無、計画どおりか、指導の予定、結果を教えてもらえるか"
+     "placeholder": "建築確認や許可の有無、計画どおりか、指導の予定、結果を教えてもらえるか",
+     "info": "ask"
     }
    ],
    "body": [
@@ -240,19 +242,43 @@
     "聞きたいことを1〜3つにしぼった",
     "相談したら、日時・部署・名前・回答を記録する"
    ],
-   "links": [
+   "deliver": [
     {
-     "type": "todokeru-guide",
-     "guide": "phone",
-     "label": "電話のかけ方（声を届ける）"
+     "title": "電話・窓口で伝える",
+     "note": "このメモを印刷するか、画面に出したまま、見ながら話します。話したら、日時・部署・名前・回答を記録しておきます。",
+     "links": [
+      {
+       "type": "todokeru-contacts",
+       "label": "電話先・窓口を探す"
+      },
+      {
+       "type": "todokeru-guide",
+       "guide": "phone",
+       "section": "ch4",
+       "label": "自治体への電話のコツ"
+      },
+      {
+       "type": "records"
+      }
+     ]
     },
     {
-     "type": "todokeru-guide",
-     "guide": "email",
-     "label": "メールの文面づくり（声を届ける）"
-    },
-    {
-     "type": "todokeru-contacts"
+     "title": "メールで送る",
+     "note": "メールの本文は「お願い・問い合わせ」の文書で作ります。（共通）の欄に入れた内容は、そのまま引き継がれます。",
+     "links": [
+      {
+       "type": "doc",
+       "doc": "gov_request",
+       "label": "メール用の文書を作る",
+       "primary": true
+      },
+      {
+       "type": "todokeru-guide",
+       "guide": "email",
+       "section": "ch4",
+       "label": "自治体へのメールの送り方"
+      }
+     ]
     }
    ]
   },
@@ -294,7 +320,8 @@
     {
      "id": "detail",
      "label": "具体的な様子",
-     "type": "textarea"
+     "type": "textarea",
+     "info": "detail"
     },
     {
      "id": "done_before",
@@ -308,7 +335,8 @@
      "id": "request",
      "label": "お願い・問い合わせたいこと",
      "type": "textarea",
-     "placeholder": "調査の結果と、建築主（施工者）への指導の内容を教えてください"
+     "placeholder": "調査の結果と、建築主（施工者）への指導の内容を教えてください",
+     "info": "ask"
     },
     {
      "id": "reply_by",
@@ -414,7 +442,8 @@
     {
      "type": "todokeru-guide",
      "guide": "email",
-     "label": "メール・手紙の送り方（声を届ける）"
+     "section": "ch4",
+     "label": "自治体へのメールの送り方（声を届ける）"
     },
     {
      "type": "todokeru-contacts"

@@ -32,7 +32,7 @@
         { "text": "{name}", "requires": ["name"] }
       ],
       "checks": ["事実だけを書き、推測や決めつけを書いていない", "職員個人を責める表現がない", "聞きたいことを番号つきで並べた", "写しを手元に残した", "送った日と方法を「対応の記録」に書いた"],
-      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+      "links": [{"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}]
     },
     {
       "id": "disclosure_memo",

@@ -125,7 +125,7 @@
       "bring": ["回答を受けた日時・担当者のメモ", "心配ごとを具体的に書いたメモ"],
       "script": "〇月〇日に〇〇について「問題ない」とのお答えをいただきました。今後のために、①判断の根拠とした法令・条例と条文、②確認された許可・届出などの手続き（番号・日付）、③確認された事実（現地の確認の有無など）を教えてください。また、私が心配している〇〇（例：前の道路の交通）は、その判断の対象に含まれていますか。",
       "ifNoAnswer": "答えがもらえなければ、判断に使った文書（審査や確認の記録、届出書など）を情報公開請求で求める方法があります。",
-      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}]
     },
     {
       "id": "do_other_route",
@@ -159,7 +159,7 @@
       "bring": ["これまでの相談の記録（日時・相手・回答）", "困りごとの記録や写真"],
       "script": "〇月〇日に〇〇についてご相談し、「〇〇」とのお答えをいただきました。今後の対応を考えるため、①その根拠となる法令・条例と条文、②権限を持つ機関があればその名前、③確認された事実や行った指導の内容を、文書（メール可）で教えていただけますか。〇月〇日ごろまでにご回答をお願いします。",
       "ifNoAnswer": "期限を過ぎても回答がなければ、記録を残したうえで、議員への相談や、判断・指導の記録を情報公開請求で求めることを考えます。",
-      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}],
+      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}],
       "facts": ["tetsuzuki_shinsei"]
     },
     {
@@ -194,7 +194,7 @@
       "bring": ["最初に相談した日時・相手のメモ", "困りごとの記録"],
       "script": "〇月〇日に〇〇についてご相談しましたが、まだご回答をいただいていません。お手数ですが、〇月〇日までに、対応の予定、または対応できない場合はその理由を、メールまたは文書でお知らせください。",
       "ifNoAnswer": "期限を過ぎても回答がなければ、自治体の「市民の声」などの受付や、議員への相談を考えます。",
-      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}]
     },
     {
       "id": "do_koucho",
@@ -249,7 +249,7 @@
       "bring": ["困りごとの記録", "これまでの相談の日時・相手・回答"],
       "script": "〇月から〇〇について〇回ご相談していますが、〇〇の状態が続いています。①〇〇の確認、②確認の結果のご連絡、をお願いします。〇月〇日までに文書でご回答ください。",
       "ifNoAnswer": "回答がなければ、「市民の声」などの受付や、議員への相談を考えます。",
-      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方"}]
+      "links": [{"type": "doc", "doc": "ask_basis"}, {"type": "todokeru-guide", "guide": "email", "section": "manual", "label": "メール・手紙の送り方"}]
     },
     {
       "id": "do_party_gov",
