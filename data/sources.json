@@ -2075,6 +2075,54 @@
    "amended": null,
    "checked": "2026-11-12",
    "note": "判示事項：概算払の支出命令から1年経過後の監査請求に正当な理由なし"
+  },
+  {
+   "id": "src_ota_minpaku",
+   "kind": "official",
+   "title": "大田区 民泊（住宅宿泊事業・特区民泊・旅館業）について",
+   "publisher": "大田区",
+   "url": "https://www.city.ota.tokyo.jp/seikatsu/hoken/minpaku/minpaku.html",
+   "published": "2026-10-20",
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-12",
+   "note": "窓口：生活衛生課 03-5764-0693"
+  },
+  {
+   "id": "src_ota_jorei",
+   "kind": "ordinance",
+   "title": "大田区 住宅宿泊事業（民泊）について（大田区住宅宿泊事業法施行条例）",
+   "publisher": "大田区",
+   "url": "https://www.city.ota.tokyo.jp/seikatsu/hoken/eisei/riyoubiyou/minpaku_shinpou.html",
+   "published": "2026-04-10",
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-12",
+   "note": "区域の制限・学校周辺の期間の制限"
+  },
+  {
+   "id": "src_ota_tokku",
+   "kind": "official",
+   "title": "大田区 国家戦略特別区域外国人滞在施設経営事業（特区民泊）",
+   "publisher": "大田区",
+   "url": "https://www.city.ota.tokyo.jp/kuseijoho/kokkasenryakutokku/ota_tokkuminpaku.html",
+   "published": "2026-04-30",
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-12",
+   "note": "令和8年4月1日施行の規則・ガイドライン改正"
+  },
+  {
+   "id": "src_ota_hyoushiki",
+   "kind": "official",
+   "title": "大田区 民泊施設の標識（ステッカー）について",
+   "publisher": "大田区",
+   "url": "https://www.city.ota.tokyo.jp/seikatsu/hoken/minpaku/hyoushiki.html",
+   "published": "2023-02-15",
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-12",
+   "note": "特区民泊の認定施設・条例適合施設へのステッカー、届出施設の標識の掲示義務"
   }
  ]
 }

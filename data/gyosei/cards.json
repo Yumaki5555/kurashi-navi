@@ -176,7 +176,10 @@
       "where": "自治体のホームページの「組織と仕事」、[[例規集]]の「事務分掌（各課の仕事を定めた規則）」。わからなければ代表電話・総合案内",
       "check": "困りごとに関係する法律・条例の名前と、それを受け持つ課の名前",
       "bring": ["困りごとを一言で言えるメモ（例：「届出のない宿泊施設の営業の疑い」）", "前に相談した課と、その回答のメモ"],
-      "script": ["{problems|〇〇（困りごと）}について相談したいのですが、〇〇法（わかれば）を受け持つ課はどちらですか。",{"t":"前に〇〇課に相談したところ、担当ではないと言われました。","when":{"fact":"result","eq":"redirected"}}],
+      "script": [
+        "{problems|〇〇（困りごと）}について相談したいのですが、〇〇法（わかれば）を受け持つ課はどちらですか。",
+        { "t": "前に〇〇課に相談したところ、担当ではないと言われました。", "when": {"fact": "result", "eq": "redirected"} }
+      ],
       "ifNoAnswer": "担当がはっきりしないときは、最初に相談した課に「どこが担当か」を文書で聞くか、議員に担当を確かめてもらう方法があります。",
       "links": [{"type": "todokeru-contacts"}]
     },
@@ -263,7 +266,15 @@
       "where": "決まりを受け持つ課（民泊なら宿泊施設の担当・保健所など、建物や工事なら建築の担当課、音や振動なら環境の担当課）",
       "check": "その営業・工事・施設に、守るべき決まり（届出・許可・基準）があるか。役所が相手方に確認・指導できるか",
       "bring": ["困りごとの記録（日時・内容）", "相手方に伝えた日時と、その返事"],
-      "script": ["{place|〇〇（施設・工事）}について、〇月〇日から{problems|〇〇（困りごと）}が続いています。〇月〇日に相手方に改善をお願いしましたが、",{"t":"返事がありません。","when":{"fact":"result","eq":"no_reply"}},{"t":"断られました。","when":{"fact":"result","eq":"refused"}},{"t":"一部しか変わりません。","when":{"fact":"result","eq":"partial"}},{"t":"かえって悪くなりました。","when":{"fact":"result","eq":"worse"}},{"t":"変わりません。","when":{"not":{"fact":"result","in":["no_reply","refused","partial","worse"]}}},"決まりに照らして確認・指導していただけますか。確認の結果も教えてください。"],
+      "script": [
+        "{place|〇〇（施設・工事）}について、〇月〇日から{problems|〇〇（困りごと）}が続いています。〇月〇日に相手方に改善をお願いしましたが、",
+        { "t": "返事がありません。", "when": {"fact": "result", "eq": "no_reply"} },
+        { "t": "断られました。", "when": {"fact": "result", "eq": "refused"} },
+        { "t": "一部しか変わりません。", "when": {"fact": "result", "eq": "partial"} },
+        { "t": "かえって悪くなりました。", "when": {"fact": "result", "eq": "worse"} },
+        { "t": "変わりません。", "when": {"not": {"fact": "result", "in": ["no_reply", "refused", "partial", "worse"]}} },
+        "決まりに照らして確認・指導していただけますか。確認の結果も教えてください。"
+      ],
       "ifNoAnswer": "役所から回答がなければ、期限を決めて文書で回答を求めます（もう一度「次の一手を探す」で、相手を「役所の担当課」にして選べます）。",
       "links": [{"type": "records"}, {"type": "todokeru-contacts"}]
     },
@@ -535,9 +546,10 @@
       "when": {
         "all": [
           { "fact": "did", "eq": "petition" },
-          { "fact": "from", "eq": "gakko" },
           { "fact": "pet_result", "ne": "adopted" },
-          { "fact": "new_material", "in": ["no", "unknown"] }
+          { "fact": "new_material", "in": ["no", "unknown"] },
+          { "fact": "from", "eq": "gakko" },
+          { "fact": "pet_topic", "eq": "japanese" }
         ]
       },
       "title": "国の調査や教育委員会の資料で、日本語指導の状況を確かめる",
@@ -558,14 +570,27 @@
       "when": {
         "all": [
           { "fact": "did", "eq": "petition" },
-          { "fact": "from", "ne": "gakko" },
           { "fact": "pet_result", "ne": "adopted" },
-          { "fact": "new_material", "in": ["no", "unknown"] }
+          { "fact": "new_material", "in": ["no", "unknown"] },
+          { "any": [{"fact": "from", "ne": "gakko"}, {"fact": "pet_topic", "in": ["class", "lunch", "safety", "admin"]}] }
         ]
       },
-      "title": "公表済みの統計や資料で、事実を確かめる",
+      "title": [
+        "公表済みの統計や資料で、",
+        { "t": "授業や先生の配置の", "when": {"fact": "pet_topic", "eq": "class"} },
+        { "t": "給食の", "when": {"fact": "pet_topic", "eq": "lunch"} },
+        { "t": "いじめ・安全の", "when": {"fact": "pet_topic", "eq": "safety"} },
+        { "t": "学校の運営・費用の", "when": {"fact": "pet_topic", "eq": "admin"} },
+        "事実を確かめる"
+      ],
       "body": "結論の理由に応えるには、だれでも確かめられる資料が役立ちます。",
-      "where": "国・都道府県・自治体の統計、自治体の計画や報告書、議会に出された資料",
+      "where": [
+        "国・都道府県・自治体の統計、自治体の計画や報告書、議会に出された資料",
+        { "t": "（例：教育委員会の事業報告・学校の教員配置の資料）", "when": {"fact": "pet_topic", "eq": "class"} },
+        { "t": "（例：給食の献立・食材・費用の公表資料）", "when": {"fact": "pet_topic", "eq": "lunch"} },
+        { "t": "（例：いじめの調査結果・学校の安全計画）", "when": {"fact": "pet_topic", "eq": "safety"} },
+        { "t": "（例：学校の予算・決算、学校運営の報告）", "when": {"fact": "pet_topic", "eq": "admin"} }
+      ],
       "check": "資料の時点、全国や近い自治体との比べ方",
       "bring": ["前に出した請願の内容と、結論の理由のメモ"],
       "script": "担当課への聞き方の例：「〇〇について、市として集計している数字や、公表している資料はありますか。」",

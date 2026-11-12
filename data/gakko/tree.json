@@ -38,8 +38,24 @@
         { "value": "E", "label": "学校のお金・PTA・部活動などの負担が重い", "short": "お金・PTA・部活動の負担", "next": "e_problems" },
         { "value": "F", "label": "学校の統合・通学路・学童保育など、学校とそのまわりの変化", "short": "学校とまわりの変化", "next": "f_problems" },
         { "value": "G", "label": "学校や教育委員会に相談したが、対応してもらえない", "short": "学校・教育委員会が対応してくれない", "next": "g_topic" },
-        { "value": "H", "label": "学校の実態の把握や、情報の公表を求めた請願・陳情が、議会で通らなかった（不採択など）", "short": "請願・陳情が通らなかった", "next": "@result" }
+        { "value": "H", "label": "学校の実態の把握や、情報の公表を求めた請願・陳情が、議会で通らなかった（不採択など）", "short": "請願・陳情が通らなかった", "next": "h_topic" }
       ]
+    },
+    "h_topic": {
+      "type": "choice",
+      "fact": "pet_topic",
+      "sum": "請願・陳情のテーマ",
+      "text": "請願・陳情で求めたことは、どれにいちばん近いですか？",
+      "help": "テーマによって、確かめる資料が変わります。はっきりしなければ「わからない・その他」で進めます。",
+      "options": [
+        { "value": "class", "label": "授業・先生の配置（自習が多い、先生が足りないなど）", "short": "授業・先生の配置" },
+        { "value": "japanese", "label": "日本語指導・支援が必要な子どもの人数や体制", "short": "日本語指導・児童生徒数" },
+        { "value": "lunch", "label": "給食", "short": "給食" },
+        { "value": "safety", "label": "いじめ・安全", "short": "いじめ・安全" },
+        { "value": "admin", "label": "学校の運営・費用", "short": "学校の運営・費用" },
+        { "value": "unknown", "label": "わからない・その他", "short": "わからない・その他" }
+      ],
+      "next": "@result"
     },
     "a_problems": {
       "type": "multi",

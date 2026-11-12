@@ -4,7 +4,7 @@
   "version": 1,
   "start": "situation",
   "entries": { "next": "next_did" },
-  "carry": ["building", "problems", "done"],
+  "carry": ["building", "problems", "done", "pet_topic"],
   "hints": {
     "next_did": { "fact": "done", "map": {"manager": "party", "owner_side": "owner", "owner": "party", "builder": "party", "police": "police", "gov": "phone"} }
   },
@@ -152,7 +152,7 @@
         {
           "value": "party",
           "label": "施設の管理者・事業者・建築主などに連絡した",
-          "alt": [{ "when": {"fact": "from", "eq": "minpaku"}, "label": "施設の管理者・事業者などに連絡した" }],
+          "alt": [{"when": {"fact": "from", "eq": "minpaku"}, "label": "施設の管理者・事業者などに連絡した"}],
           "short": "相手方に連絡した",
           "when": { "fact": "from", "in": ["minpaku", "kenchiku"] },
           "sets": { "target": "party" },
@@ -186,7 +186,7 @@
         {
           "value": "party",
           "label": "施設の管理者・事業者・建築主など、相手方",
-          "alt": [{ "when": {"fact": "from", "eq": "minpaku"}, "label": "施設の管理者・事業者など、相手方" }],
+          "alt": [{"when": {"fact": "from", "eq": "minpaku"}, "label": "施設の管理者・事業者など、相手方"}],
           "short": "相手方（事業者など）",
           "next": "result_party",
           "when": { "not": {"fact": "from", "in": ["gakko", "yosan"]} }

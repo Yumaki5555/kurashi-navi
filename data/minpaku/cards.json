@@ -10,7 +10,7 @@
       "where": "自宅や道路など、自分がいる場所から（相手の敷地には入らない）",
       "check": "日時・続いた時間・内容（音の種類、ごみの状態など）・自分の生活への影響",
       "bring": ["メモ帳やスマートフォンのメモ", "写真・録音（自宅や道路から。人の顔や車のナンバーが写らないように）", "このサイトの「対応の記録」"],
-      "script": ["記録の例：11月10日（日）",{"t":"23時10分〜23時50分、話し声と音楽。窓を閉めても聞こえ、眠れなかった。","when":{"fact":"problems","has":"noise"}},{"t":"朝7時、収集日ではないのに集積所に袋が5つ出ていた。","when":{"all":[{"not":{"fact":"problems","has":"noise"}},{"fact":"problems","has":"gomi"}]}},{"t":"〇時〇分ごろ、〇〇（起きたこと）。〇〇（困ったこと）。","when":{"not":{"fact":"problems","in":["noise","gomi"]}}}],
+      "script": ["記録の例：11月10日",{"t":"23時10分〜23時50分、話し声と音楽。窓を閉めても聞こえ、眠れなかった。","when":{"fact":"problems","has":"noise"}},{"t":"朝7時、収集日ではないのに集積所に袋が5つ出ていた。","when":{"all":[{"not":{"fact":"problems","has":"noise"}},{"fact":"problems","has":"gomi"}]}},{"t":"〇時〇分ごろ、〇〇（起きたこと）。〇〇（困ったこと）。","when":{"not":{"fact":"problems","in":["noise","gomi"]}}}],
       "ifNoAnswer": "記録は相談するたびに役立ちます。改善するまで続け、相談したときは、その日時・相手・回答も残しましょう。",
       "links": [ { "type": "records" } ]
     },
@@ -31,8 +31,8 @@
       "when": {"all":[{"any":[{"fact":"situation","eq":"C"},{"all":[{"fact":"situation","eq":"B"},{"not":{"fact":"know","has":"sign"}}]},{"fact":"biz_type","eq":"unknown"}]},{"not":{"all":[{"fact":"reasons","has":"no_sign"},{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]},{"fact":"reasons","has":"no_number"}]}}]},
       "title": "施設の営業の種類を確かめる",
       "body": "民泊には[[届出]]の民泊・[[旅館業]]の施設・[[特区民泊]]の3種類があり、相談する窓口とルールが違います。まず、どれにあたるかを確かめます。",
-      "where": [{"t":"①建物の外から見える玄関などの[[標識]]","when":{"not":{"fact":"reasons","has":"no_sign"}}},{"t":"①標識（済）","when":{"fact":"reasons","has":"no_sign"}}," → ",{"t":"②自治体が公開している施設の一覧","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"②公開一覧（済）","when":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}," → ",{"t":"③予約サイトの施設のページ","when":{"not":{"fact":"reasons","has":"no_number"}}},{"t":"③予約サイト（済）","when":{"fact":"reasons","has":"no_number"}}],
-      "check": [{"t":"標識の「届出番号」などの記載","when":{"not":{"fact":"reasons","has":"no_sign"}}},{"t":"／一覧に同じ住所の施設があるか（資料の時点も見る）","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"／予約サイトに届出番号などが書かれているか","when":{"not":{"fact":"reasons","has":"no_number"}}}],
+      "where": [{"t":"①標識（済：書かれている番号・制度名・事業者名・連絡先を控える）","when":{"fact":"know","has":"sign"}},{"t":"①建物の外から見える玄関などの[[標識]]","when":{"all":[{"not":{"fact":"reasons","has":"no_sign"}},{"not":{"fact":"know","has":"sign"}}]}},{"t":"①標識（済）","when":{"fact":"reasons","has":"no_sign"}}," → ",{"t":"②自治体が公開している施設の一覧","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"②公開一覧（済）","when":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}," → ",{"t":"③予約サイトの施設のページ","when":{"not":{"fact":"reasons","has":"no_number"}}},{"t":"③予約サイト（済）","when":{"fact":"reasons","has":"no_number"}}],
+      "check": [{"t":"標識に書かれた番号・制度名・事業者名・連絡先（わかる範囲で。種類がわからなければ、そのまま窓口に伝えて確かめてもらう）","when":{"fact":"know","has":"sign"}},{"t":"標識の「届出番号」などの記載","when":{"all":[{"not":{"fact":"reasons","has":"no_sign"}},{"not":{"fact":"know","has":"sign"}}]}},{"t":"／一覧に同じ住所の施設があるか（資料の時点も見る）","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"／予約サイトに届出番号などが書かれているか","when":{"not":{"fact":"reasons","has":"no_number"}}}],
       "bring": ["施設のおおよその住所（町名・番地の目安）", "標識や外観の写真（道路から）"],
       "script": ["確かめた結果のメモの例：",{"t":"標識：見当たらない","when":{"fact":"reasons","has":"no_sign"}},{"t":"標識：〇〇","when":{"not":{"fact":"reasons","has":"no_sign"}}},"／",{"t":"公開一覧：見当たらない（〇月〇日時点の資料）","when":{"fact":"reasons","has":"not_listed"}},{"t":"公開一覧：確認した（〇月〇日時点の資料）","when":{"all":[{"fact":"checked_list","eq":"yes"},{"not":{"fact":"reasons","has":"not_listed"}}]}},{"t":"公開一覧：〇〇（〇月〇日時点の資料）","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},"／",{"t":"予約サイト：届出番号の記載なし","when":{"fact":"reasons","has":"no_number"}},{"t":"予約サイト：〇〇","when":{"not":{"fact":"reasons","has":"no_number"}}}],
       "ifNoAnswer": "自分で確かめても分からないときは、自治体に確認をお願いします。",
@@ -75,7 +75,7 @@
       "where": "届出の民泊：都道府県または市区町村の民泊（住宅宿泊事業）の担当課／旅館業の施設：保健所（生活衛生の担当）／わからないとき：自治体の代表電話で「民泊の苦情の担当」と伝える",
       "check": "その施設の届出・許可の有無／事業者に確認・指導してもらえるか／結果を教えてもらえるか",
       "bring": ["困りごとの記録",{"t":"管理者とのやりとりの記録","when":{"fact":"done","has":"manager"}},"施設の場所"],
-      "script": ["「{place|〇〇町}の民泊と思われる施設について相談です。〇月から{problems|〇〇}の困りごとが続き",{"t":"、管理者に伝えても改善しません。","when":{"fact":"done","has":"manager"}},{"t":"ています。","when":{"not":{"fact":"done","has":"manager"}}},"届出の状況と、今後どのように対応していただけるか教えてください」"],
+      "script": ["「{place|〇〇町}の",{"t":"民泊と思われる施設","when":{"not":{"fact":"know","has":"sign"}}},{"t":"宿泊施設","when":{"fact":"know","has":"sign"}},"について相談です。",{"t":"玄関に住宅宿泊事業（届出）の標識が出ています（番号：〇〇）。","when":{"all":[{"fact":"know","has":"sign"},{"fact":"biz_type","eq":"jutaku"}]}},{"t":"玄関に特区民泊の標識（ステッカー）が出ています。","when":{"all":[{"fact":"know","has":"sign"},{"fact":"biz_type","eq":"tokku"}]}},{"t":"旅館業の許可の表示が出ています。","when":{"all":[{"fact":"know","has":"sign"},{"fact":"biz_type","eq":"ryokan"}]}},{"t":"玄関に標識がありますが、何の標識かはわかりません（書かれていること：〇〇）。","when":{"all":[{"fact":"know","has":"sign"},{"not":{"fact":"biz_type","in":["jutaku","tokku","ryokan"]}}]}},"〇月から{problems|〇〇}の困りごとが続き",{"t":"、管理者に伝えても改善しません。","when":{"fact":"done","has":"manager"}},{"t":"ています。","when":{"not":{"fact":"done","has":"manager"}}},{"t":"標識の内容どおりの営業かの確認と、","when":{"all":[{"fact":"know","has":"sign"},{"fact":"biz_type","in":["jutaku","tokku","ryokan"]}]}},{"t":"何の施設かの確認と、","when":{"all":[{"fact":"know","has":"sign"},{"not":{"fact":"biz_type","in":["jutaku","tokku","ryokan"]}}]}},{"t":"届出の状況と、","when":{"not":{"fact":"know","has":"sign"}}},"今後どのように対応していただけるか教えてください」"],
       "ifNoAnswer": "「担当ではない」と言われたら「どちらの部署の担当ですか」と聞きます。相談した日時・部署・名前・回答を記録し、改善しなければ文書で問い合わせます。",
       "links": [ { "type": "todokeru-contacts" }, { "type": "todokeru-guide", "guide": "phone", "section": "ch4", "label": "自治体への電話のコツ（声を届ける）" }, { "type": "doc", "doc": "gov_memo", "label": "相談メモを作る" } ],
       "facts": ["jutaku_kantoku", "ryokan_kyoka"]
@@ -83,8 +83,8 @@
     {
       "id": "do_police", "section": "do", "priority": 50,
       "when": { "all": [ { "fact": "problems", "in": ["noise", "traffic", "security"] }, { "not": { "fact": "ongoing", "eq": "no" } }, { "fact": "situation", "in": ["B", "C", "D"] } ] },
-      "title": "その場で騒ぎや迷惑駐車が続くときは、警察に相談する",
-      "body": "夜中の大騒ぎや危険な路上駐車など、その場で困っていることは警察に相談できます。",
+      "title": ["その場で",{"t":"騒ぎや迷惑駐車","when":{"all":[{"fact":"problems","has":"noise"},{"fact":"problems","has":"traffic"}]}},{"t":"騒ぎ","when":{"all":[{"fact":"problems","has":"noise"},{"not":{"fact":"problems","has":"traffic"}}]}},{"t":"迷惑駐車","when":{"all":[{"fact":"problems","has":"traffic"},{"not":{"fact":"problems","has":"noise"}}]}},{"t":"防犯上の不安なこと","when":{"not":{"fact":"problems","in":["noise","traffic"]}}},"が続くときは、警察に相談する"],
+      "body": [{"t":"夜中の大騒ぎなど、","when":{"fact":"problems","has":"noise"}},{"t":"危険な路上駐車など、","when":{"all":[{"fact":"problems","has":"traffic"},{"not":{"fact":"problems","has":"noise"}}]}},{"t":"知らない人の出入りで身の危険を感じるなど、","when":{"not":{"fact":"problems","in":["noise","traffic"]}}},"その場で困っていることは警察に相談できます。"],
       "where": "その場で続いている迷惑な騒ぎ・危険なこと：110番／急ぎではない相談：警察相談専用電話 #9110",
       "check": "その場で注意してもらえるか",
       "bring": ["起きている場所", "様子（人数・音・時間）"],
@@ -346,7 +346,7 @@
     },
     {
       "id": "chk_complaint_duty", "section": "check", "priority": 65,
-      "when": { "any": [ { "fact": "know", "has": "sign" }, { "fact": "biz_type", "eq": "jutaku" } ] },
+      "when": {"fact":"biz_type","eq":"jutaku"},
       "title": "届出の民泊には、苦情に対応する義務があります",
       "body": "届出の民泊の事業者（または管理を任された業者）は、近所からの苦情や問い合わせに、適切かつ速やかに対応しなければならないことになっています。",
       "facts": ["jutaku_complaint", "jutaku_kanri_itaku"]

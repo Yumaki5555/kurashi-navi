@@ -150,8 +150,9 @@ for (const [w, t] of texts) for (const re of BANNED) if (re.test(t)) err(`表現
 // ---- 6. 文書ひな形：入力していない事実を書かないか ----
 for (const d of docs) {
   const emptyLines = docLines(d, {});
-  const fixed = d.body.filter(l => !l.requires?.length).length;
-  if (emptyLines.length !== fixed) err(`文書 ${d.id}: 空欄なのに入力が必要な行が出る`);
+  // 空欄のときに出てよいのは、入力のいらない決まった行だけ（中身のない見出しは出さないので、数は減ってよい）
+  const fixed = d.body.filter(l => !l.requires?.length).map(l => l.text);
+  if (emptyLines.some(t => !fixed.includes(t))) err(`文書 ${d.id}: 空欄なのに入力が必要な行が出る`);
   if (/\{[a-z_]+\}/.test(renderDoc(d, {}))) err(`文書 ${d.id}: 置き換えられていない欄がある`);
   for (const line of d.body) if (!line.requires?.length && /\{/.test(line.text)) err(`文書 ${d.id}: 「${line.text.slice(0, 16)}…」は欄を使うのに requires がない`);
   for (const line of d.body) for (const m of line.text.matchAll(/\{([a-z_]+)\}/g)) {

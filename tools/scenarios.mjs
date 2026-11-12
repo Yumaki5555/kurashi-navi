@@ -88,7 +88,7 @@ caseRun('引き継ぎ規則', () => {
 
 // ---- A. 民泊の騒音（まだ何もしていない） ----
 caseRun('A', () => {
-  const { st, asked } = run(D.minpaku.tree, { situation: 'B', b_problems: ['noise'], b_ongoing: 'yes', b_building: 'house', b_know: ['sign'], b_done: ['none'] });
+  const { st, asked } = run(D.minpaku.tree, { situation: 'B', b_problems: ['noise'], b_ongoing: 'yes', b_building: 'house', b_know: ['sign'], b_sign: 'jutaku', b_done: ['none'] });
   const r = result(D.minpaku, st);
   const c = r.top[0];
   ok('A 結果まで8問以内', asked.length <= 8, `${asked.length}問`);
@@ -101,7 +101,7 @@ caseRun('A', () => {
 
 // ---- B. 民泊で管理者に連絡したが改善しない ----
 caseRun('B', () => {
-  const { st } = run(D.minpaku.tree, { situation: 'B', b_problems: ['noise'], b_ongoing: 'yes', b_building: 'house', b_know: ['sign', 'contact'], b_done: ['manager'], b_outcome: 'same' });
+  const { st } = run(D.minpaku.tree, { situation: 'B', b_problems: ['noise'], b_ongoing: 'yes', b_building: 'house', b_know: ['sign', 'contact'], b_sign: 'unknown', b_done: ['manager'], b_outcome: 'same' });
   const r = result(D.minpaku, st);
   ok('B 管理者への連絡を繰り返させない', !r.todo.some(x => x.id === 'do_contact_manager'), titles(r.top));
   // 管理者に電話した記録から「次の一手」を始める
@@ -159,8 +159,8 @@ caseRun('D', () => {
 
 // ---- E. 学校教育の改善を求める請願が不採択 ----
 caseRun('E', () => {
-  const { st, asked } = run(D.gakko.tree, { situation: 'H' });
-  ok('E 「請願が通らなかった」はすぐ次の一手へ', asked.length === 1 && E.test(D.gakko.tree.startNextIf, st.facts));
+  const { st, asked } = run(D.gakko.tree, { situation: 'H', h_topic: 'japanese' });
+  ok('E 「請願が通らなかった」はテーマだけ聞いて次の一手へ', asked.length === 2 && E.test(D.gakko.tree.startNextIf, st.facts));
   const file = mainFile('gakko', st);
   const rr = N.newRound(NX.tree, file, 'n1');
   const x = run(NX.tree, { pet_result: 'rejected', minutes_checked: 'no', reason_known: 'no', new_material: 'no', request_scope: 'no', ongoing: 'yes' }, { entry: 'next', facts: rr.state.facts });
@@ -237,8 +237,10 @@ caseRun('G', () => {
     const bak = S.backupText();
     S.clearAll();
     ok('H 削除でこのサイトの保存だけが消える', !mem.has(S.PREFIX + 'files'));
-    const n = S.restore(bak);
-    ok('H バックアップから戻すと元どおり', n === 1 && JSON.stringify(S.getFile(f.id)) === before);
+    const plan = S.planRestore(bak);
+    S.applyRestore(plan);
+    const norev = x => { const { rev, ...o } = JSON.parse(x); return JSON.stringify(o); };
+    ok('H バックアップから戻すと元どおり', plan.add.length === 1 && norev(JSON.stringify(S.getFile(f.id))) === norev(before));
     mem.set('other-site:keep', '1'); S.clearAll();
     ok('H ほかのサイトの保存は消さない', mem.get('other-site:keep') === '1');
   } catch (e) { fail++; log.push(`NG  H … 例外: ${e.message}`); }

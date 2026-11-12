@@ -6,8 +6,12 @@ export const STATUS = [
   { value: 'partial', label: '一部よくなった' },
   { value: 'same', label: '変化なし' },
   { value: 'worse', label: '悪くなった' },
-  { value: 'ongoing', label: 'まだ対応中' }
+  { value: 'ongoing', label: 'まだ対応中' },
+  { value: 'waiting', label: '回答を待っている' },
+  { value: 'paused', label: '今は休む・中断する' }
 ];
+// 回答の期限の種類（法律などで決まった期限・相手が示した予定・自分で決めた目安は、意味が違うので分けて記録する）
+export const DUE_TYPES = { law: '法律・条例などで決まった期限', them: '相手が示した予定', mine: '自分で決めた目安' };
 
 export const currentStatus = file => (file.statusLog || []).at(-1)?.status || null;
 

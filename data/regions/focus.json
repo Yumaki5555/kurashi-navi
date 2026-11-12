@@ -338,6 +338,43 @@
     }
    ],
    "checked": "2026-11-11"
+  },
+  {
+   "code": "131113",
+   "name": "大田区",
+   "pref": "東京都",
+   "status": "verified",
+   "rules": [
+    {
+     "system": "jutaku",
+     "title": "大田区住宅宿泊事業法施行条例",
+     "summary": "家主が住んでいない形（家主不在型）の民泊は、住居専用地域・工業地域などでは行えません。小学校・中学校の敷地のまわり100メートル以内で新たに届出をする家主不在型は、月曜の正午から金曜の正午まで行えません（この期間の制限は令和4年1月1日施行）。",
+     "effective": null,
+     "sourceId": "src_ota_jorei"
+    },
+    {
+     "system": "tokku",
+     "title": "大田区の特区民泊（国家戦略特別区域外国人滞在施設経営事業）",
+     "summary": "大田区には特区民泊の制度があり、区が認定した施設にはステッカーを配っています。令和8年4月1日施行の規則・ガイドラインの改正で、ルールが強化されています（区のページ）。",
+     "effective": "2026-04-01",
+     "sourceId": "src_ota_tokku"
+    }
+   ],
+   "contacts": [
+    {
+     "dept": "大田区 健康政策部 生活衛生課（届出の民泊・特区民泊・旅館業。違法な民泊の問い合わせも）",
+     "tel": "03-5764-0693",
+     "hours": null,
+     "url": "https://www.city.ota.tokyo.jp/seikatsu/hoken/minpaku/minpaku.html",
+     "handles": [
+      "jutaku",
+      "tokku",
+      "ryokan"
+     ],
+     "sourceId": "src_ota_minpaku"
+    }
+   ],
+   "checked": "2026-11-12"
   }
  ]
 }

@@ -92,7 +92,7 @@
         { "id": "title", "label": "件名と番号", "placeholder": "請願第〇号 〇〇についての請願" },
         { "id": "submitted", "label": "出した日・議会", "placeholder": "令和8年6月 〇〇市議会" },
         { "id": "committee", "label": "審査した委員会と日付", "optional": true, "placeholder": "文教委員会 令和8年9月10日" },
-        { "id": "result", "label": "結果", "placeholder": "不採択" },
+        { "id": "result", "label": "結果", "placeholder": "不採択", "prefill": {"fact": "pet_result"} },
         { "id": "asked", "label": "求めたこと", "type": "textarea", "placeholder": "〇〇の実態を調査し、公表すること" },
         { "id": "reasons", "label": "結論の理由として確認できたこと", "type": "textarea", "optional": true, "placeholder": "会議録：〇〇議員「個人情報の扱いが課題」、教育委員会「全国調査に回答済み」" },
         { "id": "new_facts", "label": "その後の新しい資料・事情", "type": "textarea", "optional": true },

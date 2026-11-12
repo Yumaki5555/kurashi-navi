@@ -5,10 +5,17 @@ import { test } from './engine.js';
 export const filled = v => (Array.isArray(v) ? v.length > 0 : String(v ?? '').trim() !== '');
 const str = v => (Array.isArray(v) ? v.join('、') : String(v ?? '').trim());
 
+// 見出しの行（■ で始まる行・【要旨】のような1行だけの見出し）は、その下に出す行が1つもなければ出さない（空欄の項目は、見出しごと文章に出さない）
+const HEAD = /^(■|【[^】]*】\s*$)/;
 export function docLines(doc, values) {
-  return doc.body
+  const ls = doc.body
     .filter(l => (l.requires || []).every(k => filled(values[k])) && !(l.unless || []).some(k => filled(values[k])))
     .map(l => l.text.replace(/\{([a-z_]+)\}/g, (_, k) => str(values[k])));
+  return ls.filter((t, i) => {
+    if (!HEAD.test(t)) return true;
+    const nx = ls.slice(i + 1).find(x => x.trim() !== '');
+    return nx !== undefined && !HEAD.test(nx);
+  });
 }
 
 export function renderDoc(doc, values) {
