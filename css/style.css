@@ -69,7 +69,7 @@ dd.script{background:var(--accent-bg);padding:10px 12px;border-radius:var(--r)}
 .src{font-size:.88rem;margin:8px 0 12px}
 .src summary{cursor:pointer;color:var(--sub)}
 .term{font:inherit;color:var(--accent);background:none;border:0;border-bottom:1px dashed var(--accent);padding:0;cursor:pointer}
-.termbox{background:var(--accent-bg);padding:10px 12px;border-radius:var(--r);margin:8px 0;font-size:.95rem}
+.termbox{background:var(--accent-bg);padding:10px 12px;border-left:4px solid var(--accent);border-radius:var(--r);margin:8px 0;font-size:.95rem}
 .opt{display:grid;gap:4px}.opt-terms{display:flex;flex-wrap:wrap;gap:4px 14px;padding:0 6px;font-size:.92rem}.opt-terms .term{padding:4px 0}
 .savebar{position:sticky;top:0;z-index:20;max-width:720px;margin:0 auto;padding:10px 12px;border-radius:0 0 var(--r) var(--r);font-size:.92rem}.savebar.ng{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger)}.savebar.ok{background:var(--ok-bg);color:var(--ok)}.savebar .btn{margin:4px 4px 0 0}
 .checklist{list-style:none;padding:0;margin:8px 0}
@@ -151,6 +151,10 @@ details.how p.script,p.script{background:var(--accent-bg);padding:8px 10px;borde
 h3{margin:1.2em 0 .4em}
 @media (max-width:759px){.seg{display:flex}.mobile-only{display:inline-flex;width:100%;margin-top:10px}main[data-pane=in] #pane-out,main[data-pane=out] #pane-in{display:none}}
 @media print{.printonly{display:block!important}.print-head{font-size:.85rem;border-bottom:1px solid #999;padding-bottom:4px}.savestate,.seg,.mobile-only,#doctext,.emg-top,.emg-link,.qno,.fix,.inh,.region-line{display:none!important}.pre{font-size:1rem;line-height:1.8;page-break-inside:auto}.card,.box,.cstep,.rec{break-inside:avoid}h1,h2,h3{break-after:avoid}}
+/* 印刷・PDFの余白：用紙の端に文字がくっつかないよう、上下左右に余白をとる */
+@page{margin:16mm 15mm}
+/* 印刷では押せる言葉（用語ボタン）も普通の文字として残す（消えると「PTAやを通す」「（）」のように文が欠けるため） */
+@media print{button.term{display:inline!important;color:inherit;border:0;padding:0;font:inherit}}
 
 /* スマホでも読みやすく：補足の小さな文字も16px以上、開閉の見出しは指で押しやすい高さ（44px以上） */
 @media screen{small,.cat small,.meta,h2 small,.tag,.progress,.num,.ext,.ck,.savestate,.small,.src,.gen>summary,.fix,.ol small,dt,.err,details.how,.box.now details,.inh,.inh-h,.cstep .num{font-size:max(16px,.85rem)}

@@ -1208,7 +1208,15 @@ document.addEventListener('click', async e => {
     const gl = cur?.round ? { ...cur.data.glossary, ...cur.next.glossary } : { ...(cur?.next?.glossary || {}), ...(cur?.data?.glossary || {}) };
     let txt = gl[t.dataset.term];
     if (!txt && !cur) { const dom = location.hash.split('/')[2]?.split('?')[0]; txt = cache[dom]?.glossary?.[t.dataset.term] || cache[N.NEXT_DOMAIN]?.glossary?.[t.dataset.term]; }
-    if (box) { const same = !box.hidden && box.dataset.term === t.dataset.term; box.hidden = same; box.dataset.term = t.dataset.term; box.innerHTML = `<b>${esc(t.dataset.term)}</b>：${esc(txt || '説明を準備中です。')}`; }
+    if (box) {
+      // 説明は、押した言葉のある段落のすぐ下に出す（スマホで離れた場所に出ると気づけないため）
+      const at = t.closest('p, li, dd, h2, h3, .opt-terms');
+      const same = !box.hidden && box.dataset.term === t.dataset.term && box._at === at;
+      if (at && !same) { if (at.matches('li, dd')) at.append(box); else at.after(box); }
+      box._at = at; box.hidden = same; box.dataset.term = t.dataset.term;
+      box.innerHTML = `<b>${esc(t.dataset.term)}</b>：${esc(txt || '説明を準備中です。')}`;
+      if (!same) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   }
   else if (act === 'copy') copy(t.dataset.text, t);
   else if (act === 'copydoc') copy(document.getElementById('doctext').value, t);
