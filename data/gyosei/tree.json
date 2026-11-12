@@ -5,6 +5,7 @@
   "start": "situation",
   "entries": { "next": "next_did" },
   "carry": ["building", "problems", "done", "pet_topic"],
+  "markers": { "pre_open": { "values": ["yes"], "note": "民泊の開業前の相談（近所に民泊ができるらしい）から来たしるし。質問では聞かず、引き継ぎで入れる" } },
   "hints": {
     "next_did": { "fact": "done", "map": {"manager": "party", "owner_side": "owner", "owner": "party", "builder": "party", "police": "police", "gov": "phone"} }
   },
@@ -29,7 +30,10 @@
       "builder": { "target": "party" },
       "corp": { "target": "party" },
       "party": { "target": "party" },
-      "police": { "did": "police", "target": "other" }
+      "police": { "did": "police", "target": "other" },
+      "meeting": { "target": "party" },
+      "jichikai": { "target": "other" },
+      "neighbors": { "target": "other" }
     },
     "method": { "phone": {"did": "phone"}, "counter": {"did": "phone"}, "mail": {"did": "mail"}, "letter": {"did": "letter"} },
     "partyResult": {
@@ -86,6 +90,48 @@
       },
       "set": { "concern_specific": "yes" },
       "always": true
+    },
+    {
+      "if": { "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] },
+      "set": { "pre_open": "yes", "ongoing": "yes" },
+      "always": true,
+      "preOpen": true
+    },
+    {
+      "if": {
+        "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["no_meeting"] }]
+      },
+      "set": { "target": "party", "result": "refused", "pre_issue": "no_meeting" },
+      "preOpen": true
+    },
+    {
+      "if": {
+        "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["no_answer"] }]
+      },
+      "set": { "target": "party", "result": "no_reply", "pre_issue": "no_answer" },
+      "preOpen": true
+    },
+    {
+      "if": { "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["refused"] }] },
+      "set": { "target": "party", "result": "refused", "pre_issue": "refused" },
+      "preOpen": true
+    },
+    {
+      "if": { "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["opening"] }] },
+      "set": { "target": "party", "result": "refused", "pre_issue": "opening" },
+      "preOpen": true
+    },
+    {
+      "if": { "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["gov_ok"] }] },
+      "set": { "target": "gov", "result": "no_problem" },
+      "preOpen": true
+    },
+    {
+      "if": {
+        "all": [{ "all": [{ "fact": "from", "eq": "minpaku" }, { "fact": "situation", "eq": "A" }] }, { "fact": "pre_response", "in": ["gov_cannot"] }]
+      },
+      "set": { "target": "gov", "result": "cannot" },
+      "preOpen": true
     }
   ],
   "optionSets": {},
@@ -257,7 +303,7 @@
         { "value": "same", "label": "変化がない", "short": "変化なし" },
         { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
       ],
-      "next": "facts_ready"
+      "next": [{ "if": { "fact": "pre_open", "eq": "yes" }, "go": "pre_issue" }, { "go": "facts_ready" }]
     },
     "basis_known": {
       "type": "yesno",
@@ -302,7 +348,8 @@
         { "value": "insufficient", "label": "開示されたが、知りたいことが書かれていなかった", "short": "開示されたが中身が足りない", "sets": {"did": "disclosure"} }
       ],
       "next": [
-        { "if": {"fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"]}, "go": "reason_understood" },
+        { "if": { "fact": "dis_state", "in": ["nondisclosed", "partial"] }, "go": "reason_understood" },
+        { "if": { "fact": "dis_state", "eq": "not_exist" }, "go": "absent_reason" },
         { "if": {"fact": "dis_state", "eq": "overdue"}, "go": "extension_notice" },
         { "go": "which_body" }
       ]
@@ -310,6 +357,13 @@
     "which_body": { "type": "yesno", "fact": "which_body", "sum": "持っている役所がわかるか", "text": "その情報を持っていそうな役所（市区町村・都道府県・国・議会など）は、わかりますか？", "next": "doc_specific" },
     "doc_specific": { "type": "yesno", "fact": "doc_specific", "sum": "文書を具体的に言えるか", "text": "欲しい文書を、「令和7年度の〇〇事業の契約書」のように具体的に言えますか？", "next": "@result" },
     "reason_understood": { "type": "yesno", "fact": "reason_understood", "sum": "出さない理由がわかるか", "text": "決定通知書に書かれた、出さない理由（どの規定に当たるか）がわかりますか？", "next": "kyouji" },
+    "absent_reason": {
+      "type": "yesno",
+      "fact": "absent_reason",
+      "sum": "文書がない理由がわかるか",
+      "text": "決定通知書に、文書が「ない」理由（はじめから作っていない・保存期間が過ぎて捨てた・別の役所が持っている など）が書かれていて、どれなのかわかりますか？",
+      "next": "kyouji"
+    },
     "kyouji": {
       "type": "yesno",
       "fact": "kyouji",
@@ -369,6 +423,19 @@
         { "value": "unsure", "label": "まだわからない", "short": "わからない" }
       ],
       "next": "@result"
+    },
+    "pre_issue": {
+      "type": "choice",
+      "fact": "pre_issue",
+      "sum": "開業前のやりとりの状況",
+      "text": "事業者とのやりとりで、いちばん近いものは？",
+      "options": [
+        { "value": "no_meeting", "label": "説明会や説明をしてくれない", "short": "説明してくれない" },
+        { "value": "no_answer", "label": "質問や要望に答えてくれない（文書の回答がない）", "short": "回答がない" },
+        { "value": "refused", "label": "要望を断られた・対策が足りないまま", "short": "要望を断られた" },
+        { "value": "opening", "label": "開業が決まった・止められそうにない", "short": "開業が決まった" }
+      ],
+      "next": "facts_ready"
     }
   }
 }

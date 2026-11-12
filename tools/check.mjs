@@ -48,7 +48,9 @@ for (const id of ids) {
 const reach = new Set();
 const starts = [tree.start, ...Object.values(tree.entries || {})];
 for (const s0 of starts) (function walk(id) { if (!tree.nodes[id] || reach.has(id)) return; reach.add(id); E.targetsOf(tree, id).forEach(walk); })(s0);
-for (const id of ids) if (!reach.has(id)) err(`${id}: どこからもたどり着けない`);
+// legacy：以前の流れの質問。保存されている古い答え（途中の状態を含む）を表示・再開するために残す。新しい流れからは通らなくてよい
+for (const id of ids) if (!reach.has(id) && !tree.nodes[id].legacy) err(`${id}: どこからもたどり着けない`);
+for (const id of ids) if (tree.nodes[id].legacy) for (const t of E.targetsOf(tree, id)) if (!exists(t)) err(`${id}（以前の質問）: 行き先 ${t} がない`);
 const cyc = function (id, stack) {
   if (!tree.nodes[id]) return;
   if (stack.includes(id)) { err('ループ: ' + [...stack, id].join(' → ')); return; }

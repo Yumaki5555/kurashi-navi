@@ -58,7 +58,8 @@ function caseRun(name, fn) {
 // ---- 0. 引き継ぎ規則（fromDomain / recordMap）の値が、実在する選択肢か ----
 caseRun('引き継ぎ規則', () => {
   const optsOf = (tree, fact) => Object.values(tree.nodes).filter(n => n.fact === fact).flatMap(n => E.optionsOf(tree, n).map(o => o.value));
-  const valid = (tree, fact, v) => optsOf(tree, fact).includes(v);
+  // markers：質問では聞かず、引き継ぎだけで入れるしるし（例：開業前の相談から来た pre_open）
+  const valid = (tree, fact, v) => optsOf(tree, fact).includes(v) || !!tree.markers?.[fact]?.values?.includes(v);
   const conds = c => (c.all || c.any) ? (c.all || c.any).flatMap(conds) : c.not ? conds(c.not) : [c];
   let bad = [];
   for (const r of NX.tree.fromDomain || []) {
@@ -186,6 +187,11 @@ caseRun('F', () => {
   const y = run(NX.tree, { situation: 'info', dis_state: 'nondisclosed', reason_understood: 'yes', kyouji: 'no' });
   const res2 = result(NX, y.st);
   ok('F 教示がないときは教示を確かめる案内', res2.todo.some(c => c.key === 'ask_kyouji'), titles(res2.top));
+  // 不存在の決定には「どの規定に当たるか」ではなく「文書がない理由」を聞く
+  const w = run(NX.tree, { situation: 'info', dis_state: 'not_exist', absent_reason: 'no', kyouji: 'yes', within_period: 'yes' });
+  ok('F 不存在では「文書がない理由」を聞く', w.asked.includes('absent_reason') && !w.asked.includes('reason_understood'), w.asked.join('→'));
+  const res4 = result(NX, w.st);
+  ok('F 不存在では「ない理由」を確かめる案内（不開示の規定の案内は出さない）', res4.todo.some(c => c.key === 'absent_reason') && !res4.todo.some(c => c.key === 'nondisclosure_reason'), titles(res4.top));
   const z = run(NX.tree, { situation: 'info', dis_state: 'phone_refused', which_body: 'unknown', doc_specific: 'no' });
   const res3 = result(NX, z.st);
   ok('F 電話で断られた＝正式な決定ではないと区別', res3.todo.some(c => c.key === 'formal_request' || c.key === 'disclosure') && !res3.todo.some(c => c.key === 'appeal_disclosure'), titles(res3.top));

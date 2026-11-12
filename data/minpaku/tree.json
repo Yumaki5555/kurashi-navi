@@ -1,7 +1,7 @@
 {
   "domain": "minpaku",
   "title": "民泊・宿泊施設の困りごと",
-  "version": "2026-11-11",
+  "version": "2026-11-13",
   "start": "situation",
   "maxQuestions": 9,
   "optionSets": {
@@ -28,7 +28,7 @@
         "value": "owner_side",
         "label": "マンションの管理組合・管理会社・大家さんに伝えた",
         "short": "管理組合などに伝えた",
-        "when": { "not": {"fact": "building", "in": ["house", "other_apartment"]} }
+        "when": { "not": { "fact": "building", "in": ["house", "other_apartment"] } }
       },
       { "value": "none", "label": "まだ何もしていない", "short": "まだ何もしていない", "exclusive": true }
     ],
@@ -49,7 +49,7 @@
       "text": "今の状況にいちばん近いものは？",
       "help": "あとから戻って選び直せます。",
       "options": [
-        { "value": "A", "label": "近所に民泊ができるらしい", "short": "近所に民泊ができる予定", "next": "a_building" },
+        { "value": "A", "label": "近所に民泊や宿泊施設（旅館業の簡易宿所など）ができるらしい", "short": "近所に民泊・宿泊施設ができる予定", "next": "a_stage" },
         { "value": "B", "label": "すでに営業していて困っている", "short": "営業中の民泊で困っている", "next": "b_problems" },
         { "value": "C", "label": "無許可営業ではないかと疑っている", "short": "無許可営業の疑い", "next": "c_reasons" },
         { "value": "D", "label": "役所に相談したが対応してもらえない", "short": "役所が対応してくれない", "next": "d_where" },
@@ -63,7 +63,7 @@
       "optionSet": "building",
       "text": "民泊ができるらしい建物は、どれですか？",
       "help": "分譲マンションの中なら、マンションのルール（[[管理規約]]）が大きく関係します。",
-      "next": "a_notice"
+      "next": "a_worries"
     },
     "a_notice": {
       "type": "yesno",
@@ -71,10 +71,28 @@
       "sum": "事業者からの説明・掲示",
       "text": "事業者から説明やお知らせ（説明会、チラシ、建物への掲示など）はありましたか？",
       "help": "自治体によっては、開業前に近所へ知らせることを求めるルールがあります。",
-      "next": "a_worries"
+      "next": "a_type"
     },
-    "a_worries": { "type": "multi", "fact": "problems", "sum": "心配なこと", "optionSet": "problems", "text": "心配していることは？（いくつでも）", "next": "a_checked" },
-    "a_checked": { "type": "yesno", "fact": "checked_gov", "sum": "自治体への確認", "text": "その建物の[[届出]]や[[許可]]の申請が出ているか、自治体に問い合わせましたか？", "next": "a_goal" },
+    "a_worries": {
+      "type": "multi",
+      "fact": "problems",
+      "sum": "心配なこと",
+      "optionSet": "problems",
+      "text": "心配していることは？（いくつでも）",
+      "next": "a_done",
+      "extraOptions": [
+        { "value": "safety", "label": "建物の安全（火災のときの避難・消防設備・建物のきまり）", "short": "建物の安全" },
+        { "value": "kids", "label": "通学路や、学校・保育園の近くであること", "short": "通学路・学校の近く" }
+      ]
+    },
+    "a_checked": {
+      "type": "yesno",
+      "fact": "checked_gov",
+      "sum": "自治体への確認",
+      "text": "その建物の[[届出]]や[[許可]]の申請が出ているか、自治体に問い合わせましたか？",
+      "next": "a_goal",
+      "legacy": true
+    },
     "a_goal": {
       "type": "choice",
       "fact": "goal",
@@ -82,10 +100,12 @@
       "text": "いちばん望むことは？",
       "options": [
         { "value": "info", "label": "どんな施設になるのか、正しい情報を知りたい", "short": "情報を知りたい" },
-        { "value": "request", "label": "事業者に、ごみ・騒音などの対策をお願いしたい", "short": "事業者に対策をお願いしたい" },
+        { "value": "request", "label": "開業するなら、騒音・ごみなどの対策を約束してほしい（運営の条件の改善）", "short": "事業者に対策をお願いしたい" },
+        { "value": "stop", "label": "開業の中止や、計画の変更（場所・規模・営業の形など）を求めたい", "short": "中止・計画の変更を求めたい" },
         { "value": "rule", "label": "地域の民泊のルールそのものを変えたい", "short": "ルールを変えたい" }
       ],
-      "next": "@result"
+      "next": "@result",
+      "help": "「中止を求めたい」を選んでも、住民の希望だけで開業を止められるわけではありません。結果では、法令・条例に基づくこと・相手に協力をお願いすること・住民でできることを分けてご案内します。"
     },
     "b_problems": {
       "type": "multi",
@@ -117,7 +137,7 @@
         { "value": "listing", "label": "仲介サイト（予約サイト）に載っているのを見た", "short": "予約サイトに掲載あり" },
         { "value": "none", "label": "何も分からない", "short": "何も分からない", "exclusive": true }
       ],
-      "next": [{"if": {"fact": "know", "has": "sign"}, "go": "b_sign"}, {"go": "b_done"}]
+      "next": [{ "if": { "fact": "know", "has": "sign" }, "go": "b_sign" }, { "go": "b_done" }]
     },
     "b_sign": {
       "type": "choice",
@@ -139,7 +159,11 @@
       "sum": "これまでにしたこと",
       "optionSet": "done",
       "text": "これまでにしたことは？（いくつでも）",
-      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "b_gov_response"}, {"if": {"fact": "done", "has": "none"}, "go": "@result"}, {"go": "b_outcome"}]
+      "next": [
+        { "if": { "fact": "done", "has": "gov" }, "go": "b_gov_response" },
+        { "if": { "fact": "done", "has": "none" }, "go": "@result" },
+        { "go": "b_outcome" }
+      ]
     },
     "b_gov_response": { "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse", "text": "自治体からは、どんな回答でしたか？", "next": "b_outcome" },
     "b_outcome": {
@@ -169,7 +193,7 @@
         { "value": "all_year", "label": "1年中、毎日のように宿泊客が来ているようだ", "short": "1年中営業していそう" },
         { "value": "other", "label": "その他", "short": "その他" }
       ],
-      "next": [{"if": {"fact": "reasons", "has": "not_listed"}, "go": "c_building"}, {"go": "c_checked_list"}]
+      "next": [{ "if": { "fact": "reasons", "has": "not_listed" }, "go": "c_building" }, { "go": "c_checked_list" }]
     },
     "c_checked_list": {
       "type": "yesno",
@@ -186,7 +210,7 @@
       "sum": "困っていること",
       "text": "困っていることは？（いくつでも）",
       "optionSet": "problems",
-      "extraOptions": [{"value": "none", "label": "特に困っていないが、ルールが守られているか確かめたい", "short": "困りごとはないが確かめたい", "exclusive": true}],
+      "extraOptions": [{ "value": "none", "label": "特に困っていないが、ルールが守られているか確かめたい", "short": "困りごとはないが確かめたい", "exclusive": true }],
       "next": "c_done"
     },
     "c_done": {
@@ -195,7 +219,7 @@
       "sum": "これまでにしたこと",
       "optionSet": "done",
       "text": "これまでにしたことは？（いくつでも）",
-      "next": [{"if": {"fact": "done", "has": "gov"}, "go": "c_gov_response"}, {"go": "@result"}]
+      "next": [{ "if": { "fact": "done", "has": "gov" }, "go": "c_gov_response" }, { "go": "@result" }]
     },
     "c_gov_response": { "type": "choice", "fact": "gov_response", "sum": "自治体の回答", "optionSet": "govResponse", "text": "自治体からは、どんな回答でしたか？", "next": "@result" },
     "d_where": {
@@ -287,6 +311,100 @@
         { "value": "undecided", "label": "まだ分からない", "short": "方法は未定" }
       ],
       "next": "@result"
+    },
+    "a_stage": {
+      "type": "choice",
+      "fact": "stage",
+      "sum": "今の段階",
+      "text": "今の段階に、いちばん近いものは？",
+      "help": "あとから戻って選び直せます。",
+      "options": [
+        { "value": "heard", "label": "計画を聞いたばかり（うわさ・チラシ・建物への掲示など）", "short": "計画を聞いたばかり", "next": "a_notice" },
+        { "value": "meeting_planned", "label": "住民説明会が予定されている", "short": "説明会が予定されている", "sets": { "notice": "yes" }, "next": "a_type" },
+        { "value": "meeting_done", "label": "説明会は終わったが、納得できない", "short": "説明会のあとも納得できない", "sets": { "notice": "yes" }, "next": "a_meeting" },
+        { "value": "near_open", "label": "開業が近い・工事が始まっている", "short": "開業が近い・工事中", "next": "a_notice" },
+        { "value": "requested", "label": "事業者や役所に、すでに申し入れた・問い合わせた", "short": "すでに申し入れた", "next": "a_type" }
+      ]
+    },
+    "a_meeting": {
+      "type": "multi",
+      "fact": "meeting_issue",
+      "sum": "説明会で納得できなかったこと",
+      "text": "説明会で納得できなかったことは？（いくつでも）",
+      "options": [
+        { "value": "unanswered", "label": "その場で答えられなかった・あいまいな答えの質問がある", "short": "答えのない質問がある" },
+        { "value": "no_minutes", "label": "議事録や記録が作られていない・配られていない", "short": "議事録がない" },
+        { "value": "not_notified", "label": "知らされていない住民がいた・参加できなかった人が多い", "short": "知らされていない住民がいる" },
+        { "value": "verbal", "label": "約束が口頭だけで、文書になっていない", "short": "約束が口頭だけ" },
+        { "value": "measures", "label": "騒音・ごみ・連絡先などの対策が足りない", "short": "対策が足りない" },
+        { "value": "plan", "label": "計画そのもの（場所・規模・営業の形）に納得できない", "short": "計画そのものに納得できない" }
+      ],
+      "next": "a_type"
+    },
+    "a_type": {
+      "type": "choice",
+      "fact": "biz_type",
+      "sum": "施設の種類",
+      "text": "どの種類の施設になると聞いていますか？",
+      "help": "チラシ・掲示・説明会の資料に、制度の名前が書かれていることがあります。わからなければ「わからない」で大丈夫です。確かめ方を結果でご案内します。",
+      "options": [
+        { "value": "jutaku", "label": "届出の民泊（住宅宿泊事業）", "short": "届出の民泊" },
+        { "value": "ryokan", "label": "旅館業の施設（簡易宿所・旅館・ホテル）", "short": "旅館業" },
+        { "value": "tokku", "label": "特区民泊", "short": "特区民泊" },
+        { "value": "unknown", "label": "わからない", "short": "種類はわからない" }
+      ],
+      "next": "a_building"
+    },
+    "a_done": {
+      "type": "multi",
+      "fact": "done",
+      "sum": "これまでにしたこと",
+      "text": "これまでにしたことは？（いくつでも）",
+      "help": "したことは、結果で同じ案内を繰り返さないために使います。",
+      "options": [
+        { "value": "gov", "label": "役所（保健所・担当課）に、申請・届出の状況を問い合わせた", "short": "役所に問い合わせた" },
+        { "value": "manager", "label": "事業者に問い合わせた・要望を伝えた", "short": "事業者に伝えた" },
+        { "value": "jichikai", "label": "自治会長・町会長に相談した", "short": "自治会に相談した" },
+        { "value": "neighbors", "label": "近所の人と話した・一緒に動ける人がいる", "short": "近所の人と話した" },
+        { "value": "giin", "label": "議員に相談した", "short": "議員に相談した" },
+        {
+          "value": "owner_side",
+          "label": "管理組合・管理会社・大家さんに伝えた",
+          "short": "管理組合などに伝えた",
+          "when": { "fact": "building", "in": ["same_condo", "same_rental"] }
+        },
+        { "value": "none", "label": "まだ何もしていない", "short": "まだ何もしていない", "exclusive": true }
+      ],
+      "next": [{ "if": { "fact": "stage", "eq": "requested" }, "go": "a_response" }, { "go": "a_goal" }]
+    },
+    "a_response": {
+      "type": "choice",
+      "fact": "pre_response",
+      "sum": "申し入れへの対応",
+      "text": "申し入れ・問い合わせへの対応で、いちばん近いものは？",
+      "options": [
+        { "value": "no_meeting", "label": "説明会や説明をしてくれない", "short": "説明してくれない" },
+        { "value": "no_answer", "label": "質問や要望に答えてくれない（文書の回答がない）", "short": "回答がない" },
+        { "value": "refused", "label": "要望を断られた・対策が足りないまま", "short": "要望を断られた" },
+        { "value": "gov_ok", "label": "役所に「法律上は問題ない」と言われた", "short": "役所は問題ないと回答" },
+        { "value": "gov_cannot", "label": "役所に「関与できない」「担当ではない」と言われた", "short": "役所は関与できないと回答" },
+        { "value": "opening", "label": "開業が決まった・止められそうにない", "short": "開業が決まった" }
+      ],
+      "next": "a_goal"
     }
+  },
+  "planLayout": {
+    "when": { "fact": "situation", "eq": "A" },
+    "top": 3,
+    "titles": { "top": "あなたが今すぐできること", "more": "ほかにもできること", "checklist": "説明会・行政への準備チェックリスト", "docs": "書類を作る", "after": "行動したが解決しなかったら" },
+    "groups": [
+      { "id": "neighbors", "title": "近隣住民との協力" },
+      { "id": "gov", "title": "行政・議員への働きかけ" },
+      { "id": "meeting", "title": "説明会への対策" },
+      { "id": "operator", "title": "事業者に求める対策" },
+      { "id": "other", "title": "その他の方法" }
+    ],
+    "basis": { "law": "法令・条例に基づく", "ask": "任意の協力のお願い", "self": "住民が自主的にできる" },
+    "basisHelp": "「法令・条例に基づく」は決まりに基づいて求めたり確かめたりできること、「任意の協力のお願い」は相手が応じるかを決めること、「住民が自主的にできる」は住民だけで始められることです。住民の希望だけで開業を止められるわけではありません。"
   }
 }

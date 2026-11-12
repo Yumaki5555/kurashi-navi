@@ -34,6 +34,7 @@
           { "all": [{"fact": "result", "eq": "no_problem"}, {"fact": "basis_known", "in": ["no", "unknown"]}] },
           { "fact": "result", "eq": "no_reply" },
           { "fact": "reason_understood", "in": ["no", "unknown"] },
+          { "fact": "absent_reason", "in": ["no", "unknown"] },
           { "all": [{"fact": "did", "eq": "petition"}, {"fact": "reason_known", "in": ["no", "unknown"]}] }
         ]
       },
@@ -398,15 +399,31 @@
       "key": "nondisclosure_reason",
       "priority": 93,
       "recType": ["disclosure"],
-      "when": { "all": [{"fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"]}, {"fact": "reason_understood", "in": ["no", "unknown"]}] },
+      "when": { "all": [{ "fact": "dis_state", "in": ["nondisclosed", "partial"] }, { "fact": "reason_understood", "in": ["no", "unknown"] }] },
       "title": "通知書で、出さない理由（どの規定に当たるか）を確かめる",
       "body": "出さない理由は、個人の情報、事業者の情報、検討中の情報など、決められた種類のどれかに当たるとされているはずです。どの部分がどの理由なのかがわかると、審査請求をするか、請求を変えるかを決められます。",
       "where": "決定通知書の「理由」の欄。わかりにくければ、決定をした課に問い合わせる",
-      "check": "どの条文（条例の何条何号）に当たるとされたか、塗られた部分ごとの理由。「不存在」なら、作っていないのか・保存期間が過ぎたのか・ほかの機関が持っているのか",
+      "check": "どの条文（条例の何条何号）に当たるとされたか、塗られた部分ごとの理由",
       "bring": ["決定通知書", "開示された文書（一部開示の場合）"],
-      "script": "〇月〇日付けの決定通知書について伺います。不開示とされた部分が、それぞれどの規定に当たるのかを教えてください。不存在の場合は、作成していないのか、保存期間が過ぎたのか、ほかの機関が持っているのかを教えてください。",
+      "script": "〇月〇日付けの決定通知書について伺います。不開示とされた部分が、それぞれどの規定に当たるのかを教えてください。",
       "ifNoAnswer": "理由に納得できなければ、期間内に審査請求をするか、対象を変えて請求し直すかを考えます。",
       "facts": ["joho_fukaiji", "joho_bubun"]
+    },
+    {
+      "id": "do_absent_reason",
+      "section": "do",
+      "key": "absent_reason",
+      "priority": 93,
+      "recType": ["disclosure"],
+      "when": { "all": [{ "fact": "dis_state", "eq": "not_exist" }, { "fact": "absent_reason", "in": ["no", "unknown"] }] },
+      "title": "通知書で、文書が「ない」理由を確かめる",
+      "body": "「文書が存在しない」には、はじめから作っていない、保存期間が過ぎて捨てた、別の役所が持っている、などの理由があります。どれなのかがわかると、別の役所に請求するか、文書の指定を変えて請求し直すか、審査請求をするかを決められます。",
+      "where": "決定通知書の「理由」の欄。わかりにくければ、決定をした課に問い合わせる",
+      "check": "作っていないのか・保存期間が過ぎて捨てたのか（いつ捨てたか）・ほかの機関が持っているのか。似た内容の別の文書はないか",
+      "bring": ["決定通知書", "請求書の控え"],
+      "script": "〇月〇日付けの決定通知書について伺います。文書が存在しないとのことですが、作成していないのか、保存期間が過ぎて廃棄したのか、ほかの機関が持っているのかを教えてください。",
+      "ifNoAnswer": "説明に納得できなければ、期間内に審査請求をするか、文書の指定を変えて請求し直すかを考えます。",
+      "facts": ["joho_bunsho"]
     },
     {
       "id": "do_appeal",
@@ -414,7 +431,7 @@
       "key": "appeal_disclosure",
       "priority": 91,
       "recType": ["shinsa"],
-      "boost": [{"if": {"fact": "reason_understood", "eq": "yes"}, "add": 5}],
+      "boost": [{ "if": { "fact": "reason_understood", "eq": "yes" }, "add": 5 }, { "if": { "fact": "absent_reason", "eq": "yes" }, "add": 5 }],
       "when": {
         "all": [{"fact": "dis_state", "in": ["nondisclosed", "partial", "not_exist"]}, {"fact": "kyouji", "ne": "no"}, {"fact": "within_period", "ne": "no"}]
       },
@@ -937,6 +954,166 @@
       "title": "次の一手をもう一度探す",
       "body": "行動した結果を「対応の記録」に残し、もう一度「次の一手を探す」を使ってください。これまでに試したことは、繰り返し提案しません。",
       "links": [{"type": "records"}]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_rule",
+      "key": "pre_rule_check",
+      "priority": 88,
+      "recType": ["gov"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["no_meeting"] }] },
+      "title": "開業前の「近所への周知（説明）」のルールを、自治体に確かめる",
+      "body": "事業者が説明会を開かないとき、まず確かめるのは、あなたの地域に「開業前に近所へ知らせる」決まりがあるかです。条例で義務の地域もあれば、お願い（指導）にとどまる地域もあります。",
+      "where": "民泊（住宅宿泊事業）の担当課／旅館業なら保健所（生活衛生の担当）",
+      "check": "周知が条例で義務か、お願いか／範囲と方法（書面・説明会）／開業の何日前までか／根拠の条例・要綱の名前",
+      "bring": ["計画についてのメモ（場所・時期・チラシの有無）"],
+      "script": "「宿泊施設の開業前に、事業者が近所へ説明する決まりはありますか。条例で義務か、お願いか、範囲と時期、根拠の条例の名前を教えてください」",
+      "ifNoAnswer": "決まりがない地域でも、事業者に説明をお願いすることはできます（応じるかは事業者しだい）。",
+      "links": [{ "type": "todokeru-contacts" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_procedure",
+      "key": "pre_procedure",
+      "priority": 80,
+      "recType": ["gov"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["no_meeting"] }] },
+      "title": "決まりが守られていなければ、根拠を示して担当部署に確認を求める",
+      "body": "条例などで周知が決められているのに行われていないと思うときは、どの決まりの、どの点かを示して、担当部署に確かめてもらいます。「違反だ」と決めつけず、事実と根拠を並べます。",
+      "where": "条例を受け持つ担当課（民泊の担当課・保健所など）",
+      "check": "根拠の条例と条文／守られていないと考える事実（いつ・どの範囲で）／回答の期限と方法",
+      "bring": ["条例の該当する部分の写し", "チラシが届いていない範囲などのメモ"],
+      "script": "「〇〇条例第〇条の周知が、〇〇の範囲で行われていないようです。手続きが守られているか確かめ、必要なら事業者に周知を求めていただけますか。〇月〇日までに文書でご回答ください」",
+      "ifNoAnswer": "回答がないときは、期限をつけて文書で改めて求め、議員への相談を考えます。",
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_remeeting",
+      "key": "pre_remeeting",
+      "priority": 75,
+      "recType": ["manager", "party"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["no_meeting"] }] },
+      "title": "追加の説明（書面・個別の説明・説明会）を、事業者に申し入れる",
+      "body": "説明会がむずかしいと言われても、書面での説明や、近所の人への個別の説明など、別の形をお願いできます。期限を決めて文書で申し入れます。",
+      "where": "事業者（運営会社・管理会社）",
+      "check": "求める説明の形（説明会・書面・個別）／希望する日時／回答の期限",
+      "bring": ["説明会の要望書（このサイトで作れます）"],
+      "script": "「計画について住民への説明をお願いします。説明会がむずかしい場合は、書面での説明か、近所の住民への個別の説明をお願いします。〇月〇日までにご回答ください」",
+      "ifNoAnswer": "応じてもらえないときは、議員への相談や、条例の見直しの要望を考えます。",
+      "links": [{ "type": "doc", "doc": "remeeting_request", "label": "説明会の要望書を作る" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_resend",
+      "key": "pre_resend",
+      "priority": 88,
+      "recType": ["manager", "party"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["no_answer"] }] },
+      "title": "質問書を、回答の期限をつけて送り直す",
+      "body": "前に送った質問書の写しを付け、回答の期限と方法（文書）をはっきり書いて送り直します。届いたことを確かめられる方法で送り、記録に残します。",
+      "where": "事業者（運営会社・管理会社）",
+      "check": "前に送った日と内容／答えのない質問／新しい期限（例：2週間後）",
+      "bring": ["前に送った質問書の写し"],
+      "script": "「〇月〇日にお送りした質問書に、まだご回答をいただいていません。写しを添えて改めてお送りします。〇月〇日までに文書でご回答をお願いします」",
+      "ifNoAnswer": "期限を過ぎたら、経過をまとめて役所の担当課に相談し、議員にも相談します。",
+      "links": [{ "type": "doc", "doc": "meeting_questions", "label": "質問書を作る・直す" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_giin",
+      "key": "giin",
+      "priority": 60,
+      "recType": ["giin"],
+      "when": {
+        "all": [
+          { "fact": "pre_open", "eq": "yes" },
+          { "fact": "target", "eq": "party" },
+          { "fact": "pre_issue", "in": ["no_answer", "no_meeting", "refused"] }
+        ]
+      },
+      "title": "地元の議員に、経過をまとめて相談する",
+      "body": "議員は、役所に事情を聞いたり、議会で質問したり、説明会に同席したりできます（どう動くかは議員の判断です）。",
+      "where": "お住まいの市区町村の議員（議会のホームページに名簿があります）",
+      "check": "計画と心配ごと・これまでの経過を1枚にまとめる／お願いしたいこと",
+      "bring": ["経過のメモ", "事業者に送った文書の写し"],
+      "script": "「近所の宿泊施設の計画で、事業者に説明や回答をお願いしていますが、応じてもらえません。役所に手続きの状況を確かめていただけないでしょうか」",
+      "ifNoAnswer": "返事がないときは、別の議員にも短いメモで相談します。",
+      "links": [{ "type": "doc", "doc": "attend_request", "label": "同席の依頼文を作る" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_signature",
+      "key": "pre_signature",
+      "priority": 70,
+      "recType": ["shomei"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["refused"] }] },
+      "title": "住民の声をまとめて示す（アンケート・署名）",
+      "body": "一人の要望より、多くの住民が同じことを求めているほうが、検討してもらいやすくなります。署名に開業を止める法的な力はありませんが、何を求めるかを具体的に書いて示せます。",
+      "where": "近所の住民（本人に自分で署名してもらう）",
+      "check": "求めること／出す先／署名簿の利用目的・保管の方法",
+      "bring": ["署名簿と要望書（このサイトで作れます）"],
+      "script": "呼びかけの例：「事業者に〇〇を求める要望書を出します。賛成いただける方は、ご自身でお名前とご住所をお書きください」",
+      "ifNoAnswer": "署名を出しても回答がないときは、役所や議員への相談を考えます。",
+      "links": [{ "type": "doc", "doc": "signature_sheet", "label": "署名簿と要望書を作る" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_agreement",
+      "key": "pre_agreement",
+      "priority": 85,
+      "recType": ["manager", "party"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["opening", "refused"] }] },
+      "title": "運営の条件の改善と、協定書・覚書の作成を求める",
+      "body": "開業を止められないときも、運営の対策（連絡先・駆けつけ・騒音・ごみ・駐車など）を具体的に約束してもらい、協定書・覚書の形で残すよう求められます（結ぶかは任意です）。",
+      "where": "事業者（運営会社・管理会社）",
+      "check": "求める対策／連絡先と駆けつけの時間／定期的な話し合い／運営する者が変わったときの引き継ぎ",
+      "bring": ["改善要求書・協定書の案（このサイトで作れます）"],
+      "script": "「開業にあたり、住民と話し合った対策を覚書として文書にしていただけませんか。案をお送りします」",
+      "ifNoAnswer": "断られたときも、回答の文書や議事録に約束を書いてもらうようお願いし、記録に残します。",
+      "links": [{ "type": "doc", "doc": "agreement_draft", "label": "協定書・覚書の案を作る" }, { "type": "doc", "doc": "operator_request", "label": "改善要求書を作る" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_after_open",
+      "key": "pre_after_open",
+      "priority": 80,
+      "recType": ["other"],
+      "when": { "all": [{ "fact": "pre_open", "eq": "yes" }, { "fact": "pre_issue", "in": ["opening"] }] },
+      "title": "開業後の記録のつけ方と、見守りの分担を決める",
+      "body": "開業後は、約束した対策が守られているか、困りごとが起きていないかを記録し続けます。困りごとが起きたら、記録を持って事業者と役所の担当課に相談します。",
+      "where": "このサイトの「対応の記録」",
+      "check": "開業日と標識（届出番号・連絡先）／約束した対策が始まっているか／記録の分担",
+      "bring": ["約束した対策の一覧"],
+      "script": "記録の例：〇月〇日 開業を確認。標識の連絡先〇〇。夜間の巡回：〇時に確認できた／できなかった。",
+      "ifNoAnswer": "困りごとが起きたら、このサイトの民泊の診断で「すでに営業していて困っている」を選んで、次の行動を探せます。",
+      "links": [{ "type": "records" }, { "type": "page", "url": "#/start/minpaku", "label": "営業が始まってから困ったときの診断" }]
+    },
+    {
+      "section": "do",
+      "id": "pre_n_rule_amend",
+      "key": "pre_rule_amend",
+      "priority": 55,
+      "recType": ["petition"],
+      "when": {
+        "all": [
+          { "fact": "pre_open", "eq": "yes" },
+          {
+            "any": [
+              { "fact": "pre_issue", "in": ["opening"] },
+              { "all": [{ "fact": "result", "eq": "no_problem" }, { "fact": "basis_known", "eq": "yes" }] }
+            ]
+          }
+        ]
+      },
+      "title": "今のルールで防げないなら、条例の見直しを具体的に要望する",
+      "body": "「開業前の書面での周知と説明会を義務にする」など、具体的な案にして、議員・担当課・議会（陳情・請願）・意見募集に出します。",
+      "where": "地元の議員・条例を受け持つ担当課・議会事務局",
+      "check": "今の条例の内容と変えたい点／ほかの自治体の例",
+      "bring": ["変えたい点を1枚にまとめたメモ"],
+      "script": "「宿泊施設の開業前に、近所へ書面と説明会で知らせることを、条例で義務にしてほしいと考えています」",
+      "ifNoAnswer": "議員への相談、陳情・請願、パブコメ、署名などを組み合わせます。",
+      "links": [{ "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" }]
     }
   ]
 }

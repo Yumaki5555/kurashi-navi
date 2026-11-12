@@ -68,7 +68,7 @@ async function loadDomain(d) {
   const data = Object.fromEntries(names.map((n, i) => [n, v[i]]));
   if (!data.tree) throw new Error('診断データを読み込めませんでした');
   cache[d] = {
-    tree: data.tree, cards: data.cards?.cards || [], checklists: data.checklists?.items || [], cases: data.cases?.cases || [],
+    tree: data.tree, cards: data.cards?.cards || [], checklists: data.checklists?.items || [], checklistMode: data.checklists?.mode || '', cases: data.cases?.cases || [],
     docs: data.docs?.docs || [], glossary: Object.fromEntries((data.glossary?.terms || []).map(t => [t.term, t.text])),
     ladder: data.ladder || { steps: [] }, facts: Object.fromEntries((data.facts?.facts || []).map(f => [f.id, f]))
   };
@@ -597,8 +597,12 @@ function todoCard(c, i, open, chosen, T, extra = {}) {
     chosen && k !== 'internal' ? chooseBtn(c, chosen) : ''
   ].join('');
   const links = (c.links || []).filter(l => !(k === 'record' && l.type === 'records'));
-  return `<details class="card todo k-${k}"${open ? ' open' : ''}><summary>${i === null ? '' : `<span class="num">${i + 1}</span>`}${rich(fill(c.title, T))}</summary>
+  // 区分（法令・条例に基づく／任意の協力のお願い／住民が自主的にできる）：分野の設定（planLayout.basis）があるときだけ出す
+  const bl = c.basis && cur.data.tree.planLayout?.basis?.[c.basis];
+  const items = partsOf(c.items, T);
+  return `<details class="card todo k-${k}"${open ? ' open' : ''}><summary>${i === null ? '' : `<span class="num">${i + 1}</span>`}${rich(fill(c.title, T))}${bl ? ` <span class="tag b-${esc(c.basis)}">${esc(bl)}</span>` : ''}</summary>
     ${c.body ? `<p>${rich(fill(c.body, T))}</p>` : ''}
+    ${items.length ? `<ul class="items">${items.map(x => `<li>${rich(x)}</li>`).join('')}</ul>` : ''}
     ${body ? `<dl>${body}</dl>` : ''}${linksBlock(links, { skipNext: true })}${acts ? `<div class="links">${acts}</div>` : ''}${sourcesBlock(c.sources, c.facts)}<div class="termbox" hidden></div></details>`;
 }
 function infoCard(c, T, open = false) {
@@ -606,7 +610,31 @@ function infoCard(c, T, open = false) {
   return `<details class="card"${open ? ' open' : ''}><summary>${rich(fill(c.title, T))}</summary><p>${rich(fill(c.body || '', T))}</p>
     ${items.length ? `<ul>${items.map(x => `<li>${rich(x)}</li>`).join('')}</ul>` : ''}${linksBlock(c.links, { skipNext: true })}${sourcesBlock(c.sources, c.facts)}<div class="termbox" hidden></div></details>`;
 }
-function checklistBlock(items, checked, T) {
+// 状態つきのチェックリスト（分野の設定 mode=status）：済／これから／不要。
+// 以前の保存（チェックあり=true）は「済」として読む。rec：対応の記録にその相手の記録があれば「記録あり」。doneIf：診断の答えから済とわかる
+const CL_ST = [['done', '済'], ['todo', 'これから'], ['na', '不要']];
+const clCount = sts => `済 ${sts.filter(x => x === 'done').length} / ${sts.filter(x => x !== 'na').length}${sts.includes('na') ? '（不要を除く）' : ''}`;
+function clState(i, checked, T, recs) {
+  const v = checked[i.id];
+  const r = i.rec && recs.filter(x => i.rec.includes(x.toType)).sort((a, b) => (a.date || '').localeCompare(b.date || '')).at(-1);
+  const auto = r ? `記録あり（${fmtDay(r.date)}）` : i.doneIf && E.test(i.doneIf, T.facts) ? '診断の答えから' : '';
+  const st = v === true || v === 'done' ? 'done' : v === 'na' || v === 'todo' ? v : auto ? 'done' : 'todo';
+  return { st, auto };
+}
+function statusChecklist(items, checked, T, title) {
+  const fid = cur.file.id, recs = (cur.file.records || []).filter(x => !isPlanned(x));
+  const rows = items.map(i => ({ i, ...clState(i, checked, T, recs) }));
+  const cnt = `<small class="cnt">${clCount(rows.map(x => x.st))}</small>`;
+  // title があるとき：結果の画面の見出しつきの欄として出す。ないとき：これまでどおり折りたたみ
+  const [open, close] = title ? [`<section id="checklist" data-cl="1"><h2>${esc(title)} ${cnt}</h2>`, '</section>'] : [`<details class="more" id="checklist" data-cl="1"><summary>チェックリスト ${cnt}</summary>`, '</details>'];
+  return `${open}
+    <p class="help">それぞれ「済」「これから」「不要」を選べます。選んだ内容はこの相談に保存されます。「確かめ方」を開くと、確認の方法・聞く先・聞き方の例と、対応の記録に残すボタンが出ます。</p>
+    <ul class="checklist st">${rows.map(({ i, st, auto }) => { const sc = fill(i.script, T); return `<li data-st="${st}"><span class="cl-text">${rich(fill(i.text, T))}${auto ? ` <small class="auto">${esc(auto)}</small>` : ''}</span>
+      <span class="cl-st" role="group" aria-label="この項目の状態">${CL_ST.map(([v, l]) => `<button type="button" class="btn slim" data-act="check3" data-id="${i.id}" data-v="${v}" aria-pressed="${st === v}">${l}</button>`).join('')}</span>
+      <details class="how"><summary>確かめ方・記録</summary>${i.how ? `<p><b>どうやって</b>：${rich(fill(i.how, T))}</p>` : ''}${i.ask ? `<p><b>どこに聞く</b>：${rich(fill(i.ask, T))}</p>` : ''}${sc ? `<p><b>聞き方の例</b>：${rich(sc)} <button class="btn slim" data-act="copy" data-text="${esc(plain(sc))}">コピー</button></p>` : ''}<a class="btn slim" href="#/f/${fid}/records?add=1&cl=${i.id}">対応の記録に残す</a></details></li>`; }).join('')}</ul><div class="termbox" hidden></div>${close}`;
+}
+function checklistBlock(items, checked, T, opt = {}) {
+  if (opt.status) return statusChecklist(items, checked, T, opt.title);
   const n = items.filter(i => checked[i.id]).length;
   return `<details class="more" id="checklist" data-cl="1"><summary>チェックリスト <small class="cnt">${n} / ${items.length}</small></summary>
     <p class="help">項目の「確かめ方」を開くと、確認の方法・聞く先・聞き方の例が出ます。</p>
@@ -676,14 +704,19 @@ function viewResult() {
     : `<p class="help">回答がない・断られた・変わらないときは、これまでの答えと記録を引き継いで、次の方法を探せます。</p><a class="btn big" href="#/f/${file.id}/next/new">次の一手を探す</a>`;
   const others2 = rounds.filter(x => x.id !== c.roundId);
   const roundList = others2.length ? `<details class="more"><summary>これまでの次の一手（${others2.length}件）</summary><ul class="files">${others2.map(x => `<li><a href="#/f/${file.id}/next/${x.id}${x.done ? '' : '/q'}">${esc(roundTitle(x))}<span class="meta">${fmtDate(x.createdAt)}${x.done ? '' : '・途中'}</span></a></li>`).join('')}</ul></details>` : '';
+  // 分野の設定（planLayout）に合うとき：①今すぐできること ②ほかにもできること（分類ごと） ③準備チェックリスト ④書類を作る ⑤行動したが解決しなかったら
+  const plan = !isRound && c.tree.planLayout && E.test(c.tree.planLayout.when, facts) ? c.tree.planLayout : null;
+  const scenes = plan ? r.ifnot.filter(x => x.scene) : [];
+  const clHtml = r.checklist.length ? checklistBlock(r.checklist, file.checks || {}, T, { status: c.data.checklistMode === 'status', title: plan?.titles.checklist }) : '';
   const other = [
+    plan && r.cause.length ? more('今わかっていること・次に確かめること', r.cause.slice(0, 2).map(x => `<div class="box cause"><b>${rich(fill(x.title, T).replace(/^見立て：/, ''))}</b><p>${rich(fill(x.body, T))}</p>${sourcesBlock(x.sources, x.facts)}<div class="termbox" hidden></div></div>`).join('')) : '',
     more(`すでに試したこと・選んだこと（${tried.length}件・同じ提案はしません）`, tried.length ? `<ul>${tried.map(x => `<li>${rich(fill(x.title, T))}</li>`).join('')}</ul>` : ''),
     more('また起きたとき・ほかの困りごとが残るとき', r.recur.map((x, i) => todoCard(x, i, false, chosen, T)).join('')),
     more(`あわせて確かめておくと役立つこと（${r.check.length}件）`, r.check.map(x => infoCard(x, T)).join('')),
-    r.checklist.length ? checklistBlock(r.checklist, file.checks || {}, T) : '',
+    plan ? '' : clHtml,
     r.dont.map(x => infoCard(x, T)).join(''),
     !isRound && lad.next ? more(`この分野の次の段階：${esc(lad.next.title)}`, `<p>${rich(lad.next.body)}</p>${linksBlock(lad.next.links, { skipNext: true })}`) : '',
-    r.ifnot.filter(x => !/段階/.test(x.title)).map(x => infoCard(x, T)).join(''),
+    r.ifnot.filter(x => !/段階/.test(x.title) && !x.scene).map(x => infoCard(x, T)).join(''),
     isRound ? '' : regionInfo([first, ...others].some(x => x?.region === 'list')),
     // 次の一手では「役所の対応」の事例を出す（事例のページから、この回の次の一手に戻れるよう回のIDも渡す）
     more('似た問題の事例', (r.cases.length ? r.cases.map(x => caseItem(x, caseDom, isRound ? `${file.id}&n=${c.roundId}` : file.id)).join('') : '<p class="note">似た事例は、確認でき次第追加します。</p>') + `<a class="btn" href="#/cases/${caseDom}">事例集をすべて見る</a>`)
@@ -697,7 +730,7 @@ function viewResult() {
     <div class="box now"><b>今の状況</b><p>${esc(nowText(sum))}</p>
       <details><summary>答えた内容をすべて見る・変更する</summary><ul>${sum.map(s => `<li>${esc(s.label)}：<b>${esc(s.value)}</b>${s.auto ? ' <small>（引き継ぎ）</small>' : ''} <a class="fix" href="${qHash(c, s.n)}?edit=1">回答を変更</a></li>`).join('')}</ul></details></div>
     ${outcome ? `<p class="note">「対応の記録」で相談全体の状態を「${esc(STATUS.find(s => s.value === st).label)}」にしているので、それに合わせた案内を出しています。<a href="#/f/${file.id}/records">状態を変える</a></p>` : ''}
-    <section><h2>まずすること</h2>
+    ${plan ? planHtml(plan, { fresh, chosen, T, recHelp, noneHtml, clHtml, scenes, nextSec, roundList, file }) : `<section><h2>まずすること</h2>
       ${first ? todoCard(first, null, true, chosen, T, { recHelp }) : noneHtml}
     </section>
     ${others.length ? `<details class="more cand"><summary>ほかの方法（${others.length}件）</summary>${others.map((x, i) => todoCard(x, i + 1, false, chosen, T)).join('')}</details>` : ''}
@@ -707,11 +740,40 @@ function viewResult() {
       <div class="row wrap start"><a class="btn primary" href="#/f/${file.id}/records?add=1">結果を記録する</a><a class="btn" href="#/f/${file.id}/records">対応の記録を見る</a>${allDocs().length ? `<a class="btn" href="#/f/${file.id}/doc">文書の下書きを作る</a>` : ''}</div>
       <h3>うまくいかなかったとき</h3>
       ${nextSec}${roundList}
-    </section>
+    </section>`}
     ${other ? `<details class="more other"><summary>注意点・根拠・関連情報</summary>${other}</details>` : ''}
     <div class="row wrap noprint"><button class="btn" data-act="restart">${isRound ? 'この次の一手を最初からやり直す' : 'この診断を最初からやり直す'}</button><button class="btn" data-act="print">この結果を印刷・PDF</button></div>
     ${saveState()}
     <p class="note">この結果は、対応の仕方を整理するためのもので、法的な判断ではありません。</p>`, isRound ? roundTitle(c.holder) : '診断の結果');
+}
+
+// 結果の画面の「段階に合わせた並び」（分野の設定 planLayout があり、その条件に合うとき）
+function planHtml(plan, { fresh, chosen, T, recHelp, noneHtml, clHtml, scenes, nextSec, roundList, file }) {
+  const n = plan.top || 3, tops = fresh.slice(0, n), rest = fresh.slice(n), ti = plan.titles;
+  const gs = plan.groups.map(g => ({ ...g, cs: rest.filter(x => (x.group || 'other') === g.id) })).filter(g => g.cs.length);
+  let k = n;
+  const moreHtml = gs.map(g => `<h3 class="grp">${esc(g.title)}（${g.cs.length}件）</h3>${g.cs.map(x => todoCard(x, k++, false, chosen, T)).join('')}`).join('');
+  // 書類：行動から案内している文書を先に、そのあと、この状況のための文書（when のある文書）
+  const ds = allDocs(), linked = [...new Set(fresh.flatMap(x => (x.links || []).filter(l => l.type === 'doc').map(l => l.doc)))];
+  const docs = [...linked.map(id => ds.find(d => d.id === id)), ...ds.filter(d => d.when && !linked.includes(d.id))].filter(Boolean);
+  const item = d => `<a class="btn big left" href="#/f/${file.id}/doc/${d.id}"><b>${esc(d.title)}</b><br><small>${esc(d.desc || '')}</small></a>`;
+  return `<section><h2>${esc(ti.top)}</h2>
+      ${plan.basisHelp ? `<p class="help">住民の希望だけで開業を止めることはできません。決まりに合っているかの確認と、協力のお願いを組み合わせて進めます。</p><details class="how flat"><summary>行動につけた区分の意味</summary><p>${rich(plan.basisHelp)}</p></details>` : ''}
+      ${tops.length ? tops.map((x, i) => todoCard(x, i, i === 0, chosen, T, i === 0 ? { recHelp } : {})).join('') : noneHtml}
+    </section>
+    ${rest.length ? `<details class="more cand"><summary>${esc(ti.more)}（${rest.length}件）</summary>${moreHtml}</details>` : ''}
+    ${clHtml}
+    ${docs.length ? `<section><h2>${esc(ti.docs)}</h2><p class="help">入力した事実だけで文章を組み立てます。出す前に必ず読み直してください。</p>
+      <div class="stack">${docs.slice(0, 3).map(item).join('')}</div>
+      ${docs.length > 3 ? `<details class="more"><summary>ほかの書類（${docs.length - 3}種類）</summary><div class="stack">${docs.slice(3).map(item).join('')}</div></details>` : ''}
+      <a class="btn" href="#/f/${file.id}/doc">文書の一覧を見る</a></section>` : ''}
+    <section><h2>${esc(ti.after)}</h2>
+      <p class="help">行動したら、その日と結果を記録しておくと、次に何をするかを考えやすくなります。</p>
+      <div class="row wrap start"><a class="btn primary" href="#/f/${file.id}/records?add=1">結果を記録する</a><a class="btn" href="#/f/${file.id}/records">対応の記録を見る</a></div>
+      ${scenes.length ? `<h3>よくある場面と、次の手</h3>${scenes.map((x, i) => infoCard(x, T, i === 0 && !!T.facts.pre_response)).join('')}` : ''}
+      <h3>次の一手を探す</h3>
+      ${nextSec}${roundList}
+    </section>`;
 }
 
 // 事例の分野は、表示している一覧の分野を必ず渡す（開いている相談の分野を使うと、別の分野の事例に入れない）
@@ -784,7 +846,8 @@ async function viewCase(domain, id, q = {}) {
 // ---------- 画面：文書 ----------
 // 分野の文書＋「役所とのやりとり」の共通文書（分野に同じ役目の文書があるものは出さない）
 function allDocs() {
-  const own = cur.data.docs;
+  // when：その相談の答えに合うときだけ出す文書（例：開業前の対策の文書は、近所に民泊ができるらしいときだけ）
+  const own = cur.data.docs.filter(d => !d.when || E.test(d.when, cur.file.state?.facts || {}));
   if (cur.file.domain === N.NEXT_DOMAIN) return own;
   const hasDisc = own.some(d => /disclosure/.test(d.id));
   const common = (cur.next?.docs || []).filter(d => !own.some(o => o.id === d.id) && !(hasDisc && d.id === 'disclosure_memo'));
@@ -802,7 +865,9 @@ function docPrefill(d) {
       const nodeId = st.history.map(h => h.node).find(id => tree.nodes[id]?.fact === k);
       if (!nodeId) continue;
       const val = [].concat(st.facts[k]).filter(x => !['none', 'unknown', 'forgot'].includes(x));
-      if (val.length) { v[f.id] = E.labelOf(tree, nodeId, val.length === 1 ? val[0] : val); from[f.id] = '診断の答えから'; }
+      // map：選んだ答えごとに決めた文を入れる（例：心配ごと→求める対策）
+      const text = f.prefill.map ? val.map(x => f.prefill.map[x]).filter(Boolean).join('\n') : val.length ? E.labelOf(tree, nodeId, val.length === 1 ? val[0] : val) : '';
+      if (text) { v[f.id] = text; from[f.id] = '診断の答えから'; }
       break;
     }
     if (f.prefill?.region && file.region) { v[f.id] = file.region[f.prefill.region] || ''; from[f.id] = '地域の設定から'; }
@@ -927,9 +992,11 @@ function viewRecords(editId, q = {}, keep = false) {
   const dr = S.getUi().drafts?.[file.id];
   const target = editId || (!q.add && dr?.id) || '';
   const ed = target ? all.find(r => r.id === target) : null;
-  const useDraft = dr && (dr.id || '') === (ed?.id || '') && !q.doc;
+  const useDraft = dr && (dr.id || '') === (ed?.id || '') && !q.doc && !q.cl;
   const doc = q.doc && allDocs().find(x => x.id === q.doc);
-  const base = ed ? { ...ed } : { date: today(), toType: '', method: '', state: '', content: doc ? `「${doc.title}」を送った・伝えた` : '' };
+  // q.cl：チェックリストの項目から記録する（項目の文と、相手の種類を入れておく）
+  const cl = q.cl && (cur.data.checklists || []).find(x => x.id === q.cl);
+  const base = ed ? { ...ed } : { date: today(), toType: cl?.rec?.[0] || '', method: '', state: '', content: doc ? `「${doc.title}」を送った・伝えた` : cl ? `チェックリスト「${plain(fill(cl.text, { facts: file.state?.facts || {} }))}」について：` : '' };
   if (q.done && ed) Object.assign(base, { date: today(), state: ed.state === 'todo' ? 'doing' : ed.state });
   const v = useDraft ? { ...base, ...dr.values } : base;
   const formOpen = !!(ed || q.add || useDraft);
@@ -1134,6 +1201,16 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]');
   if (!t || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type !== 'button')) return;
   const act = t.dataset.act;
+  if (act === 'check3') {
+    // 状態つきチェックリスト：済／これから／不要。押した状態を保存し、その項目と件数だけ書き換える
+    const li = t.closest('li'), v = t.dataset.v;
+    cur.file.checks = { ...cur.file.checks, [t.dataset.id]: v }; save();
+    li.dataset.st = v;
+    li.querySelectorAll('[data-act=check3]').forEach(b => b.setAttribute('aria-pressed', String(b === t)));
+    const box = t.closest('[data-cl]');
+    box.querySelector('.cnt').textContent = clCount([...box.querySelectorAll('li[data-st]')].map(x => x.dataset.st));
+    return;
+  }
   if (act === 'startans') {
     const dom = t.dataset.domain, v = t.dataset.v;
     const [data, next] = await Promise.all([loadDomain(dom), loadDomain(N.NEXT_DOMAIN)]);

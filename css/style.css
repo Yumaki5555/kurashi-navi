@@ -160,3 +160,19 @@ h3{margin:1.2em 0 .4em}
 @media screen{small,.cat small,.meta,h2 small,.tag,.progress,.num,.ext,.ck,.savestate,.small,.src,.gen>summary,.fix,.ol small,dt,.err,details.how,.box.now details,.inh,.inh-h,.cstep .num{font-size:max(16px,.85rem)}
 summary{min-height:44px;box-sizing:border-box;padding-top:10px;padding-bottom:10px}
 .tag{white-space:normal;max-width:100%}.opt-terms .term{display:inline-flex;align-items:center;min-height:44px;margin-right:12px}}
+/* 行動の区分（法令・条例に基づく／任意の協力のお願い／住民が自主的にできる）と、行動の中の項目 */
+.tag.b-law{background:var(--ok-bg);color:var(--ok)}.tag.b-ask{background:var(--warn-bg);color:var(--warn)}.tag.b-self{background:var(--accent-bg);color:var(--accent)}
+ul.items{margin:6px 0 8px;padding-left:1.3em}ul.items li{margin:2px 0}
+h3.grp{font-size:1rem;margin:16px 0 4px}
+details.how.flat{margin-left:0}
+/* 状態つきチェックリスト：済／これから／不要 */
+.checklist.st li{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.checklist.st .cl-text{flex:1 1 15em}
+.checklist.st .auto{display:inline-block;color:var(--ok)}
+.cl-st{display:inline-flex;flex:none}
+.cl-st .btn{border-radius:0;min-width:4.4em}.cl-st .btn:first-child{border-radius:var(--r) 0 0 var(--r)}.cl-st .btn:last-child{border-radius:0 var(--r) var(--r) 0}.cl-st .btn+.btn{margin-left:-1px}
+.cl-st .btn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.checklist.st li[data-st=na] .cl-text{color:var(--sub);text-decoration:line-through}
+.checklist.st details.how{flex-basis:100%;margin-left:0}
+@media (max-width:480px){.cl-st{width:100%}.cl-st .btn{flex:1}}
+@media print{.checklist.st li[data-st=done] .cl-text::before{content:"［済］"}.checklist.st li[data-st=todo] .cl-text::before{content:"［　］"}.checklist.st li[data-st=na] .cl-text::before{content:"［不要］"}}

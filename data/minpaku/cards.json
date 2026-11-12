@@ -27,16 +27,88 @@
       "links": [ { "type": "records" } ]
     },
     {
-      "id": "do_check_type", "region": "list", "boost": [{"if":{"fact":"situation","eq":"C"},"add":6}], "section": "do", "priority": 80,
-      "when": {"all":[{"any":[{"fact":"situation","eq":"C"},{"all":[{"fact":"situation","eq":"B"},{"not":{"fact":"know","has":"sign"}}]},{"fact":"biz_type","eq":"unknown"}]},{"not":{"all":[{"fact":"reasons","has":"no_sign"},{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]},{"fact":"reasons","has":"no_number"}]}}]},
+      "id": "do_check_type",
+      "region": "list",
+      "boost": [{ "if": { "fact": "situation", "eq": "C" }, "add": 6 }],
+      "section": "do",
+      "priority": 80,
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "any": [
+                  { "fact": "situation", "eq": "C" },
+                  { "all": [{ "fact": "situation", "eq": "B" }, { "not": { "fact": "know", "has": "sign" } }] },
+                  { "fact": "biz_type", "eq": "unknown" }
+                ]
+              },
+              {
+                "not": {
+                  "all": [
+                    { "fact": "reasons", "has": "no_sign" },
+                    { "any": [{ "fact": "reasons", "has": "not_listed" }, { "fact": "checked_list", "eq": "yes" }] },
+                    { "fact": "reasons", "has": "no_number" }
+                  ]
+                }
+              }
+            ]
+          },
+          { "fact": "situation", "ne": "A" }
+        ]
+      },
       "title": "施設の営業の種類を確かめる",
       "body": "民泊には[[届出]]の民泊・[[旅館業]]の施設・[[特区民泊]]の3種類があり、相談する窓口とルールが違います。まず、どれにあたるかを確かめます。",
-      "where": [{"t":"①標識（済：書かれている番号・制度名・事業者名・連絡先を控える）","when":{"fact":"know","has":"sign"}},{"t":"①建物の外から見える玄関などの[[標識]]","when":{"all":[{"not":{"fact":"reasons","has":"no_sign"}},{"not":{"fact":"know","has":"sign"}}]}},{"t":"①標識（済）","when":{"fact":"reasons","has":"no_sign"}}," → ",{"t":"②自治体が公開している施設の一覧","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"②公開一覧（済）","when":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}," → ",{"t":"③予約サイトの施設のページ","when":{"not":{"fact":"reasons","has":"no_number"}}},{"t":"③予約サイト（済）","when":{"fact":"reasons","has":"no_number"}}],
-      "check": [{"t":"標識に書かれた番号・制度名・事業者名・連絡先（わかる範囲で。種類がわからなければ、そのまま窓口に伝えて確かめてもらう）","when":{"fact":"know","has":"sign"}},{"t":"標識の「届出番号」などの記載","when":{"all":[{"not":{"fact":"reasons","has":"no_sign"}},{"not":{"fact":"know","has":"sign"}}]}},{"t":"／一覧に同じ住所の施設があるか（資料の時点も見る）","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},{"t":"／予約サイトに届出番号などが書かれているか","when":{"not":{"fact":"reasons","has":"no_number"}}}],
+      "where": [
+        { "t": "①標識（済：書かれている番号・制度名・事業者名・連絡先を控える）", "when": { "fact": "know", "has": "sign" } },
+        {
+          "t": "①建物の外から見える玄関などの[[標識]]",
+          "when": { "all": [{ "not": { "fact": "reasons", "has": "no_sign" } }, { "not": { "fact": "know", "has": "sign" } }] }
+        },
+        { "t": "①標識（済）", "when": { "fact": "reasons", "has": "no_sign" } },
+        " → ",
+        {
+          "t": "②自治体が公開している施設の一覧",
+          "when": { "not": { "any": [{ "fact": "reasons", "has": "not_listed" }, { "fact": "checked_list", "eq": "yes" }] } }
+        },
+        { "t": "②公開一覧（済）", "when": { "any": [{ "fact": "reasons", "has": "not_listed" }, { "fact": "checked_list", "eq": "yes" }] } },
+        " → ",
+        { "t": "③予約サイトの施設のページ", "when": { "not": { "fact": "reasons", "has": "no_number" } } },
+        { "t": "③予約サイト（済）", "when": { "fact": "reasons", "has": "no_number" } }
+      ],
+      "check": [
+        { "t": "標識に書かれた番号・制度名・事業者名・連絡先（わかる範囲で。種類がわからなければ、そのまま窓口に伝えて確かめてもらう）", "when": { "fact": "know", "has": "sign" } },
+        {
+          "t": "標識の「届出番号」などの記載",
+          "when": { "all": [{ "not": { "fact": "reasons", "has": "no_sign" } }, { "not": { "fact": "know", "has": "sign" } }] }
+        },
+        {
+          "t": "／一覧に同じ住所の施設があるか（資料の時点も見る）",
+          "when": { "not": { "any": [{ "fact": "reasons", "has": "not_listed" }, { "fact": "checked_list", "eq": "yes" }] } }
+        },
+        { "t": "／予約サイトに届出番号などが書かれているか", "when": { "not": { "fact": "reasons", "has": "no_number" } } }
+      ],
       "bring": ["施設のおおよその住所（町名・番地の目安）", "標識や外観の写真（道路から）"],
-      "script": ["確かめた結果のメモの例：",{"t":"標識：見当たらない","when":{"fact":"reasons","has":"no_sign"}},{"t":"標識：〇〇","when":{"not":{"fact":"reasons","has":"no_sign"}}},"／",{"t":"公開一覧：見当たらない（〇月〇日時点の資料）","when":{"fact":"reasons","has":"not_listed"}},{"t":"公開一覧：確認した（〇月〇日時点の資料）","when":{"all":[{"fact":"checked_list","eq":"yes"},{"not":{"fact":"reasons","has":"not_listed"}}]}},{"t":"公開一覧：〇〇（〇月〇日時点の資料）","when":{"not":{"any":[{"fact":"reasons","has":"not_listed"},{"fact":"checked_list","eq":"yes"}]}}},"／",{"t":"予約サイト：届出番号の記載なし","when":{"fact":"reasons","has":"no_number"}},{"t":"予約サイト：〇〇","when":{"not":{"fact":"reasons","has":"no_number"}}}],
+      "script": [
+        "確かめた結果のメモの例：",
+        { "t": "標識：見当たらない", "when": { "fact": "reasons", "has": "no_sign" } },
+        { "t": "標識：〇〇", "when": { "not": { "fact": "reasons", "has": "no_sign" } } },
+        "／",
+        { "t": "公開一覧：見当たらない（〇月〇日時点の資料）", "when": { "fact": "reasons", "has": "not_listed" } },
+        {
+          "t": "公開一覧：確認した（〇月〇日時点の資料）",
+          "when": { "all": [{ "fact": "checked_list", "eq": "yes" }, { "not": { "fact": "reasons", "has": "not_listed" } }] }
+        },
+        {
+          "t": "公開一覧：〇〇（〇月〇日時点の資料）",
+          "when": { "not": { "any": [{ "fact": "reasons", "has": "not_listed" }, { "fact": "checked_list", "eq": "yes" }] } }
+        },
+        "／",
+        { "t": "予約サイト：届出番号の記載なし", "when": { "fact": "reasons", "has": "no_number" } },
+        { "t": "予約サイト：〇〇", "when": { "not": { "fact": "reasons", "has": "no_number" } } }
+      ],
       "ifNoAnswer": "自分で確かめても分からないときは、自治体に確認をお願いします。",
-      "links": [ { "type": "minpaku-map" }, { "type": "todokeru-contacts" } ],
+      "links": [{ "type": "minpaku-map" }, { "type": "todokeru-contacts" }],
       "facts": ["jutaku_hyoshiki", "ryokan_kyoka", "tokku_nintei"]
     },
     {
@@ -53,14 +125,27 @@
       "facts": ["jutaku_complaint"]
     },
     {
-      "id": "do_owner_side", "section": "do", "priority": 75,
-      "when": { "all": [ { "fact": "building", "in": ["same_condo", "same_rental"] }, { "not": { "fact": "done", "has": "owner_side" } } ] },
+      "id": "do_owner_side",
+      "section": "do",
+      "priority": 75,
+      "when": {
+        "all": [
+          { "fact": "building", "in": ["same_condo", "same_rental"] },
+          { "not": { "fact": "done", "has": "owner_side" } },
+          { "fact": "situation", "ne": "A" }
+        ]
+      },
       "title": "マンションの管理組合・管理会社（賃貸なら大家さん）に伝える",
       "body": "同じ建物の中の部屋なら、建物のルールで対応できることがあります。分譲マンションは[[管理規約]]、賃貸は部屋の契約が手がかりです。",
       "where": "分譲マンション：管理組合の理事会や管理会社／賃貸：大家さんや管理会社",
       "check": "分譲：管理規約で民泊（住宅宿泊事業）が認められているか／賃貸：契約で又貸し（転貸）や宿泊施設としての利用が認められているか",
       "bring": ["困りごとの記録", "管理規約の写し（分譲の場合）"],
-      "script": ["「〇号室が宿泊施設として使われているようで、",{"t":"夜の騒音が続いています。","when":{"fact":"problems","has":"noise"}},{"t":"{problems|〇〇}で困っています。","when":{"not":{"fact":"problems","has":"noise"}}},"管理規約（契約）で認められているか確認し、対応を検討していただけますか」"],
+      "script": [
+        "「〇号室が宿泊施設として使われているようで、",
+        { "t": "夜の騒音が続いています。", "when": { "fact": "problems", "has": "noise" } },
+        { "t": "{problems|〇〇}で困っています。", "when": { "not": { "fact": "problems", "has": "noise" } } },
+        "管理規約（契約）で認められているか確認し、対応を検討していただけますか」"
+      ],
       "ifNoAnswer": "分譲マンションなら、総会の議題にすることを理事会に求められます。あわせて自治体の担当窓口にも相談します。",
       "facts": ["mansion_kiyaku", "kubun_stop"]
     },
@@ -106,53 +191,135 @@
       "facts": ["jutaku_explain_guests"]
     },
     {
-      "id": "do_a_check_plan", "section": "do", "priority": 80,
-      "when": { "all": [ { "fact": "situation", "eq": "A" }, { "not": { "fact": "checked_gov", "eq": "yes" } } ] },
-      "title": "計画の内容を自治体に確かめる",
-      "body": "うわさだけで判断せず、どの種類の施設になるのか、地域のルールで近所への説明が必要かを確かめます。",
-      "where": "自治体の民泊（住宅宿泊事業）の担当課／旅館業なら保健所（生活衛生の担当）",
-      "check": "その建物で届出・許可の申請や相談が出ているか／営業の種類／地域の[[条例]]で近所への事前の周知が必要か／開業後の苦情の窓口",
-      "bring": ["建物の場所", "掲示やチラシの写真（あれば）"],
-      "script": "「{place|〇〇町〇丁目の〇〇（建物）}で民泊の計画があると聞きました。届出や許可の申請が出ているか、地域のルールで近所への説明が必要か、教えてください」",
-      "ifNoAnswer": "申請の前で、自治体もまだ把握していないことがあります。時期をおいてもう一度確認するか、事業者に直接たずねます。",
-      "links": [ { "type": "todokeru-contacts" } ],
-      "facts": ["jutaku_ordinance"]
+      "section": "do",
+      "region": "gov",
+      "id": "do_a_check_plan",
+      "key": "pre_check_status",
+      "group": "gov",
+      "basis": "self",
+      "priority": 88,
+      "recType": ["gov"],
+      "boost": [
+        { "if": { "fact": "stage", "in": ["meeting_planned", "meeting_done"] }, "add": -25 },
+        { "if": { "fact": "pre_response", "in": ["no_meeting", "no_answer", "refused", "opening"] }, "add": -30 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "not": { "any": [{ "fact": "done", "has": "gov" }, { "fact": "checked_gov", "eq": "yes" }] } },
+          { "not": { "fact": "pre_response", "in": ["gov_ok", "gov_cannot"] } }
+        ]
+      },
+      "title": "保健所・担当課に、申請・届出の状況を確かめる",
+      "body": "うわさや掲示だけで判断せず、どの種類の施設として、いつ手続きが進んでいるかを役所に確かめます。だれでも問い合わせできます（どこまで答えるかは役所の判断です）。",
+      "where": [
+        { "t": "民泊（住宅宿泊事業）の担当課", "when": { "fact": "biz_type", "in": ["jutaku"] } },
+        { "t": "保健所（旅館業・生活衛生の担当）", "when": { "fact": "biz_type", "in": ["ryokan"] } },
+        { "t": "特区民泊の認定の担当課（自治体の案内で確かめる）", "when": { "fact": "biz_type", "in": ["tokku"] } },
+        { "t": "届出の民泊なら民泊の担当課、旅館業なら保健所（生活衛生の担当）。種類がわからなければ両方に", "when": { "not": { "fact": "biz_type", "in": ["jutaku", "ryokan", "tokku"] } } }
+      ],
+      "check": "その建物で届出・許可・認定の申請や事前の相談が出ているか／営業の種類（届出の民泊・旅館業・特区民泊）／開業の予定時期／地域の[[条例]]で、開業前に近所への周知（説明）が必要か／開業後の苦情の窓口",
+      "bring": ["建物の場所（住所や目印）", "掲示・チラシ・説明資料の写真（あれば）"],
+      "script": "「{place|〇〇町〇丁目の〇〇（建物）}で宿泊施設（民泊・旅館業）の計画があると聞きました。届出や許可の申請・相談が出ているか、どの種類の施設になるか、地域のルールで近所への事前の説明が必要か、教えてください」",
+      "ifNoAnswer": "申請の前で役所もまだ知らない、または個別の申請の内容は答えられない、と言われることがあります。その場合は、いつごろ確かめられるか・公開される一覧はどこかを聞き、時期をおいてもう一度確かめます。",
+      "links": [{ "type": "todokeru-contacts" }, { "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }],
+      "facts": ["jutaku_todokede", "ryokan_kyoka", "tokku_nintei"]
     },
     {
-      "id": "do_a_after_check", "section": "do", "priority": 75,
-      "when": { "all": [ { "fact": "situation", "eq": "A" }, { "fact": "checked_gov", "eq": "yes" } ] },
-      "title": "確認した内容を記録し、開業前に伝えたいことをまとめる",
-      "body": "自治体から聞いた内容（営業の種類、時期、ルール）を残しておくと、開業後に困りごとが起きたときにすぐ動けます。",
+      "section": "do",
+      "region": "none",
+      "id": "do_a_after_check",
+      "key": "pre_after_check",
+      "group": "gov",
+      "basis": "self",
+      "priority": 35,
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "done", "has": "gov" }, { "fact": "checked_gov", "eq": "yes" }] }] },
+      "title": "役所で確かめた内容を記録し、開業前に伝えたいことをまとめる",
+      "body": "役所から聞いた内容（営業の種類、時期、ルール）を残しておくと、説明会や要望のときに正確に話せ、開業後に困りごとが起きたときにもすぐ動けます。",
       "where": "このサイトの「対応の記録」",
-      "check": "聞いた日時・部署・回答／開業の時期／苦情の窓口",
-      "bring": ["自治体からの回答のメモ"],
+      "check": "聞いた日時・部署・回答／営業の種類と開業の時期／周知（説明）の決まり／苦情の窓口",
+      "bring": ["役所からの回答のメモ"],
       "script": "記録の例：11月11日 〇〇区 生活衛生課。届出は〇〇（出ている・まだ出ていない）。出された場合は〇〇（区のホームページの一覧など）で確かめられる。",
-      "ifNoAnswer": "開業の予定がはっきりしないときは、1〜2か月おきに一覧や掲示を確認します。",
-      "links": [ { "type": "records" } ]
+      "ifNoAnswer": "開業の予定がはっきりしないときは、1〜2か月おきに一覧や掲示を確かめます。",
+      "links": [{ "type": "records" }]
     },
     {
-      "id": "do_a_ask_operator", "section": "do", "priority": 70,
-      "when": { "all": [ { "fact": "situation", "eq": "A" }, { "any": [ { "fact": "goal", "eq": "request" }, { "fact": "notice", "eq": "yes" } ] } ] },
-      "title": "事業者に、ごみ・騒音の対策と苦情の連絡先をたずねる",
-      "body": "開業前に対策をお願いしておくと、問題が起きにくくなります。",
-      "where": "説明会・お知らせに書かれた事業者の連絡先",
-      "check": "苦情の連絡先（夜間もつながるか）／ごみの処理の方法／宿泊者へのルールの伝え方／困ったときに駆けつけてもらえるか",
-      "bring": ["心配なことのメモ"],
-      "script": "「開業後の{problems|〇〇}について心配しています。苦情の連絡先、ごみの処理の方法、宿泊者へのルールの伝え方を教えていただけますか」",
-      "ifNoAnswer": "答えてもらえないときは、自治体の担当課に、事業者への周知や説明を求められるか相談します。",
-      "links": [ { "type": "doc", "doc": "manager_letter", "label": "事業者への連絡文を作る" } ]
+      "section": "do",
+      "region": "none",
+      "id": "do_a_ask_operator",
+      "key": "pre_measures",
+      "group": "operator",
+      "basis": "ask",
+      "priority": 60,
+      "recType": ["manager"],
+      "boost": [
+        { "if": { "fact": "goal", "in": ["request"] }, "add": 20 },
+        { "if": { "fact": "meeting_issue", "in": ["measures"] }, "add": 30 },
+        { "if": { "fact": "pre_response", "in": ["opening"] }, "add": 30 },
+        { "if": { "fact": "pre_response", "in": ["refused"] }, "add": 10 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [
+              { "fact": "goal", "in": ["request", "stop"] },
+              { "fact": "notice", "eq": "yes" },
+              { "fact": "stage", "in": ["meeting_planned", "meeting_done", "near_open"] },
+              { "fact": "meeting_issue", "in": ["measures"] },
+              { "fact": "pre_response", "in": ["refused", "opening"] }
+            ]
+          }
+        ]
+      },
+      "title": "事業者に、運営の対策を具体的に求める",
+      "body": "心配ごとに合わせて、下の一覧から求める対策を選びます。法律で事業者の義務になっていること（届出の民泊の苦情への対応、ごみの処理など）のほかは、お願い（任意の協力）です。数字や担当者まで具体的にすると、約束が守られているか確かめやすくなります。",
+      "items": [
+        { "t": "24時間つながる苦情の連絡先（届出の民泊では、近所からの苦情に適切かつ速やかに対応することが事業者の義務です）", "when": { "fact": "biz_type", "in": ["jutaku"] } },
+        { "t": "24時間つながる苦情の連絡先（電話番号・受付の時間）", "when": { "not": { "fact": "biz_type", "in": ["jutaku"] } } },
+        "管理責任者の名前（または担当部署）と連絡の方法",
+        "苦情があったときに駆けつける体制（着くまでの時間）",
+        "常駐の管理、または夜間の巡回",
+        "宿泊の定員の見直し（部屋の広さや近所への影響に合わせて）",
+        "宴会・パーティーの禁止と、守られないときに退室を求める対応",
+        "夜間の騒音を防ぐ対策と、宿泊者への前もっての説明",
+        "ベランダ・屋上の宿泊者の利用の制限（夜間は使わないなど）",
+        "窓の目隠し・防音の工事（窓の開け閉めを制限する対策は、火災のときの避難や換気に支障がないか、消防署・建築の担当課の確認を受けたうえでのみ）",
+        { "t": "ごみの専用の保管場所と、事業ごみとしての収集（届出の民泊のごみは、事業者が責任をもって処理する決まりです）", "when": { "fact": "biz_type", "in": ["jutaku"] } },
+        { "t": "ごみの専用の保管場所と、事業ごみとしての収集（地域の集積所に出さない）", "when": { "not": { "fact": "biz_type", "in": ["jutaku"] } } },
+        "路上駐車・送迎の車の対策（駐車場の確保、停める場所の案内）",
+        "喫煙場所の指定と吸い殻の対策",
+        "入口や宿泊者の通り道の変更（住民の玄関や窓の前を通らないように）",
+        "防犯カメラの設置（向きと範囲は、近所の住宅の中や通行人を必要以上に写さないように）",
+        "宿泊者向けの多言語のルール（騒音・ごみ・喫煙・駐車）とその掲示",
+        "開業後の定期的な住民との話し合い（例：3か月に1回）",
+        "約束した対策を[[協定書]]・覚書にすること"
+      ],
+      "where": "事業者（運営会社）の連絡先。管理会社に任せる場合は管理会社も",
+      "check": "下の一覧から、心配ごとに合う対策を選ぶ／それぞれ「いつから・だれが・どのように」／守られないときの連絡先",
+      "bring": ["改善要求書（このサイトで作れます）", "住民アンケートの結果（あれば）"],
+      "script": "「開業後の{problems|騒音・ごみ}について、住民として心配しています。24時間つながる連絡先、管理責任者、駆けつけの体制、宿泊者へのルールの伝え方について、具体的な対策を〇月〇日までに文書でお示しください」",
+      "ifNoAnswer": "答えてもらえないときは、役所の担当課に、事業者への説明の求めや、開業後の苦情の窓口について相談します。",
+      "links": [{ "type": "doc", "doc": "operator_request", "label": "改善要求書を作る" }, { "type": "doc", "doc": "agreement_draft", "label": "協定書・覚書の案を作る" }],
+      "facts": ["jutaku_complaint", "jutaku_complaint_level", "jutaku_explain_guests", "jutaku_gomi"]
     },
     {
-      "id": "do_a_info", "region": "list", "section": "do", "priority": 60,
-      "when": { "all": [ { "fact": "situation", "eq": "A" }, { "fact": "goal", "eq": "info" } ] },
+      "section": "do",
+      "region": "list",
+      "id": "do_a_info",
+      "key": "pre_info",
+      "group": "gov",
+      "basis": "self",
+      "priority": 60,
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "goal", "in": ["info"] }] },
       "title": "公開されている情報で、施設の種類と時期を確かめる",
       "body": "届出や許可を受けた施設は、自治体のホームページの一覧に載ることが多いです。",
       "where": "自治体が公開している施設の一覧／建物の掲示",
       "check": "建物の住所が一覧に載っているか／一覧の資料の時点",
       "bring": ["建物のおおよその住所"],
-      "script": "（一覧に見当たらないとき）自治体へ：「{place|〇〇町〇丁目}で民泊の計画があると聞きました。届出・許可の申請状況を教えていただけますか」",
-      "ifNoAnswer": "一覧は更新に時間がかかることがあります。自治体の担当課に直接確かめます。",
-      "links": [ { "type": "minpaku-map" } ]
+      "script": "（一覧に見当たらないとき）役所へ：「{place|〇〇町〇丁目}で民泊の計画があると聞きました。届出・許可の申請状況を教えていただけますか」",
+      "ifNoAnswer": "一覧は更新に時間がかかることがあります。役所の担当課に直接確かめます。",
+      "links": [{ "type": "minpaku-map" }]
     },
     {
       "id": "do_c_report", "section": "do", "priority": 85,
@@ -230,8 +397,17 @@
       "links": [ { "type": "doc", "doc": "gov_request", "label": "問い合わせの文書を作る" }, { "type": "todokeru-guide", "guide": "email", "section": "ch4", "label": "自治体へのメールの送り方（声を届ける）" } ]
     },
     {
-      "id": "do_e_check_rule", "section": "do", "priority": 90,
-      "when": { "all": [ { "any": [ { "fact": "situation", "eq": "E" }, { "fact": "goal", "eq": "rule" } ] }, { "not": { "fact": "checked_rule", "eq": "yes" } } ] },
+      "id": "do_e_check_rule",
+      "section": "do",
+      "priority": 90,
+      "when": {
+        "all": [
+          {
+            "all": [{ "any": [{ "fact": "situation", "eq": "E" }, { "fact": "goal", "eq": "rule" }] }, { "not": { "fact": "checked_rule", "eq": "yes" } }]
+          },
+          { "fact": "situation", "ne": "A" }
+        ]
+      },
       "title": "今の自治体のルールを調べる",
       "body": "変えたいことを伝える前に、今どんなルールがあるかを確かめます。他の自治体と比べると、提案がしやすくなります。",
       "where": "自治体のホームページ（「住宅宿泊事業」「民泊」の条例や要綱）／民泊の担当課",
@@ -242,8 +418,10 @@
       "facts": ["jutaku_ordinance"]
     },
     {
-      "id": "do_e_giin", "section": "do", "priority": 70,
-      "when": { "any": [ { "fact": "rule_method", "in": ["giin", "petition", "undecided"] }, { "all": [ { "fact": "goal", "eq": "rule" } ] } ] },
+      "id": "do_e_giin",
+      "section": "do",
+      "priority": 70,
+      "when": { "fact": "rule_method", "in": ["giin", "petition", "undecided"] },
       "title": "地元の議員に相談する",
       "body": "条例は議会で決まります。議員は、議会での質問や、請願の紹介などで動いてくれることがあります。",
       "where": "市区町村（または都道府県）議会の議員。考えの近い人に限らず、複数の議員に相談してかまいません",
@@ -251,7 +429,8 @@
       "bring": ["困りごとの記録やまとめ", "他の自治体のルールの例（あれば）"],
       "script": "「{place|〇〇町}で民泊の{problems|〇〇}の問題があり、住民が困っています。条例で〇〇のような仕組みをつくれないか、議会で取り上げていただけませんか」",
       "ifNoAnswer": "別の議員にも相談します。陳情は議員の紹介がなくても出せることが多いです。",
-      "links": [ { "type": "todokeru-contacts", "label": "議会の窓口を探す（声を届ける）" } ]
+      "links": [{ "type": "todokeru-contacts", "label": "議会の窓口を探す（声を届ける）" }],
+      "key": "giin"
     },
     {
       "id": "do_e_petition", "section": "do", "priority": 65,
@@ -290,13 +469,19 @@
       "links": [ { "type": "shomei" }, { "type": "todokeru-guide", "guide": "signature", "label": "署名の方法（声を届ける）" } ],
       "facts": ["lg_direct_claim"]
     },
-
     {
-      "id": "chk_3types", "section": "check", "priority": 100,
+      "id": "chk_3types",
+      "section": "check",
+      "priority": 100,
       "title": "民泊には3つの種類があります",
       "body": "種類によって、相談する窓口とルールが違います。",
-      "items": ["[[届出]]の民泊（[[住宅宿泊事業]]）：住宅宿泊事業法による。営業は年180日まで。玄関などに[[標識]]を出す決まり", "[[旅館業]]の施設（簡易宿所など）：旅館業法による。保健所などの[[許可]]が必要。日数の上限はない", "[[特区民泊]]：国家戦略特区の一部の地域だけ。自治体の認定が必要"],
-      "facts": ["jutaku_todokede", "jutaku_180days", "ryokan_kyoka", "tokku_nintei"]
+      "items": [
+        "[[届出]]の民泊（[[住宅宿泊事業]]）：住宅宿泊事業法による。営業は年180日まで。玄関などに[[標識]]を出す決まり",
+        "[[旅館業]]の施設（簡易宿所など）：旅館業法による。保健所などの[[許可]]が必要。日数の上限はない",
+        "[[特区民泊]]：国家戦略特区の一部の地域だけ。自治体の認定が必要"
+      ],
+      "facts": ["jutaku_todokede", "jutaku_180days", "ryokan_kyoka", "tokku_nintei"],
+      "when": { "fact": "situation", "ne": "A" }
     },
     {
       "id": "chk_sign", "section": "check", "priority": 80,
@@ -365,7 +550,6 @@
       "body": "条例は、首長（市長など）か議員が案を出し、議会で決まります。住民は、議員への相談、陳情・請願、意見募集（パブコメ）、署名などで意見を届けられます。有権者の50分の1以上の署名で、条例の制定や改正を求める「直接請求」という制度もあります。",
       "facts": ["lg_direct_claim", "jutaku_ordinance"]
     },
-
     {
       "id": "ifn_ladder", "section": "ifnot", "priority": 100,
       "title": "段階を一つずつ上げていく",
@@ -381,11 +565,16 @@
       "facts": ["callcenter"]
     },
     {
-      "id": "ifn_disclosure", "section": "ifnot", "priority": 70,
-      "when": { "any": [ { "fact": "situation", "eq": "D" }, { "fact": "done", "has": "gov" } ] },
+      "id": "ifn_disclosure",
+      "section": "ifnot",
+      "priority": 70,
+      "when": { "all": [{ "any": [{ "fact": "situation", "eq": "D" }, { "fact": "done", "has": "gov" }] }, { "fact": "situation", "ne": "A" }] },
       "title": "情報公開請求で、行政の対応の記録を確かめる",
       "body": "[[情報公開請求]]をすると、苦情の受付や指導の記録などの行政文書を見られることがあります（個人の情報などは黒く塗られます）。",
-      "links": [ { "type": "doc", "doc": "disclosure_draft", "label": "請求する文書の書き方" }, { "type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手続き（声を届ける）" } ]
+      "links": [
+        { "type": "doc", "doc": "disclosure_draft", "label": "請求する文書の書き方" },
+        { "type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手続き（声を届ける）" }
+      ]
     },
     {
       "id": "ifn_rule", "section": "ifnot", "priority": 60,
@@ -400,7 +589,6 @@
       "body": "被害が大きいとき、相手と話し合いがつかないときは、法律の専門家に相談できます。法テラス（日本司法支援センター）のサポートダイヤル（0570-078374、平日9時〜21時・土曜9時〜17時）、弁護士会の法律相談、自治体の無料法律相談などがあります。",
       "facts": ["houterasu"]
     },
-
     {
       "id": "dont_main", "section": "dont", "priority": 100,
       "title": "トラブルを大きくしないために",
@@ -411,6 +599,838 @@
       "when": { "fact": "problems", "answered": true },
       "title": "写真や録音をとるときは",
       "items": ["自分の家や道路など、自分がいてよい場所からとる", "人の顔や車のナンバーが写らないようにする", "とった記録は、相談先に見せるためだけに使う"]
+    },
+    {
+      "section": "do",
+      "region": "gov",
+      "id": "pa_rule_check",
+      "key": "pre_rule_check",
+      "group": "gov",
+      "basis": "self",
+      "priority": 80,
+      "boost": [
+        { "if": { "fact": "notice", "eq": "no" }, "add": 20 },
+        { "if": { "fact": "pre_response", "in": ["no_meeting"] }, "add": 40 },
+        { "if": { "fact": "meeting_issue", "in": ["not_notified"] }, "add": 25 },
+        { "if": { "fact": "stage", "in": ["heard"] }, "add": 5 },
+        { "if": { "fact": "stage", "in": ["meeting_planned"] }, "add": -40 }
+      ],
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "開業前の「近所への周知（説明）」のルールを確かめる",
+      "body": "届出の民泊では、届出の前に近所へ説明することは、国のガイドラインで「望ましい」とされているもので、義務ではありません。特区民泊は、申請の前の説明が認定の要件の一つです。自治体によっては、[[条例]]で書面での周知や説明会を義務にしています。まず、あなたの地域のルールを確かめます。",
+      "where": "自治体の民泊（住宅宿泊事業）の担当課／旅館業なら保健所（生活衛生の担当）／自治体の条例のページ",
+      "check": "事前の周知（説明）が条例で義務か、お願い（指導）か／周知の範囲（何メートル以内・どの住民）と方法（書面・説明会）／開業の何日前までか／周知したことを役所に報告する決まりがあるか／守られなかったときの扱い",
+      "bring": ["自治体の名前（上の「地域」を選ぶと、確認できた地域ではルールが出ます）"],
+      "script": "「宿泊施設を開業する前に、事業者が近所へ説明（周知）する決まりはありますか。条例で義務なのか、お願いなのか、対象の範囲と時期を教えてください。根拠の条例や要綱の名前も教えてください」",
+      "ifNoAnswer": "決まりがない地域でも、事業者に説明をお願いすることはできます（応じるかは事業者しだい）。決まりがあるのに守られていないと思うときは、「手続きが守られていないと思うとき」の案内に進みます。",
+      "links": [{ "type": "todokeru-contacts" }],
+      "facts": ["jutaku_prior_explain", "tokku_setsumei", "jutaku_ordinance"]
+    },
+    {
+      "section": "do",
+      "region": "gov",
+      "id": "pa_procedure",
+      "key": "pre_procedure",
+      "group": "gov",
+      "basis": "law",
+      "priority": 60,
+      "recType": ["gov"],
+      "boost": [
+        { "if": { "fact": "pre_response", "in": ["no_meeting"] }, "add": 30 },
+        { "if": { "fact": "meeting_issue", "in": ["not_notified"] }, "add": 20 },
+        { "if": { "all": [{ "fact": "stage", "in": ["near_open"] }, { "fact": "notice", "eq": "no" }] }, "add": 15 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [{ "fact": "notice", "eq": "no" }, { "fact": "pre_response", "in": ["no_meeting"] }, { "fact": "meeting_issue", "in": ["not_notified"] }]
+          }
+        ]
+      },
+      "title": "周知・説明の手続きが守られていないと思うときは、根拠を示して確認を求める",
+      "body": "条例などで決められた周知や説明が行われていないと思うときは、どの決まりの、どの点が守られていないと考えるのかを示して、担当部署に確認を求めます。「違反だ」と決めつけず、事実と根拠を並べて確認をお願いする形にします。",
+      "where": "条例を受け持つ担当課（民泊の担当課・保健所など）",
+      "check": "根拠にする条例・要綱の名前と条文／守られていないと考える事実（いつ・どの範囲に・何がなかったか）／役所として事業者に確かめ、必要なら周知を求めてもらえるか／回答の期限と方法",
+      "bring": ["条例・要綱の該当する部分の写し", "チラシが届いていない範囲などのメモ（事実だけ）"],
+      "script": "「〇〇条例第〇条では、開業前に近所への周知が必要とされていると理解しています。〇〇（建物）の計画について、〇月〇日の時点で、〇〇の範囲の住民に周知がされていないようです。手続きが守られているか確かめ、必要であれば事業者に周知を求めていただけますか。〇月〇日までに、文書でご回答をお願いします」",
+      "ifNoAnswer": "回答がないときは、期限をつけて文書で改めて求め、議員への相談も考えます。決まりが「お願い（指導）」にとどまる地域では、役所も強制はできないことがあります。",
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }],
+      "facts": ["jutaku_prior_explain", "tokku_setsumei"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_law_check",
+      "key": "other_route",
+      "group": "gov",
+      "basis": "law",
+      "priority": 55,
+      "recType": ["gov"],
+      "boost": [
+        { "if": { "fact": "problems", "in": ["safety"] }, "add": 35 },
+        { "if": { "fact": "goal", "in": ["stop"] }, "add": 25 },
+        { "if": { "fact": "pre_response", "in": ["gov_ok"] }, "add": 30 },
+        { "if": { "fact": "meeting_issue", "in": ["plan"] }, "add": 15 },
+        { "if": { "fact": "biz_type", "in": ["ryokan"] }, "add": 5 }
+      ],
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "建築・消防・用途地域のきまりに合っているか、担当部署に確かめてもらう",
+      "body": "宿泊施設には、消防法による消防用設備、建物の用途によっては[[建築確認]]の手続き、[[用途地域]]によるホテル・旅館の建築の制限などのきまりがあります。住民は、それぞれの担当部署に「この計画がきまりに合っているか確かめてほしい」と求められます（判断するのは担当部署です）。",
+      "where": "消防：消防署（予防の担当）／建物：建築指導の担当課／用途地域：都市計画の担当課（都市計画図で調べられることもある）",
+      "check": [
+        "消防用設備（火災報知器・誘導灯など）と避難経路が確保されるか、確認の予定はあるか",
+        {
+          "t": "／ホテル・旅館への用途の変更で、建築確認が必要な規模（200平方メートル超）か／その場所の用途地域でホテル・旅館が建てられるか",
+          "when": { "not": { "fact": "biz_type", "in": ["jutaku", "tokku"] } }
+        },
+        {
+          "t": "／学校・保育園などの近く（おおむね100メートル）なら、許可の前に学校の設置者などの意見を聞く手続き（旅館業）",
+          "when": { "all": [{ "fact": "problems", "in": ["kids"] }, { "not": { "fact": "biz_type", "in": ["jutaku", "tokku"] } }] }
+        }
+      ],
+      "bring": ["建物の住所", "説明資料・図面（もらっていれば）"],
+      "script": "「〇〇（住所）の建物で宿泊施設の計画があると聞きました。消防用設備や避難経路が消防法令に合っているかの確認は、どのように行われますか。住民として、確かめていただくようお願いできますか」（建築の担当課には「用途の変更に建築確認が必要な規模か」を聞きます）",
+      "ifNoAnswer": "個別の建物の審査の内容は答えられない、と言われることがあります。その場合は、確認の手続きがあるか・いつ行うかだけでも聞き、必要なら情報公開請求で、出された書類を確かめます。建築士に見てもらう方法もあります。",
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }],
+      "facts": ["shobo_setsubi", "jutaku_shobo", "kenchiku_youto", "ryokan_youto", "ryokan_school"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_ask_basis",
+      "key": "ask_basis",
+      "group": "gov",
+      "basis": "self",
+      "priority": 95,
+      "recType": ["gov"],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "pre_response", "in": ["gov_ok"] }] },
+      "title": "「法律上問題ない」と言われたら、どの法律・条例・基準で確かめたのかを聞く",
+      "body": "「問題ない」は、ある法律の、ある点についての判断であることが多いです。何に照らして判断したのかを確かめると、ほかの法律や担当（建築・消防など）で確かめられることが見えてきます。",
+      "where": "回答した部署",
+      "check": "どの法律・条例・基準に照らした判断か／何を確かめたか（書類・現地）／ほかの部署（建築・消防・環境）の確認はこれからか／開業後の苦情の窓口",
+      "bring": ["前回の回答のメモ（日時・部署・担当者・言われたこと）"],
+      "script": "「先日、〇〇の計画について法律上問題ないとのお答えをいただきました。どの法律・条例のどの基準に照らして、何を確かめられたのか教えてください。建築や消防のきまりについては、どちらで確かめられるのでしょうか」",
+      "ifNoAnswer": "口頭の答えがあいまいなときは、期限をつけて文書で問い合わせます。それでも解決しないときは、別の担当（建築・消防）に確かめ、議員への相談や条例の見直しの要望を考えます。",
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "gov",
+      "id": "pa_find_office",
+      "key": "find_office",
+      "group": "gov",
+      "basis": "self",
+      "priority": 95,
+      "recType": ["gov"],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "pre_response", "in": ["gov_cannot"] }] },
+      "title": "「関与できない」「担当ではない」と言われたら、受け持つ部署と理由を確かめる",
+      "body": "宿泊施設は、営業の種類で担当が分かれ、建物は建築、消防は消防署と、心配ごとごとに担当が違います。「どこなら扱えるのか」「なぜ関与できないのか」を聞き直すと、前に進めます。",
+      "where": "届出の民泊：民泊の担当課／旅館業・特区民泊：保健所などの担当／建物：建築指導の担当課／消防：消防署／道路・駐車：道路の管理者・警察",
+      "check": "この件を受け持つ部署の名前と電話番号／関与できない理由（どの法律の範囲の外か）",
+      "bring": ["前回の回答のメモ"],
+      "script": "「〇〇の宿泊施設の計画について相談したところ、こちらでは扱えないと言われました。営業の種類（届出の民泊・旅館業・特区民泊）ごとに、どの部署の担当か教えてください。扱えない理由も教えていただけますか」",
+      "ifNoAnswer": "自治体の代表電話や「声を届ける」の窓口検索で担当を探します。たらい回しが続くときは、日時・部署・回答を記録し、議員に相談します。",
+      "links": [{ "type": "todokeru-contacts" }]
+    },
+    {
+      "section": "do",
+      "region": "gov",
+      "id": "pa_tell_gov",
+      "key": "tell_gov",
+      "group": "gov",
+      "basis": "self",
+      "priority": 70,
+      "recType": ["gov"],
+      "boost": [{ "if": { "fact": "pre_response", "in": ["no_answer"] }, "add": 15 }],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "pre_response", "in": ["no_answer", "refused", "no_meeting"] }] },
+      "title": "事業者が答えない・応じないことを、役所の担当課に伝えて相談する",
+      "body": "事業者とのやりとりで進まないときは、経過を記録にまとめて、施設の手続きを受け持つ役所に伝えます。役所が事業者にどこまで求められるかは、法令や条例の決まりによります（求められないこともあります）。",
+      "where": [
+        { "t": "民泊（住宅宿泊事業）の担当課", "when": { "fact": "biz_type", "in": ["jutaku"] } },
+        { "t": "保健所（旅館業・生活衛生の担当）", "when": { "fact": "biz_type", "in": ["ryokan"] } },
+        { "t": "特区民泊の認定の担当課（自治体の案内で確かめる）", "when": { "fact": "biz_type", "in": ["tokku"] } },
+        { "t": "届出の民泊なら民泊の担当課、旅館業なら保健所（生活衛生の担当）。種類がわからなければ両方に", "when": { "not": { "fact": "biz_type", "in": ["jutaku", "ryokan", "tokku"] } } }
+      ],
+      "check": "これまでの経過（いつ・何を求め・どう答えたか）／役所から事業者に説明や対応を求めてもらえるか／開業前の手続きの状況",
+      "bring": ["経過の記録（このサイトの「対応の記録」）", "送った文書の写し"],
+      "script": "「〇〇（建物）の宿泊施設の計画について、事業者に〇月〇日に質問書を送りましたが、回答がありません。手続きの状況と、役所から事業者に住民への説明を求めていただけるかを教えてください」",
+      "ifNoAnswer": "役所の回答があいまいなときは、文書で問い合わせ、議員への相談を考えます。",
+      "links": [{ "type": "records" }, { "type": "doc", "doc": "gov_check_letter", "label": "確認書（文書）を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_disclosure",
+      "key": "disclosure",
+      "group": "gov",
+      "basis": "law",
+      "priority": 35,
+      "recType": ["disclosure"],
+      "boost": [{ "if": { "fact": "pre_response", "in": ["gov_ok"] }, "add": 15 }, { "if": { "fact": "goal", "in": ["stop"] }, "add": 10 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "any": [{ "fact": "goal", "in": ["stop", "info"] }, { "fact": "stage", "in": ["meeting_done", "near_open", "requested"] }] }
+        ]
+      },
+      "title": "届出書・申請書や図面などを、情報公開請求で確かめる",
+      "body": "役所に出された届出書・申請書や図面などは、自治体の情報公開条例に基づいて開示を請求できます。個人の情報や事業者の権利を害する部分などは、黒く塗られたり、出されなかったりすることがあります（理由は決定通知書に書かれます）。",
+      "where": "自治体の情報公開の窓口（自治体のホームページで「情報公開」と調べる）",
+      "check": "請求する文書の名前と期間をしぼる（例：〇〇（住所）の宿泊施設の届出書・申請書と添付図面、周知の報告書）／手数料・写しの費用／決定までの期間",
+      "bring": ["建物の住所", "請求書（自治体の様式。電子申請できる自治体もある）"],
+      "script": "請求する文書の書き方の例：「〇〇（住所）の宿泊施設（住宅宿泊事業または旅館業）について、〇年〇月〇日から〇年〇月〇日までに受け付けた届出書・申請書とその添付図面、近隣への周知に関する報告書」",
+      "ifNoAnswer": "出さない・一部だけ出すという決定に納得できないときは、決定通知書に書かれた方法と期間で審査請求ができます。「次の一手を探す」でも案内します。",
+      "links": [{ "type": "doc", "doc": "disclosure_draft", "label": "請求する文書の書き方" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_giin",
+      "key": "giin",
+      "group": "gov",
+      "basis": "self",
+      "priority": 45,
+      "recType": ["giin"],
+      "boost": [
+        { "if": { "fact": "pre_response", "in": ["gov_ok"] }, "add": 35 },
+        { "if": { "fact": "pre_response", "in": ["gov_cannot"] }, "add": 45 },
+        { "if": { "fact": "pre_response", "in": ["no_answer", "refused"] }, "add": 20 },
+        { "if": { "fact": "goal", "in": ["stop"] }, "add": 10 },
+        { "if": { "fact": "goal", "in": ["rule"] }, "add": 30 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "not": { "fact": "done", "has": "giin" } },
+          {
+            "any": [
+              { "fact": "goal", "in": ["stop", "request", "rule"] },
+              { "fact": "pre_response", "in": ["gov_ok", "gov_cannot", "no_answer", "refused", "no_meeting"] },
+              { "fact": "stage", "in": ["meeting_planned", "meeting_done"] }
+            ]
+          }
+        ]
+      },
+      "title": "地元の議員に相談する（説明会への同席や、現地を見に来てもらうことも頼める）",
+      "body": "議員は、役所に事情を聞いたり、議会で質問したり、現地を見に来たりできます（どう動くかは議員の判断で、役所に命令はできません）。説明会への同席を頼むこともできます。会派の違う複数の議員に相談してもかまいません。",
+      "where": "お住まいの市区町村の議員（議会のホームページに名簿と連絡先があります）",
+      "check": "計画の内容と心配ごと（1枚にまとめる）／これまでの経過（役所・事業者の答え）／お願いしたいこと（役所への確認、現地を見ること、説明会への同席、議会での質問など）",
+      "bring": ["経過と心配ごとをまとめた1枚のメモ", "説明資料・地図"],
+      "script": "「〇〇町で宿泊施設の計画があり、近所の住民で心配しています。役所の対応は〇〇でした。計画の内容と手続きが適切か、役所に確かめていただけないでしょうか。〇月〇日の説明会に同席していただくことはできますか」",
+      "ifNoAnswer": "返事がないときや断られたときは、別の議員にも短いメモで相談します。議会への陳情・請願も考えます。",
+      "links": [{ "type": "doc", "doc": "attend_request", "label": "同席の依頼文を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_petition",
+      "key": "pre_petition",
+      "group": "gov",
+      "basis": "law",
+      "priority": 25,
+      "recType": ["petition"],
+      "boost": [{ "if": { "fact": "goal", "in": ["rule"] }, "add": 30 }, { "if": { "fact": "pre_response", "in": ["gov_ok"] }, "add": 10 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "any": [{ "fact": "goal", "in": ["stop", "rule"] }, { "fact": "pre_response", "in": ["gov_ok", "refused", "opening"] }] }
+        ]
+      },
+      "title": "議会に陳情・請願を出す",
+      "body": "陳情・請願は、議会に要望を正式に出す方法です。請願には議員の紹介が必要です。開業前の周知の義務化や、学校の近くでの営業の制限など、しくみの見直しを求めるときに使います。採択されるかは議会の判断です。",
+      "where": "市区町村議会の議会事務局",
+      "check": "出せる様式と締め切り（次の議会の日程）／請願の紹介議員／陳情の扱い（委員会で審査されるか、配られるだけか）",
+      "bring": ["要旨と理由の下書き", "住民の署名（あれば）"],
+      "script": "「宿泊施設の開業前の住民への説明について、陳情（請願）を出したいと考えています。様式、締め切り、陳情の扱い（審査されるか）を教えてください」",
+      "ifNoAnswer": "不採択や結論が出ないときも、「次の一手を探す」で、会議録の確かめ方や出し直しの決まりなどを案内します。",
+      "links": [
+        { "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" },
+        { "type": "todokeru-guide", "guide": "petition", "label": "請願・陳情の出し方（声を届ける）" }
+      ],
+      "facts": ["seigan_124"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_jichikai",
+      "key": "pre_jichikai",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 62,
+      "recType": ["jichikai"],
+      "boost": [
+        { "if": { "fact": "goal", "in": ["stop", "request"] }, "add": 12 },
+        { "if": { "fact": "stage", "in": ["meeting_planned"] }, "add": 5 },
+        { "if": { "fact": "goal", "in": ["info"] }, "add": -20 }
+      ],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "not": { "fact": "done", "has": "jichikai" } }] },
+      "title": "自治会長・町会長に相談し、自治会として対応できるか話し合ってもらう",
+      "body": "自治会・町会は、地域の住民の声をまとめて事業者や役所に伝える窓口になれます。自治会として動くかどうかは、自治会の中で決めることです。動けない場合も、回覧板での情報の共有や、話し合いの場所を貸してもらえることがあります。",
+      "where": "自治会長・町会長（連絡先は回覧板や掲示板、近所の役員の方に）",
+      "check": "計画について知っていること（いつ・どこで・どんな施設）／自治会として対応を話し合ってもらえるか／回覧板での情報の共有／説明会の案内が自治会に来ているか",
+      "bring": ["計画についてのメモ（チラシ・掲示の写真）"],
+      "script": "「〇〇の建物で宿泊施設の計画があると聞きました。近所で心配している人がいます。自治会として事業者に説明を求めたり、住民で話し合ったりできないか、相談させてください」",
+      "ifNoAnswer": "自治会として動けないときは、心配している住民どうしで連絡を取り合い、代表を決めて動きます（「連絡網」「代表」の案内）。"
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_network",
+      "key": "pre_network",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 50,
+      "recType": ["neighbors"],
+      "boost": [{ "if": { "fact": "goal", "in": ["stop"] }, "add": 10 }],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "not": { "fact": "goal", "in": ["info"] } }] },
+      "title": "近所の人と情報を共有し、連絡網をつくる",
+      "body": "一人で抱え込まず、同じ心配をしている人とつながると、説明会への参加や記録、役所への相談を分担できます。連絡先は本人の同意を得て集め、この件の連絡以外に使わないようにします。",
+      "where": "近所の人（あいさつのついでや、回覧・ポスティングで呼びかける）",
+      "check": "連絡の方法（電話・メール・グループでの連絡など、参加する人が使える方法）／連絡先を管理する人／集めた連絡先を使う目的（この計画への対応だけ）",
+      "bring": ["呼びかけのメモ（計画の概要、連絡先、集まる日）"],
+      "script": "呼びかけの例：「〇〇の建物で宿泊施設の計画があります。近所で情報を共有し、説明会に一緒に参加しませんか。連絡先は、この件の連絡にだけ使います。連絡先：〇〇」",
+      "ifNoAnswer": "集まりが少ないときは、まず2〜3人で始め、説明会の前後に改めて呼びかけます。"
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_reps",
+      "key": "pre_reps",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 40,
+      "boost": [{ "if": { "any": [{ "fact": "done", "has": "jichikai" }, { "fact": "done", "has": "neighbors" }] }, "add": 15 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "not": { "fact": "goal", "in": ["info"] } },
+          { "any": [{ "fact": "done", "has": "jichikai" }, { "fact": "done", "has": "neighbors" }, { "fact": "goal", "in": ["stop", "request"] }] }
+        ]
+      },
+      "title": "住民の代表を複数人決め、窓口を一本にする",
+      "body": "事業者や役所とのやりとりは、代表を通すと話が食い違いにくくなります。一人に負担が集中しないよう2〜3人を代表にし、記録係も決めます。代表は住民の意見を伝える役で、住民全員の代わりに約束する権限はない、と最初に確かめておきます。",
+      "where": "住民の集まり（自治会の会合、近所の人の話し合い）",
+      "check": "代表（2〜3人）・連絡係・記録係／代表が事業者と約束してよい範囲（持ち帰って相談すること）／住民への報告の方法",
+      "bring": ["参加する人の名簿（本人の同意を得て）"],
+      "script": "決めることの例：「代表：〇〇さん・〇〇さん／記録：〇〇さん／事業者との約束は、住民の集まりで確かめてから返事をする」",
+      "ifNoAnswer": "代表を引き受ける人がいないときは、連絡係だけ決め、事業者への文書は住民の連名で出します。"
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_survey",
+      "key": "pre_survey",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 35,
+      "boost": [{ "if": { "fact": "goal", "in": ["request"] }, "add": 10 }, { "if": { "fact": "stage", "in": ["meeting_planned"] }, "add": 10 }],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "not": { "fact": "goal", "in": ["info"] } }] },
+      "title": "住民アンケートで、心配ごとと望む対策を集める",
+      "body": "近所の人の心配ごと（騒音・ごみ・駐車・防犯など）と、事業者に求めたい対策を集めると、質問書や要望書に具体的に書けます。名前や住所は書かなくてよい形にすると、答えやすくなります。",
+      "where": "近所の住民（回覧・ポスティング・集まりで配る）",
+      "check": "聞く項目（心配ごと、望む対策、説明会に参加できるか）／回収の方法と締め切り／集めた結果の使い道（質問書・要望書に使う）",
+      "bring": ["アンケートの用紙（A4で1枚くらい）"],
+      "script": "質問の例：「1. 心配していること（騒音・ごみ・駐車・防犯・その他）2. 事業者に求めたい対策 3. 説明会に参加できますか」",
+      "ifNoAnswer": "回答が少なくても、出てきた心配ごとを質問書や要望書に生かします。"
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_signature",
+      "key": "pre_signature",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 42,
+      "recType": ["shomei"],
+      "boost": [
+        { "if": { "fact": "goal", "in": ["stop"] }, "add": 25 },
+        { "if": { "fact": "pre_response", "in": ["refused"] }, "add": 15 },
+        { "if": { "any": [{ "fact": "done", "has": "jichikai" }, { "fact": "done", "has": "neighbors" }] }, "add": 10 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "any": [{ "fact": "goal", "in": ["request", "stop", "rule"] }, { "fact": "pre_response", "in": ["refused", "no_meeting", "no_answer"] }] }
+        ]
+      },
+      "title": "近隣住民の署名を集め、要望書として出す",
+      "body": "署名は、多くの住民が同じことを求めていると示す方法です。署名そのものに、開業を止める法的な力はありません。何を求めるのか（説明会の開催、対策の約束、計画の見直しなど）を具体的に書き、署名した人の個人情報は、決めた目的以外に使わないようにします。",
+      "where": "近所の住民（本人に自分で署名してもらう）。出す先：事業者／役所の担当課／議会（陳情・請願に添える）",
+      "check": "求めること（具体的に）／出す先と出し方の形式（議会や役所に出すときは、その決まりに従う）／署名簿の利用目的・保管の方法・保管の期間・出したあとの扱い",
+      "bring": ["署名簿と要望書（このサイトで作り、印刷して使います）"],
+      "script": "呼びかけの例：「〇〇の宿泊施設の計画について、事業者に〇〇を求める要望書を出します。趣旨に賛成いただける方は、ご自身でお名前とご住所をお書きください。署名簿は〇〇に出すためだけに使い、〇〇が保管します」",
+      "ifNoAnswer": "署名を出しても回答がないときは、期限をつけて回答を求め、役所や議員への相談、陳情・請願を考えます。条例をつくる・変える直接請求には、有権者の50分の1以上の署名と決まった手続きが必要です。",
+      "links": [{ "type": "doc", "doc": "signature_sheet", "label": "署名簿と要望書を作る" }],
+      "facts": ["lg_direct_claim"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_inform",
+      "key": "pre_inform",
+      "group": "neighbors",
+      "basis": "self",
+      "priority": 25,
+      "boost": [{ "if": { "fact": "problems", "in": ["kids"] }, "add": 20 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "any": [{ "fact": "problems", "in": ["kids", "traffic", "security"] }, { "fact": "goal", "in": ["stop"] }] }
+        ]
+      },
+      "title": "近くの学校・保育園・商店会などにも、必要に応じて情報を伝える",
+      "body": "子どもの通学路や、保育園の送り迎えの道に関わる計画なら、学校や保育園、PTA、商店会も関係者です。決めつけず、わかっている事実（計画の場所・時期・説明会の日時）だけを伝えます。旅館業の施設が学校などの近くにできるときは、許可の前に学校の設置者などの意見を聞く手続きがあります。",
+      "where": "学校・保育園（副校長・教頭・園長など）、PTA、商店会の役員",
+      "check": "伝える事実（場所・時期・説明会の日時）／学校・保育園としての心配ごと／説明会の案内が届いているか",
+      "bring": ["計画の場所がわかる地図", "説明会の案内（あれば）"],
+      "script": "「〇〇（場所）で宿泊施設の計画があり、〇月〇日に説明会があります。通学路に近いので、念のためお知らせします」",
+      "ifNoAnswer": "学校などがどう対応するかは、それぞれの判断です。通学路の安全の心配は、道路の管理者や警察にも相談できます。",
+      "facts": ["ryokan_school"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_questions",
+      "key": "pre_questions",
+      "group": "meeting",
+      "basis": "ask",
+      "priority": 70,
+      "recType": ["meeting"],
+      "boost": [{ "if": { "fact": "stage", "in": ["meeting_planned"] }, "add": 30 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [{ "fact": "stage", "in": ["meeting_planned"] }, { "all": [{ "fact": "stage", "in": ["heard"] }, { "fact": "notice", "eq": "yes" }] }]
+          }
+        ]
+      },
+      "title": "説明会の前に、質問書を出す",
+      "body": "前もって質問を文書で出しておくと、説明会で答えを用意してもらいやすく、答えられなかった点も残ります。答えるかどうかは事業者しだいですが、期限と方法（文書での回答）をはっきり書いてお願いします。",
+      "where": "説明会の主催者（事業者）の連絡先（チラシ・案内に書かれたもの）",
+      "check": "営業の種類と定員・開業の時期／管理の体制（24時間の連絡先、管理責任者、駆けつけ）／騒音・ごみ・駐車・喫煙の対策／宿泊者へのルールの伝え方／苦情があったときの対応",
+      "bring": ["質問書（このサイトで作れます）", "住民アンケートの結果（あれば）"],
+      "script": "「〇月〇日の説明会に先立ち、近隣住民から質問書をお送りします。当日ご説明いただき、その場で答えられない点は、〇月〇日までに文書でご回答をお願いします」",
+      "ifNoAnswer": "回答がないときは、説明会の場で質問書を示して答えを求め、未回答の事項は一覧にして、期限をつけて文書での回答を求めます。",
+      "links": [{ "type": "doc", "doc": "meeting_questions", "label": "事前質問書を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_meeting_prep",
+      "key": "pre_meeting_prep",
+      "group": "meeting",
+      "basis": "self",
+      "priority": 82,
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "stage", "in": ["meeting_planned"] }] },
+      "title": "説明会への参加を呼びかけ、録音・記録の準備をする",
+      "body": "参加する人が多いと、住民の関心の高さが伝わります。録音するときは、前もって（または始めに）主催者へ「記録のため録音します」と伝えます。録音とは別に記録係がメモをとり、主催者にも議事録の作成と配布をお願いします。",
+      "where": "説明会の会場（前もって主催者へ連絡）",
+      "check": "参加の呼びかけ（日時・場所）／録音することを主催者に伝えたか／記録係（だれが・何を書くか）／議事録の作成・配布のお願い／質問の担当（だれが・どの質問をするか）",
+      "bring": ["録音できる機器（スマートフォンなど）", "議事録・未回答事項の記録用紙（このサイトで作れます）", "前もって出した質問書の写し"],
+      "script": "主催者へ：「当日は、正確に記録するため、住民側でも録音させていただきます。説明会の議事録を作り、参加できなかった住民にも配っていただけますか」",
+      "ifNoAnswer": "録音を断られたときは、記録係のメモで残し、終わったあとに要点を主催者に送って確認を求めます。議事録を作ってもらえないときは、住民側の記録を「議事録の案」として送り、違う点があれば指摘してもらいます。",
+      "links": [{ "type": "doc", "doc": "meeting_minutes", "label": "議事録・未回答事項の記録用紙を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_written_answer",
+      "key": "pre_written_answer",
+      "group": "meeting",
+      "basis": "ask",
+      "priority": 60,
+      "recType": ["meeting"],
+      "boost": [{ "if": { "fact": "meeting_issue", "in": ["unanswered"] }, "add": 35 }, { "if": { "fact": "meeting_issue", "in": ["no_minutes"] }, "add": 25 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "any": [{ "fact": "stage", "in": ["meeting_done"] }, { "fact": "meeting_issue", "in": ["unanswered", "no_minutes"] }] }
+        ]
+      },
+      "title": "答えのなかった質問を一覧にし、期限をつけて文書での回答を求める",
+      "body": "口頭の説明だけでは、あとで「言った・言わない」になりがちです。説明会で答えがなかった質問や、あいまいだった答えを一覧にして、回答の期限と方法（文書）を書いて送ります。議事録がなければ、作成と配布もあわせてお願いします。",
+      "where": "説明会の主催者（事業者）",
+      "check": "答えのなかった質問（番号をつける）／あいまいだった答えと、確かめたいこと／回答の期限（2週間くらいなど）と方法（文書）／議事録の作成・配布",
+      "bring": ["説明会の記録（メモ・録音）", "議事録・未回答事項の一覧（このサイトで作れます）"],
+      "script": "「〇月〇日の説明会で回答がなかった次の事項について、〇月〇日までに文書でご回答をお願いします。あわせて、説明会の議事録を作り、住民に配ってください」",
+      "ifNoAnswer": "期限までに回答がないときは、質問書を再送し、事業者が回答しないことを役所の担当課に伝えて相談します。",
+      "links": [{ "type": "doc", "doc": "meeting_minutes", "label": "議事録・未回答事項一覧を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_remeeting",
+      "key": "pre_remeeting",
+      "group": "meeting",
+      "basis": "ask",
+      "priority": 50,
+      "recType": ["meeting"],
+      "boost": [
+        { "if": { "fact": "meeting_issue", "in": ["not_notified"] }, "add": 30 },
+        { "if": { "fact": "pre_response", "in": ["no_meeting"] }, "add": 35 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [
+              { "fact": "meeting_issue", "in": ["not_notified", "unanswered", "plan"] },
+              { "fact": "pre_response", "in": ["no_meeting"] },
+              { "all": [{ "fact": "notice", "eq": "no" }, { "fact": "stage", "in": ["near_open"] }] }
+            ]
+          }
+        ]
+      },
+      "title": "説明が足りない・知らされていない住民がいるときは、追加の説明や再説明会を求める",
+      "body": "周知の範囲が狭かった、参加できなかった住民が多い、説明が足りなかった、というときは、追加の説明会や個別の説明を求めます。条例で説明会が義務になっている地域では、その決まりを根拠に示せます。そうでない地域では、お願い（任意の協力）になります。",
+      "where": "説明会の主催者（事業者）。条例で周知が義務の地域では、担当課にも相談",
+      "check": "説明が届いていない範囲・住民／足りなかった説明の点／希望する日時（夜・休日など参加しやすい時間）・方法",
+      "bring": ["再説明会の要望書（このサイトで作れます）"],
+      "script": "「〇月〇日の説明会は、〇〇の住民に案内が届いておらず、〇〇についての説明も足りませんでした。参加しやすい日時で、改めて説明会を開いていただくようお願いします。〇月〇日までにご回答ください」",
+      "ifNoAnswer": "応じてもらえないときは、自治体の周知のルールを確かめ、手続きが守られていないと考えるなら担当課に確認を求めます。議員に相談する方法もあります。",
+      "links": [{ "type": "doc", "doc": "remeeting_request", "label": "再説明会の要望書を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "gov",
+      "id": "pa_attend",
+      "key": "pre_attend",
+      "group": "meeting",
+      "basis": "ask",
+      "priority": 58,
+      "recType": ["gov", "giin"],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "stage", "in": ["meeting_planned"] }] },
+      "title": "説明会に、役所の担当職員や議員の同席を頼む",
+      "body": "役所の職員や議員が同席すると、制度についての説明が正確になり、やりとりの記録も残りやすくなります。ただし、同席は全国一律の義務ではなく、応じるかは役所・議員の判断です。断られたら、前もって制度の説明を受けたり、質問への答えを文書でもらったりする方法に切り替えます。",
+      "where": "役所：民泊・旅館業の担当課（保健所など）／議員：議会のホームページの名簿",
+      "check": "説明会の日時・場所・主催者／同席してほしい理由（制度の説明、手続きの確認）／同席がむずかしい場合の代わり（前もっての説明、文書での回答）",
+      "bring": ["説明会の案内（チラシ）の写し"],
+      "script": "「〇月〇日に〇〇で、〇〇（事業者）が宿泊施設の住民説明会を開きます。制度や手続きについて正確に知りたいので、担当の方に同席していただけないでしょうか。むずかしい場合は、前もって制度の説明をしていただけますか」",
+      "ifNoAnswer": "同席を断られても、それだけで問題があるとは限りません。説明会で出た制度の質問は、あとで役所に文書で確かめます。",
+      "links": [{ "type": "doc", "doc": "attend_request", "label": "同席の依頼文を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_agreement",
+      "key": "pre_agreement",
+      "group": "operator",
+      "basis": "ask",
+      "priority": 45,
+      "recType": ["manager"],
+      "boost": [
+        { "if": { "fact": "meeting_issue", "in": ["verbal"] }, "add": 40 },
+        { "if": { "fact": "pre_response", "in": ["opening"] }, "add": 40 },
+        { "if": { "fact": "goal", "in": ["request"] }, "add": 10 },
+        { "if": { "fact": "stage", "in": ["near_open"] }, "add": 10 }
+      ],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [
+              { "fact": "meeting_issue", "in": ["verbal", "measures"] },
+              { "fact": "goal", "in": ["request"] },
+              { "fact": "stage", "in": ["near_open"] },
+              { "fact": "pre_response", "in": ["opening", "refused"] }
+            ]
+          }
+        ]
+      },
+      "title": "口約束で終わらせず、合意したことを協定書・覚書にしてもらう",
+      "body": "説明会などで事業者が約束した対策は、文書にしておくと、開業後に守られていないときに示せます。[[協定書]]・覚書を結ぶかどうかは話し合いで決まる任意のもので、結ぶ義務はありません。運営する会社や管理会社が変わったときに引き継ぐことも書いておきます。",
+      "where": "事業者（運営会社）。管理会社に任せる場合は管理会社も",
+      "check": "約束した対策（時間・回数・担当まで具体的に）／連絡先と駆けつけの時間／守られなかったときの話し合いの方法／定期的な住民との話し合い／運営する者が変わったときの引き継ぎ／有効期間",
+      "bring": ["説明会の記録", "協定書・覚書の案（このサイトで作れます）"],
+      "script": "「説明会でお約束いただいた対策を、住民と〇〇（事業者）の覚書として文書にしていただけませんか。案をお送りしますので、ご意見をください」",
+      "ifNoAnswer": "文書にすることを断られたときは、説明会の議事録や回答の文書に約束を書いてもらうようお願いし、自分たちの記録にも残します。内容について法律の専門家に相談する方法もあります。",
+      "links": [{ "type": "doc", "doc": "agreement_draft", "label": "協定書・覚書の案を作る" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_kiyaku",
+      "key": "pre_kiyaku",
+      "group": "other",
+      "basis": "law",
+      "priority": 85,
+      "recType": ["owner_side"],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "building", "eq": "same_condo" }, { "not": { "fact": "done", "has": "owner_side" } }] },
+      "title": "マンションの管理組合に、管理規約で民泊が認められているか確かめてもらう",
+      "body": "分譲マンションの部屋で届出の民泊をするには、[[管理規約]]に民泊を禁止する決まりがないこと（決まりがなければ、管理組合に禁止の意思がないこと）を届出書に書かなければなりません。規約で禁止されているなら、管理組合から事業者や役所に伝えられます。旅館業の施設は、ふつうは規約の「住宅として使う」に含まれないと考えられています。",
+      "where": "管理組合の理事会・管理会社",
+      "check": "管理規約で民泊（住宅宿泊事業）を認めているか・禁止しているか／規約に決まりがない場合、理事会・総会で禁止を決める予定があるか／旅館業としての使い方についての決まり",
+      "bring": ["管理規約の写し", "計画についてのメモ"],
+      "script": "「〇号室で宿泊施設の計画があると聞きました。管理規約で民泊が認められているか確かめ、認められていない場合は、事業者と役所に伝えていただけますか」",
+      "ifNoAnswer": "理事会が動かないときは、総会の議題にするよう求められます。規約を変えるには総会の決議が必要です。",
+      "facts": ["jutaku_mansion_todoke", "mansion_kiyaku", "mansion_kiyaku_comment"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_owner",
+      "key": "pre_owner",
+      "group": "other",
+      "basis": "ask",
+      "priority": 30,
+      "recType": ["owner_side"],
+      "boost": [{ "if": { "fact": "building", "eq": "same_rental" }, "add": 50 }],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          { "fact": "building", "in": ["same_rental", "other_apartment", "unknown"] },
+          { "not": { "fact": "done", "has": "owner_side" } }
+        ]
+      },
+      "title": "建物の所有者（大家・オーナー）や管理会社に、計画を知っているか確かめる",
+      "body": "部屋を借りている人が届出の民泊をするには、貸主（大家・オーナー）の承諾が必要で、承諾を証明する書面を届出に付けます。所有者が計画を知っているか、賃貸の契約で宿泊施設としての使い方が認められているかを、所有者や管理会社に確かめてもらいます。",
+      "where": "建物の所有者・管理会社（建物の掲示や、建物の登記で確かめられることがある）",
+      "check": "所有者が計画を知っているか／賃貸の契約で宿泊施設としての使い方を認めているか／分譲マンションなら管理規約",
+      "bring": ["建物の住所"],
+      "script": "「〇〇（建物）の〇号室で宿泊施設の計画があると聞きました。所有者として承知されていますか。賃貸の契約で認められているか、確かめていただけますか」",
+      "ifNoAnswer": "所有者がわからないときは、法務局で建物の登記事項証明書を取ると、所有者の名前と住所がわかります（手数料がかかります）。",
+      "facts": ["jutaku_tenshaku"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_road",
+      "key": "pre_road",
+      "group": "other",
+      "basis": "self",
+      "priority": 28,
+      "boost": [{ "if": { "fact": "problems", "in": ["kids"] }, "add": 15 }, { "if": { "fact": "problems", "in": ["traffic"] }, "add": 10 }],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "problems", "in": ["traffic", "kids"] }] },
+      "title": "周りの道路・通学路の安全を確かめ、送迎の車や駐車の対策を求める",
+      "body": "送迎の車や大きな荷物を持った宿泊者の出入りで、狭い道や通学路が危なくならないかを確かめます。道路の安全は道路の管理者や警察の担当です。事業者には、駐車場の確保や停める場所の案内を求めます（お願い）。",
+      "where": "道路の管理者（市区町村の道路の担当課）・警察署（交通の担当）・学校（通学路）",
+      "check": "道路の幅・歩道があるか／通学路か（学校に聞く）／送迎の車が止まりそうな場所／事業者の駐車場の計画",
+      "bring": ["地図（通学路や、車が止まりそうな場所に印）"],
+      "script": "事業者へ：「送迎の車や宿泊者の車が、〇〇（通学路）に止まらないよう、駐車場の確保と停める場所の案内をお願いします」",
+      "ifNoAnswer": "開業後に路上駐車が続くときは、警察（#9110）や道路の担当課に相談します。",
+      "facts": ["police_9110"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_rule_amend",
+      "key": "pre_rule_amend",
+      "group": "other",
+      "basis": "law",
+      "priority": 30,
+      "boost": [{ "if": { "fact": "goal", "in": ["rule"] }, "add": 55 }],
+      "when": {
+        "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "goal", "in": ["rule"] }, { "fact": "pre_response", "in": ["gov_ok", "opening"] }] }]
+      },
+      "title": "条例の見直しを、具体的な案にして求める",
+      "body": "今のルールでは防げないときは、自治体の[[条例]]を変えることを求めます。「開業前の書面での周知と説明会を義務にする」「学校の周りでは平日の営業を制限する」など、具体的な案にすると伝わりやすくなります。ほかの自治体の例も参考になります（上の「地域」で、確認できた地域のルールを見られます）。",
+      "where": "条例を受け持つ担当課・地元の議員・議会（陳情・請願）／意見募集（パブコメ）が行われていればそれに",
+      "check": "今の条例の内容と、変えたい点／ほかの自治体の例（条例の名前）／地域で起きていること（計画・心配ごと）",
+      "bring": ["変えたい点を1枚にまとめたメモ", "ほかの自治体の条例の例"],
+      "script": "「〇〇市でも、宿泊施設の開業前に、近所へ書面と説明会で知らせることを条例で義務にしてほしいと考えています。〇〇区の条例のような見直しを検討していただけないでしょうか」",
+      "ifNoAnswer": "議員への相談、陳情・請願、パブコメ、住民の署名（条例の直接請求には有権者の50分の1以上の署名が必要）などを組み合わせます。",
+      "links": [{ "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" }, { "type": "pubcome" }],
+      "facts": ["jutaku_ordinance", "jutaku_zero_day_2026", "lg_direct_claim"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_expert",
+      "key": "lawyer",
+      "group": "other",
+      "basis": "self",
+      "priority": 20,
+      "recType": ["lawyer"],
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [
+              { "fact": "goal", "in": ["stop"] },
+              { "fact": "problems", "in": ["safety"] },
+              { "fact": "pre_response", "in": ["gov_ok", "refused", "opening"] }
+            ]
+          }
+        ]
+      },
+      "title": "建築士・弁護士など専門家に相談する",
+      "body": "建物の安全や手続きのことは建築士、法律上取れる手段は弁護士に相談すると、根拠のある主張と弱い主張を分けられます。自治体の無料の法律相談や、法テラスの案内も使えます。",
+      "where": "法テラス（0570-078374）・弁護士会の法律相談・自治体の無料の法律相談／建築士（建築士事務所など）",
+      "check": "相談したいこと（法令に合っているか、取れる手段）を1枚にまとめる／費用と時間",
+      "bring": ["計画の資料・図面", "これまでの経過と回答の記録"],
+      "script": "「近所で宿泊施設の計画があり、建物の安全（消防・建築）や手続きが法令に合っているか、住民として取れる手段を相談したいです」",
+      "ifNoAnswer": "一度の相談で結論が出ないこともあります。記録と資料をそろえて、別の相談窓口にも聞きます。",
+      "links": [{ "type": "tel", "tel": "0570-078374", "label": "法テラスに電話（0570-078374）" }],
+      "facts": ["houterasu"]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_resend",
+      "key": "pre_resend",
+      "group": "meeting",
+      "basis": "ask",
+      "priority": 95,
+      "recType": ["manager"],
+      "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "pre_response", "in": ["no_answer"] }] },
+      "title": "質問書を、回答の期限をつけて送り直す",
+      "body": "回答がないときは、同じお願いを口頭で繰り返すより、前に送った質問書の写しを付け、回答の期限と方法をはっきり書いて送り直します。いつ・何を送ったかは記録に残します。",
+      "where": "事業者（運営会社・管理会社）。届いたことを確かめられる方法で（簡易書留、メールの送信記録など）",
+      "check": "前に送った日と内容／答えのない質問（番号をつける）／新しい回答の期限（例：2週間後）と方法（文書）",
+      "bring": ["前に送った質問書の写し", "送った日の記録"],
+      "script": "「〇月〇日にお送りした質問書について、まだご回答をいただいていません。写しを添えて改めてお送りします。〇月〇日までに、文書でご回答をお願いします」",
+      "ifNoAnswer": "期限を過ぎても回答がないときは、役所の担当課に経過を伝えて相談し、議員への相談を考えます。",
+      "links": [{ "type": "doc", "doc": "meeting_questions", "label": "質問書を作る・直す" }]
+    },
+    {
+      "section": "do",
+      "region": "none",
+      "id": "pa_after_open",
+      "key": "pre_after_open",
+      "group": "other",
+      "basis": "self",
+      "priority": 40,
+      "boost": [{ "if": { "fact": "pre_response", "in": ["opening"] }, "add": 45 }],
+      "when": {
+        "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "pre_response", "in": ["opening"] }, { "fact": "stage", "in": ["near_open"] }] }]
+      },
+      "title": "開業後に備えて、記録のつけ方と相談先を決めておく",
+      "body": "開業を止められなくても、約束した対策が守られているか、困りごとが起きていないかを記録し続けることが、あとで改善を求める力になります。開業後に困りごとが起きたら、このサイトの「すでに営業していて困っている」で診断できます。",
+      "where": "このサイトの「対応の記録」／開業後の苦情の窓口（事業者の連絡先・標識に書かれた連絡先・役所の担当課）",
+      "check": "開業日と[[標識]]（届出番号・連絡先）／約束した対策が始まっているか／困りごとの日時と内容／住民どうしの記録の分担",
+      "bring": ["約束した対策の一覧（協定書・議事録）"],
+      "script": "記録の例：〇月〇日 開業を確認。標識：届出番号〇〇、連絡先〇〇。約束した夜間の巡回：〇時に確認できた／できなかった。",
+      "ifNoAnswer": "困りごとが起きたら、日時と内容を記録して、まず事業者の連絡先に、続くときは役所の担当課に相談します。",
+      "links": [{ "type": "records" }, { "type": "page", "url": "#/start/minpaku", "label": "営業が始まってから困ったときの診断" }],
+      "facts": ["jutaku_hyoshiki", "jutaku_complaint"]
+    },
+    {
+      "id": "chk_a_types",
+      "section": "check",
+      "priority": 98,
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "開業前の手続きと、近所への説明の決まり（施設の種類ごと）",
+      "body": "施設の種類によって、開業前の手続きと、近所への説明の決まりが違います。",
+      "items": [
+        {
+          "t": "[[届出]]の民泊：届出で始められます。届出の前に近所へ説明することは、国のガイドラインで「望ましい」とされているもので、義務ではありません（条例で義務にしている自治体があります）。部屋を借りている人は貸主の承諾が、分譲マンションでは管理規約で禁止されていないことが、届出の条件です。",
+          "when": { "not": { "fact": "biz_type", "in": ["ryokan", "tokku"] } }
+        },
+        {
+          "t": "[[旅館業]]：保健所などの[[許可]]が必要です。学校・保育園などの周囲おおむね100メートルでは、許可の前に学校の設置者などの意見を聞く手続きがあります。ホテル・旅館が建てられない[[用途地域]]があります。",
+          "when": { "not": { "fact": "biz_type", "in": ["jutaku", "tokku"] } }
+        },
+        { "t": "[[特区民泊]]：自治体の認定が必要で、申請の前に周りの住民へ適切に説明していることが、認定の要件の一つです。", "when": { "not": { "fact": "biz_type", "in": ["jutaku", "ryokan"] } } },
+        "どの種類でも：消防用設備の設置などの消防法のきまりは守る必要があります。"
+      ],
+      "facts": ["jutaku_prior_explain", "jutaku_tenshaku", "jutaku_mansion_todoke", "ryokan_school", "ryokan_youto", "tokku_setsumei", "shobo_setsubi"]
+    },
+    {
+      "id": "chk_a_limits",
+      "section": "check",
+      "priority": 96,
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "住民の反対だけで、開業を止めることはできません",
+      "body": "届出・許可・認定は、法令や条例の基準に合っているかで判断されます。反対する住民の数で決まるものではありません。住民ができることは、次の3つに分かれます。",
+      "items": [
+        "法令・条例に基づくこと：基準に合っているかを担当部署に確かめてもらう、情報公開請求、陳情・請願、条例の見直しの要望など",
+        "任意の協力のお願い：説明会の開催（条例で義務の地域を除く）、文書での回答、運営の対策、計画の見直し、協定書など（応じるかは相手が決めます）",
+        "住民が自主的にできること：情報の共有、自治会への相談、アンケート、署名、記録など"
+      ]
+    },
+    {
+      "id": "chk_a_not_duty",
+      "section": "check",
+      "priority": 72,
+      "when": {
+        "all": [
+          { "fact": "situation", "eq": "A" },
+          {
+            "any": [
+              { "fact": "stage", "in": ["meeting_planned", "meeting_done", "requested"] },
+              { "fact": "pre_response", "in": ["no_meeting", "no_answer"] }
+            ]
+          }
+        ]
+      },
+      "title": "説明会・同席・文書での回答は、全国一律の義務ではありません",
+      "body": "説明会の開催（条例で義務の地域を除く）、役所の職員や議員の同席、文書での回答、議事録の配布は、相手が応じるかどうかを決めることです。断られても、それだけで違反とは言えません。理由と期限を示して文書でお願いすると、応じてもらいやすくなります。"
+    },
+    {
+      "id": "dont_a_meeting",
+      "section": "dont",
+      "priority": 95,
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "開業前の話し合いで気をつけること",
+      "items": ["事業者や担当者を個人として責めたり、名前をネットに出したりしない", "確かめていないことを「違法」と言いふらさない", "署名や参加を強く迫らない（参加しない自由もあります）", "録音するときは、そのことを相手に伝える", "集めた連絡先・署名は、決めた目的以外に使わない"]
+    },
+    {
+      "id": "dont_a_window",
+      "section": "dont",
+      "priority": 90,
+      "when": { "fact": "situation", "eq": "A" },
+      "title": "窓を開けられなくするような対策は、安全の確認なしに求めない",
+      "body": "窓やベランダの施錠・開け閉めの制限は、火災のときの避難や換気、消防の活動のさまたげになるおそれがあります。目隠しや防音など、ほかの方法を先に考え、開け閉めを制限する対策を求めるときは、消防署や建築の担当課に安全を確かめてもらうことを条件にします。"
+    },
+    {
+      "id": "ifn_a_no_meeting",
+      "section": "ifnot",
+      "scene": true,
+      "priority": 60,
+      "when": { "fact": "situation", "eq": "A" },
+      "boost": [{ "if": { "fact": "pre_response", "in": ["no_meeting"] }, "add": 40 }, { "if": { "fact": "notice", "eq": "no" }, "add": 20 }],
+      "title": "説明会を開いてくれないとき",
+      "items": ["①自治体の、開業前の周知（説明）のルールを確かめる", "②決まりがあるのに守られていなければ、根拠を示して担当部署に確認を求める", "③追加の説明（書面・個別の説明・説明会）を事業者に申し入れる", "④それでも進まなければ、議員に相談する"],
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書を作る" }, { "type": "doc", "doc": "remeeting_request", "label": "説明会の要望書を作る" }]
+    },
+    {
+      "id": "ifn_a_no_answer",
+      "section": "ifnot",
+      "scene": true,
+      "priority": 55,
+      "when": { "fact": "situation", "eq": "A" },
+      "boost": [{ "if": { "fact": "pre_response", "in": ["no_answer"] }, "add": 40 }, { "if": { "fact": "meeting_issue", "in": ["unanswered"] }, "add": 20 }],
+      "title": "質問に回答がないとき",
+      "items": ["①前の質問書の写しを付けて、回答の期限を決めて送り直す", "②期限を過ぎたら、経過を記録して役所の担当課に相談する", "③議員に相談し、説明会への同席や役所への確認を頼む"],
+      "links": [{ "type": "doc", "doc": "meeting_questions", "label": "質問書を作る・直す" }, { "type": "records" }]
+    },
+    {
+      "id": "ifn_a_refused",
+      "section": "ifnot",
+      "scene": true,
+      "priority": 50,
+      "when": { "fact": "situation", "eq": "A" },
+      "boost": [{ "if": { "fact": "pre_response", "in": ["refused"] }, "add": 40 }],
+      "title": "要望を断られたとき",
+      "items": ["①求めることをしぼり、理由と期限をつけて、文書で改めてお願いする", "②住民の声をまとめて示す（アンケート・署名）", "③役所の担当課に経過を伝え、事業者への説明の求めを相談する", "④議員に相談する"],
+      "links": [{ "type": "doc", "doc": "operator_request", "label": "改善要求書を作る" }, { "type": "doc", "doc": "signature_sheet", "label": "署名簿と要望書を作る" }]
+    },
+    {
+      "id": "ifn_a_gov_ok",
+      "section": "ifnot",
+      "scene": true,
+      "priority": 45,
+      "when": { "fact": "situation", "eq": "A" },
+      "boost": [{ "if": { "fact": "pre_response", "in": ["gov_ok", "gov_cannot"] }, "add": 40 }],
+      "title": "役所に「法律上問題ない」「関与できない」と言われたとき",
+      "items": ["①どの法律・条例・基準に照らした回答かを、文書で確かめる", "②建築・消防・道路など、別の担当が受け持つきまりを確かめる", "③それでも解決しなければ、具体的な条例の見直しを要望する（議員への相談・陳情・請願・パブコメ）"],
+      "links": [{ "type": "doc", "doc": "gov_check_letter", "label": "確認書を作る" }, { "type": "doc", "doc": "petition_draft", "label": "陳情・請願の下書き" }]
+    },
+    {
+      "id": "ifn_a_opened",
+      "section": "ifnot",
+      "scene": true,
+      "priority": 40,
+      "when": { "fact": "situation", "eq": "A" },
+      "boost": [{ "if": { "fact": "pre_response", "in": ["opening"] }, "add": 40 }, { "if": { "fact": "stage", "in": ["near_open"] }, "add": 20 }],
+      "title": "開業を止められなかったとき",
+      "items": ["①運営の条件の改善と、協定書・覚書の作成を求める", "②開業後の記録のつけ方と、住民どうしの見守りの分担を決める", "③困りごとが起きたら、記録を持って事業者・役所の担当課に相談する（このサイトの「すでに営業していて困っている」で診断できます）"],
+      "links": [
+        { "type": "doc", "doc": "agreement_draft", "label": "協定書・覚書の案を作る" },
+        { "type": "page", "url": "#/start/minpaku", "label": "営業が始まってから困ったときの診断" }
+      ]
     }
   ]
 }
