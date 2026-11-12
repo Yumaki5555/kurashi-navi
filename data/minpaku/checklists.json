@@ -32,6 +32,12 @@
     { "id": "cl_a_written", "priority": 62, "text": "答えのなかった質問について、期限をつけて文書での回答を求めた", "when": { "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "stage", "in": ["meeting_done", "requested"] }, { "fact": "meeting_issue", "in": ["unanswered", "no_minutes"] }] }] } },
     { "id": "cl_a_safety", "priority": 61, "text": "建築・消防・用途地域のきまりを、担当部署に確かめてもらった", "when": { "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "problems", "in": ["safety"] }, { "fact": "goal", "in": ["stop"] }, { "fact": "pre_response", "in": ["gov_ok"] }] }] } },
     { "id": "cl_a_basis", "priority": 60, "text": "「問題ない」の根拠（どの法律・条例・基準か）を確かめた", "when": { "all": [{ "fact": "situation", "eq": "A" }, { "fact": "pre_response", "in": ["gov_ok"] }] } },
-    { "id": "cl_a_agreement", "priority": 58, "text": "約束した対策を、協定書・覚書にするよう求めた", "when": { "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "goal", "in": ["request"] }, { "fact": "stage", "in": ["meeting_done", "near_open"] }, { "fact": "meeting_issue", "in": ["verbal"] }, { "fact": "pre_response", "in": ["opening", "refused"] }] }] } }
+    { "id": "cl_a_agreement", "priority": 58, "text": "約束した対策を、協定書・覚書にするよう求めた", "when": { "all": [{ "fact": "situation", "eq": "A" }, { "any": [{ "fact": "goal", "in": ["request"] }, { "fact": "stage", "in": ["meeting_done", "near_open"] }, { "fact": "meeting_issue", "in": ["verbal"] }, { "fact": "pre_response", "in": ["opening", "refused"] }] }] } },
+    {
+      "id": "cl_shobo",
+      "priority": 62,
+      "text": "火事への備えについて、消防署（予防課）に確かめてもらった",
+      "when": { "all": [{ "fact": "situation", "in": ["B", "C", "D"] }, { "fact": "problems", "has": "safety" }] }
+    }
   ]
 }

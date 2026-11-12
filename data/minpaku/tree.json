@@ -18,6 +18,7 @@
       { "value": "smell", "label": "におい・たばこ", "short": "におい" },
       { "value": "traffic", "label": "交通・駐車（路上駐車、タクシーの停車など）", "short": "交通・駐車" },
       { "value": "security", "label": "防犯・不安（知らない人の出入り、鍵の受け渡しなど）", "short": "防犯・不安" },
+      { "value": "safety", "label": "火事・建物の安全（火の扱い、火災のときの避難、消防設備、建物のきまり）", "short": "火事・建物の安全" },
       { "value": "other", "label": "その他", "short": "その他" }
     ],
     "done": [
@@ -81,7 +82,6 @@
       "text": "心配していることは？（いくつでも）",
       "next": "a_done",
       "extraOptions": [
-        { "value": "safety", "label": "建物の安全（火災のときの避難・消防設備・建物のきまり）", "short": "建物の安全" },
         { "value": "kids", "label": "通学路や、学校・保育園の近くであること", "short": "通学路・学校の近く" }
       ]
     },
@@ -233,6 +233,7 @@
         { "value": "minpaku_dept", "label": "民泊・観光の担当課", "short": "民泊・観光の担当課" },
         { "value": "env", "label": "ごみ・環境の担当", "short": "ごみ・環境の担当" },
         { "value": "police", "label": "警察", "short": "警察" },
+        { "value": "shobo", "label": "消防署", "short": "消防署" },
         { "value": "other", "label": "その他・わからない", "short": "相談先は不明" }
       ],
       "next": "d_method"

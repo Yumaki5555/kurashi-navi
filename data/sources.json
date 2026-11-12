@@ -2134,7 +2134,55 @@
    "effective": null,
    "amended": null,
    "checked": "2026-11-13",
-   "note": "第17条（消防用設備等の設置・維持）"
+   "note": "第4条（立入検査）・第5条・第5条の2（措置命令・使用禁止）・第7条（建築の同意）・第8条（防火管理者）・第17条（消防用設備等の設置・維持）・第17条の4（設置命令）"
+  },
+  {
+   "id": "law_shobo_rei",
+   "kind": "law",
+   "title": "消防法施行令（昭和36年政令第37号）",
+   "publisher": "e-Gov法令検索",
+   "url": "https://laws.e-gov.go.jp/law/336CO0000000037",
+   "published": null,
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-13",
+   "note": "第1条の2（防火管理者が必要な建物と収容人員）・別表第一（防火対象物の区分：（一）項ロ 集会場、（五）項イ 旅館・ホテル、（十一）項 神社・寺院・教会など）"
+  },
+  {
+   "id": "fdma_minpaku",
+   "kind": "official",
+   "title": "平成30年版 消防白書 特集7「住宅宿泊事業（民泊）における防火安全対策」",
+   "publisher": "総務省消防庁",
+   "url": "https://www.fdma.go.jp/publication/hakusho/h30/topics7/38244.html",
+   "published": null,
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-13",
+   "note": "家主が居住し宿泊室50㎡以下の場合を除きホテル・旅館と同様の防火安全対策（消防予第330号）、届出時の消防法令適合通知書"
+  },
+  {
+   "id": "fdma_ihan",
+   "kind": "official",
+   "title": "令和6年版 消防白書「立入検査と違反是正」",
+   "publisher": "総務省消防庁",
+   "url": "https://www.fdma.go.jp/publication/hakusho/r6/chapter1/section1/para2/68010.html",
+   "published": null,
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-13",
+   "note": "立入検査と違反是正、適マーク制度、違反対象物の公表制度"
+  },
+  {
+   "id": "fdma_kohyo",
+   "kind": "official",
+   "title": "違反対象物公表制度（公表している消防本部のホームページへのリンク集）",
+   "publisher": "総務省消防庁",
+   "url": "https://www.fdma.go.jp/relocation/publication/",
+   "published": null,
+   "effective": null,
+   "amended": null,
+   "checked": "2026-11-13",
+   "note": "地域ごとに、公表している消防本部のページを探せる。公表の内容は地域で異なる"
   }
  ]
 }

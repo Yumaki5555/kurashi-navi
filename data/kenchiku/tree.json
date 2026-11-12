@@ -25,6 +25,7 @@
       { "value": "water", "label": "雨水・排水・土砂の流れ込み、崩れの心配", "short": "水・土砂・崩れ" },
       { "value": "crowd", "label": "多くの人の出入り・行事のときの混雑", "short": "人の出入り・混雑" },
       { "value": "gomi", "label": "ごみ", "short": "ごみ" },
+      { "value": "fire", "label": "火事のときの安全（非常口や避難の通路がふさがれている、火の扱いが心配など）", "short": "火事・避難の安全" },
       { "value": "none", "label": "今は具体的な被害はない", "short": "具体的な被害はない", "exclusive": true }
     ],
     "done": [
@@ -193,6 +194,7 @@
         { "value": "toshi_dept", "label": "都市計画・開発許可の担当課", "short": "都市計画・開発の担当課" },
         { "value": "env", "label": "環境・公害（騒音・振動）の担当課", "short": "環境・公害の担当課" },
         { "value": "nogyo", "label": "農業委員会", "short": "農業委員会" },
+        { "value": "shobo", "label": "消防署（予防課・査察の担当）", "short": "消防署" },
         { "value": "other", "label": "その他・わからない", "short": "その他の窓口" }
       ],
       "next": "d_method"
