@@ -24,7 +24,12 @@
       { "value": "manager", "label": "施設の管理者・運営者に連絡した", "short": "管理者に連絡" },
       { "value": "gov", "label": "自治体（保健所・民泊の担当課など）に相談した", "short": "自治体に相談" },
       { "value": "police", "label": "警察に相談・通報した", "short": "警察に相談" },
-      { "value": "owner_side", "label": "マンションの管理組合・管理会社・大家さんに伝えた", "short": "管理組合などに伝えた" },
+      {
+        "value": "owner_side",
+        "label": "マンションの管理組合・管理会社・大家さんに伝えた",
+        "short": "管理組合などに伝えた",
+        "when": { "not": {"fact": "building", "in": ["house", "other_apartment"]} }
+      },
       { "value": "none", "label": "まだ何もしていない", "short": "まだ何もしていない", "exclusive": true }
     ],
     "govResponse": [

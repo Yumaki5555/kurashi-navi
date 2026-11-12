@@ -36,9 +36,10 @@ export const newId = () => Date.now().toString(36) + Math.random().toString(36).
 export function listFiles() { return loadAll().files.slice().sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')); }
 export function getFile(id) { return loadAll().files.find(f => f.id === id) || null; }
 
-export function putFile(file) {
+// touch=false：中身の形を直すだけのとき（更新日時を変えず、一覧の並びも変えない）
+export function putFile(file, touch = true) {
   const db = loadAll();
-  file.updatedAt = new Date().toISOString();
+  if (touch) file.updatedAt = new Date().toISOString();
   const i = db.files.findIndex(f => f.id === file.id);
   if (i >= 0) db.files[i] = file; else db.files.push(file);
   return saveAll(db);
@@ -50,11 +51,21 @@ export function removeFile(id) {
   return saveAll(db);
 }
 
-export function createFile(domain, state) {
+// 相談を作る（画面からは、1問目に答えたときだけ呼ぶ。開始ボタンを押しただけでは作らない）
+export function createFile(domain, state, extra = {}) {
   const now = new Date().toISOString();
-  const f = { id: newId(), domain, title: '', createdAt: now, updatedAt: now, state, done: false, checks: {}, records: [], statusLog: [], region: null, docs: {} };
+  const f = { id: newId(), domain, title: '', createdAt: now, updatedAt: now, state, done: false, checks: {}, records: [], statusLog: [], region: null, docs: {}, info: {}, ...extra };
   putFile(f);
   return f;
+}
+
+// 古い形の保存データを今の形に直す。fix(file) が true を返したものがあれば保存し直す（消さずに書き換えるだけ）
+export function migrateAll(fix) {
+  const db = loadAll();
+  let changed = false;
+  for (const f of db.files) if (fix(f)) changed = true;
+  if (changed) saveAll(db);
+  return changed;
 }
 
 export function getSettings() { try { return JSON.parse(ls()?.getItem(SET) || '{}'); } catch { return memSet; } }

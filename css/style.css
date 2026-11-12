@@ -108,3 +108,11 @@ details.how{margin:4px 0 0 36px;font-size:.9rem}details.how summary{cursor:point
 section.start .btn{flex:1 1 200px}
 @media (min-width:760px){html{font-size:17px}}
 @media print{.noprint,.btn,.nav,.links,button,select,input[type=file],.crumb,form,.region,.termbox{display:none!important}body{background:#fff;color:#000}main{max-width:none;padding:0}.card,details{border:0}details>*{display:block}textarea{border:0;height:auto;min-height:0;overflow:visible;white-space:pre-wrap}}
+.region-start{margin:12px 0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.region-start small,.cat .cat-note{display:block}
+.cat .cat-note{color:var(--accent)}
+.region-line{margin:4px 0 10px}
+.region-line>summary{cursor:pointer;color:var(--sub)}
+.contacts,.lists{margin:6px 0 0;padding-left:1.2em}
+.fix{font-size:.85rem;margin-left:4px}
+.linklike{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;font:inherit;cursor:pointer}

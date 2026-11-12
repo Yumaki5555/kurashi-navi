@@ -8,14 +8,16 @@
     {
      "id": "place",
      "label": "建物・土地の場所の目安",
-     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）"
+     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）",
+     "info": "place"
     },
     {
      "id": "problems",
      "label": "困っていること",
      "prefill": {
       "fact": "problems"
-     }
+     },
+     "info": "problems"
     },
     {
      "id": "dates",
@@ -124,19 +126,22 @@
     {
      "id": "place",
      "label": "建物・土地の場所の目安",
-     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）"
+     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）",
+     "info": "place"
     },
     {
      "id": "problems",
      "label": "困っていること",
      "prefill": {
       "fact": "problems"
-     }
+     },
+     "info": "problems"
     },
     {
      "id": "period",
      "label": "いつから・どのくらい",
-     "placeholder": "9月の工事開始から、平日の朝7時台に毎日"
+     "placeholder": "9月の工事開始から、平日の朝7時台に毎日",
+     "info": "since"
     },
     {
      "id": "detail",
@@ -149,7 +154,8 @@
      "optional": true,
      "prefill": {
       "fact": "reasons"
-     }
+     },
+     "info": "know"
     },
     {
      "id": "done_before",
@@ -157,7 +163,8 @@
      "optional": true,
      "prefill": {
       "fact": "done"
-     }
+     },
+     "info": "history"
     },
     {
      "id": "response_before",
@@ -165,7 +172,8 @@
      "optional": true,
      "prefill": {
       "fact": "gov_response"
-     }
+     },
+     "info": "lastResponse"
     },
     {
      "id": "ask",
@@ -266,19 +274,22 @@
     {
      "id": "place",
      "label": "建物・土地の場所の目安",
-     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）"
+     "placeholder": "〇〇町〇丁目〇番付近（建物や工事現場の目印）",
+     "info": "place"
     },
     {
      "id": "problems",
      "label": "困っていること",
      "prefill": {
       "fact": "problems"
-     }
+     },
+     "info": "problems"
     },
     {
      "id": "period",
      "label": "時期・回数",
-     "placeholder": "9月の工事開始から、平日の朝7時台に毎日"
+     "placeholder": "9月の工事開始から、平日の朝7時台に毎日",
+     "info": "since"
     },
     {
      "id": "detail",
@@ -290,7 +301,8 @@
      "label": "これまでの対応",
      "type": "textarea",
      "optional": true,
-     "placeholder": "10月5日に電話で相談し、指導すると回答をいただいた"
+     "placeholder": "10月5日に電話で相談し、指導すると回答をいただいた",
+     "info": "history"
     },
     {
      "id": "request",
@@ -433,7 +445,8 @@
     {
      "id": "place",
      "label": "建物・土地の場所",
-     "placeholder": "〇〇町〇丁目〇番付近"
+     "placeholder": "〇〇町〇丁目〇番付近",
+     "info": "place"
     },
     {
      "id": "fact",
@@ -556,7 +569,8 @@
     {
      "id": "place",
      "label": "建物・土地の所在地（町名・丁目まで）",
-     "placeholder": "〇〇町〇丁目"
+     "placeholder": "〇〇町〇丁目",
+     "info": "place"
     },
     {
      "id": "period",
@@ -626,7 +640,8 @@
      "optional": true,
      "prefill": {
       "fact": "problems"
-     }
+     },
+     "info": "problems"
     },
     {
      "id": "reasons",

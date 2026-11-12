@@ -2,8 +2,8 @@
   "items": [
     { "id": "cl_datetime", "priority": 100, "text": "困りごとが起きた日時を記録した", "when": { "fact": "situation", "in": ["B", "C", "D"] } },
     { "id": "cl_detail", "priority": 95, "text": "被害の様子（音の内容、ごみの状態など）を整理した", "when": { "all": [ { "fact": "situation", "in": ["B", "C", "D"] }, { "not": { "fact": "problems", "has": "none" } } ] } },
-    { "id": "cl_sign", "priority": 90, "text": "玄関などの[[標識]]を、道路から確認した", "when": { "fact": "situation", "in": ["B", "C"] } },
-    { "id": "cl_list", "priority": 88, "text": "自治体が公開している施設の一覧を確認した（資料の時点も見た）", "when": { "any": [ { "fact": "situation", "in": ["A", "C"] }, { "fact": "know", "has": "none" } ] } },
+    { "id": "cl_sign", "priority": 90, "text": "玄関などの[[標識]]を、道路から確認した", "when": {"all":[{"fact":"situation","in":["B","C"]},{"not":{"fact":"reasons","has":"no_sign"}}]} },
+    { "id": "cl_list", "priority": 88, "text": "自治体が公開している施設の一覧を確認した（資料の時点も見た）", "when": {"all":[{"any":[{"fact":"situation","in":["A","C"]},{"fact":"know","has":"none"}]},{"not":{"any":[{"fact":"checked_list","eq":"yes"},{"fact":"reasons","has":"not_listed"}]}}]} },
     { "id": "cl_type", "priority": 85, "text": "施設の営業の種類（届出・旅館業・特区）を確認した", "when": { "fact": "situation", "in": ["A", "B", "C", "D"] } },
     { "id": "cl_contact", "priority": 80, "text": "管理者・運営者の連絡先を確認した", "when": { "fact": "situation", "in": ["A", "B"] } },
     { "id": "cl_manager", "priority": 75, "text": "管理者・運営者に連絡した", "when": { "fact": "situation", "eq": "B" } },

@@ -27,10 +27,11 @@ export function test(cond, facts) {
 }
 
 // ---- 質問 ----
-export function optionsOf(tree, node) {
+// facts を渡すと、画面に出す選択肢だけにする（when：分野や答えに合わないものを出さない／hidden：古い答えの表示用に残すだけ）
+export function optionsOf(tree, node, facts) {
   if (node.type === 'yesno') return YESNO;
-  const base = node.options || tree.optionSets?.[node.optionSet] || [];
-  return base.concat(node.extraOptions || []);
+  const base = (node.options || tree.optionSets?.[node.optionSet] || []).concat(node.extraOptions || []);
+  return facts ? base.filter(o => !o.hidden && test(o.when, facts)) : base;
 }
 
 export function labelOf(tree, nodeId, value) {
@@ -79,7 +80,7 @@ export function begin(tree, entry, facts = {}) {
 }
 
 // すでに答えが分かっている質問は聞かずに進める（auto:true の履歴として残すので、戻れば選び直せる）
-function known(tree, node, v) {
+export function known(tree, node, v) {
   if (v === undefined) return false;
   const opts = optionsOf(tree, node);
   if (node.type === 'multi') return Array.isArray(v) && v.length > 0 && v.every(x => opts.some(o => o.value === x));
@@ -127,6 +128,24 @@ export function back(state) {
   return { node: prev.node, facts: prev.facts, history: h };
 }
 
+// n 問目（1から）を表示していたときの状態。保存している状態（いちばん先まで進んだもの）は変えない
+export function stateAt(state, n) {
+  const h = state.history;
+  if (!(n >= 1) || n > h.length) return state;
+  return { node: h[n - 1].node, facts: h[n - 1].facts, history: h.slice(0, n - 1) };
+}
+
+// 答えを直したあと：残りの質問に前の答え（prev：質問ID → 答え）を当てはめて進める。分岐が変わって前の答えがない質問で止まる
+export function replay(tree, state, prev = {}) {
+  let s = state;
+  for (let i = 0; i < 50 && s.node !== RESULT && s.node !== EMERGENCY; i++) {
+    const node = tree.nodes[s.node], v = prev[s.node];
+    if (!node || v === undefined || !known(tree, node, v) || (node.type !== 'multi' && !optionsOf(tree, node, s.facts).some(o => o.value === v))) break;
+    try { s = answer(tree, s, v); } catch { break; }
+  }
+  return s;
+}
+
 // 進み具合：この質問から先に、最も多くて何問あるか（ループは検査で禁止しているが念のため打ち切る）
 export function maxRemaining(tree, nodeId, seen = new Set()) {
   if (!tree.nodes[nodeId]) return 0;
@@ -156,9 +175,9 @@ export function targetsOf(tree, nodeId) {
 // ①あなたの状況：答えた順に「見出し：答え」を並べる
 export function summarize(tree, state) {
   const order = state.history.map(h => h.node);
-  return order.map(id => {
+  return order.map((id, i) => {
     const n = tree.nodes[id];
-    return { label: n.sum, value: labelOf(tree, id, state.facts[n.fact]) };
+    return { label: n.sum, value: labelOf(tree, id, state.facts[n.fact]), n: i + 1, auto: !!state.history[i].auto };
   });
 }
 

@@ -16,33 +16,52 @@ export function latestDone(records = [], today = localToday()) {
   return best;
 }
 
-// 記録から分かること（相手の種類 → 相手・したこと、方法 → したこと）
+// 記録から分かること（相手の種類 → 相手・したこと、方法 → したこと、相手の回答の種類 → 結果）
 export function factsFromRecord(tree, rec) {
   if (!rec) return {};
   const m = tree.recordMap || {};
   const byType = m.toType?.[rec.toType] || {};
   const out = { ...byType };
   if (!out.did && out.target && m.method?.[rec.method]) Object.assign(out, m.method[rec.method]);
+  // 相手の回答の種類：相手方（事業者など）への記録は、相手方の結果の選択肢に読み替える
+  if (rec.resultType && out.target) {
+    const v = out.target === 'party' ? m.partyResult?.[rec.resultType] : rec.resultType;
+    if (v) out.result = v;
+  }
   return out;
 }
 
-// 分野の診断の答えから分かること（tree.fromDomain の規則）
-export function factsFromDomain(tree, domain, facts = {}) {
+// 分野の診断の答えから分かること（tree.fromDomain の規則）。
+// first：1回目で記録がまだないとき。そうでなければ always の規則（いつでも同じ答えになるもの）だけを使う
+export function factsFromDomain(tree, domain, facts = {}, first = true) {
   const f = { ...facts, from: domain };
   const out = {};
-  for (const r of tree.fromDomain || []) if (E.test(r.if, f)) Object.assign(out, r.set);
+  for (const r of tree.fromDomain || []) if ((first || r.always) && E.test(r.if, f)) Object.assign(out, r.set);
   return out;
 }
 
 // 新しい「次の一手」に最初から入れておく答え。
-// 1回目で、まだ実際の記録がなければ分野の診断の答えから。記録があれば、いちばん新しい記録から（したこと・相手だけ。結果は聞く）。
+// 分野の診断から：変わらない事実（建物・困りごと・したこと。tree.carry）はいつも引き継ぐ。
+// 1回目で、まだ実際の記録がなければ、相談の結果なども分野の診断の答えから。記録があれば、いちばん新しい記録から。
 export function prefill(tree, file, today = localToday()) {
   const f = { from: file.domain };
   const rec = latestDone(file.records, today);
   const first = !(file.rounds || []).length;
-  if (first && !rec && file.domain !== NEXT_DOMAIN && file.state?.node === E.RESULT) Object.assign(f, factsFromDomain(tree, file.domain, file.state.facts));
+  const main = file.domain !== NEXT_DOMAIN && file.state?.node === E.RESULT ? file.state.facts : null;
+  if (main) {
+    for (const k of tree.carry || []) if (main[k] !== undefined) f[k] = main[k];
+    Object.assign(f, factsFromDomain(tree, file.domain, main, first && !rec));
+  }
   if (rec) Object.assign(f, factsFromRecord(tree, rec));
   return f;
+}
+
+// 答えの印（聞くけれど、前の診断の答えに合う選択肢を選んだ状態にしておく）：tree.hints[質問ID] = {fact, map}
+export function hintsFor(tree, nodeId, facts) {
+  const h = tree.hints?.[nodeId];
+  if (!h) return [];
+  const v = facts[h.fact];
+  return [...new Set((Array.isArray(v) ? v : [v]).map(x => h.map[x]).filter(Boolean))];
 }
 
 export function newRound(tree, file, id, today = localToday()) {

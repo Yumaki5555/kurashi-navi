@@ -4,6 +4,10 @@
   "version": 1,
   "start": "situation",
   "entries": { "next": "next_did" },
+  "carry": ["building", "problems", "done"],
+  "hints": {
+    "next_did": { "fact": "done", "map": {"manager": "party", "owner_side": "owner", "owner": "party", "builder": "party", "police": "police", "gov": "phone"} }
+  },
   "maxQuestions": 8,
   "recordMap": {
     "toType": {
@@ -24,9 +28,20 @@
       "owner": { "target": "party" },
       "builder": { "target": "party" },
       "corp": { "target": "party" },
-      "party": { "target": "party" }
+      "party": { "target": "party" },
+      "police": { "did": "police", "target": "other" }
     },
-    "method": { "phone": {"did": "phone"}, "counter": {"did": "phone"}, "mail": {"did": "mail"}, "letter": {"did": "letter"} }
+    "method": { "phone": {"did": "phone"}, "counter": {"did": "phone"}, "mail": {"did": "mail"}, "letter": {"did": "letter"} },
+    "partyResult": {
+      "no_reply": "no_reply",
+      "cannot": "refused",
+      "redirected": "refused",
+      "no_problem": "refused",
+      "will_do_nochange": "same",
+      "partial": "partial",
+      "same": "same",
+      "worse": "worse"
+    }
   },
   "fromDomain": [
     { "if": {"all": [{"fact": "from", "in": ["minpaku", "kenchiku"]}, {"fact": "situation", "eq": "D"}]}, "set": {"target": "gov"} },
@@ -58,7 +73,20 @@
     { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "situation", "eq": "H"}]}, "set": {"did": "petition"} },
     { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "talk"}]}, "set": {"did": "phone"} },
     { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "note"}]}, "set": {"did": "mail"} },
-    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "letter"}]}, "set": {"did": "letter"} }
+    { "if": {"all": [{"fact": "from", "eq": "gakko"}, {"fact": "g_method", "eq": "letter"}]}, "set": {"did": "letter"} },
+    { "if": {"fact": "ongoing", "eq": "yes"}, "set": {"ongoing": "yes"} },
+    { "if": {"fact": "ongoing", "eq": "no"}, "set": {"ongoing": "no"} },
+    { "if": {"fact": "ongoing", "eq": "unknown"}, "set": {"ongoing": "unknown"} },
+    {
+      "if": {
+        "all": [
+          { "fact": "from", "in": ["minpaku", "kenchiku"] },
+          { "fact": "problems", "in": ["noise", "gomi", "smell", "traffic", "security", "sunlight", "privacy", "dust", "damage", "water", "crowd"] }
+        ]
+      },
+      "set": { "concern_specific": "yes" },
+      "always": true
+    }
   ],
   "optionSets": {},
   "nodes": {
@@ -114,7 +142,6 @@
       "fact": "did",
       "sum": "最後にしたこと",
       "text": "これまでに、最後にしたことは何ですか？",
-      "help": "「対応の記録」や前の診断から分かることは、自動で入れています。違うときは選び直してください。",
       "options": [
         { "value": "phone", "label": "電話・窓口で相談・問い合わせをした", "short": "電話・窓口で相談した", "next": "target" },
         { "value": "mail", "label": "メール・問い合わせフォームで伝えた", "short": "メールで伝えた", "next": "target" },
@@ -122,6 +149,30 @@
         { "value": "disclosure", "label": "[[情報公開請求]]をした（またはしようとしている）", "short": "情報公開請求", "next": "dis_state" },
         { "value": "petition", "label": "議会に[[陳情]]・[[請願]]を出した", "short": "陳情・請願を出した", "next": "pet_result" },
         { "value": "giin", "label": "議員に相談した", "short": "議員に相談した", "next": "giin_result" },
+        {
+          "value": "party",
+          "label": "施設の管理者・事業者・建築主などに連絡した",
+          "short": "相手方に連絡した",
+          "when": { "fact": "from", "in": ["minpaku", "kenchiku"] },
+          "sets": { "target": "party" },
+          "next": "result_party"
+        },
+        {
+          "value": "owner",
+          "label": "管理組合・管理会社・大家さんに伝えた",
+          "short": "管理組合などに伝えた",
+          "when": { "all": [{"fact": "from", "eq": "minpaku"}, {"not": {"fact": "building", "in": ["house", "other_apartment"]}}] },
+          "sets": { "target": "party" },
+          "next": "result_party"
+        },
+        {
+          "value": "police",
+          "label": "警察に相談した",
+          "short": "警察に相談した",
+          "when": { "fact": "from", "in": ["minpaku", "kenchiku"] },
+          "sets": { "target": "other" },
+          "next": "result"
+        },
         { "value": "none", "label": "まだ何もしていない・何をすればいいかわからない", "short": "まだ何もしていない", "next": "want" }
       ]
     },
@@ -131,10 +182,28 @@
       "sum": "相手",
       "text": "伝えた相手はどこですか？",
       "options": [
-        { "value": "party", "label": "施設の管理者・事業者・建築主など、相手方", "short": "相手方（事業者など）", "next": "result_party" },
+        {
+          "value": "party",
+          "label": "施設の管理者・事業者・建築主など、相手方",
+          "short": "相手方（事業者など）",
+          "next": "result_party",
+          "when": { "not": {"fact": "from", "in": ["gakko", "yosan"]} }
+        },
         { "value": "gov", "label": "市区町村・都道府県の担当課", "short": "役所の担当課", "next": "result" },
-        { "value": "school", "label": "学校（担任・校長など）", "short": "学校", "next": "result" },
-        { "value": "board", "label": "[[教育委員会]]", "short": "教育委員会", "next": "result" },
+        {
+          "value": "school",
+          "label": "学校（担任・校長など）",
+          "short": "学校",
+          "next": "result",
+          "when": { "not": {"fact": "from", "in": ["minpaku", "kenchiku", "yosan"]} }
+        },
+        {
+          "value": "board",
+          "label": "[[教育委員会]]",
+          "short": "教育委員会",
+          "next": "result",
+          "when": { "not": {"fact": "from", "in": ["minpaku", "kenchiku", "yosan"]} }
+        },
         { "value": "other", "label": "国の機関・そのほかの窓口", "short": "国の機関・その他", "next": "result" }
       ]
     },
@@ -161,9 +230,9 @@
         { "value": "cannot", "label": "「対応できない」「権限がない」と言われた", "short": "対応できないと回答" },
         { "value": "redirected", "label": "「担当ではない」と言われた・別の窓口を案内された", "short": "担当ではないと回答" },
         { "value": "no_problem", "label": "「問題ない」と言われた", "short": "問題ないと回答" },
-        { "value": "will_do_nochange", "label": "「指導する・検討する」と言われたが、変わらない", "short": "指導すると言われたが変化なし" },
+        { "value": "will_do_nochange", "label": "「指導する・検討する」などと言われたが、変わらない", "short": "対応すると言われたが変化なし" },
         { "value": "partial", "label": "一部はよくなった", "short": "一部よくなった" },
-        { "value": "same", "label": "変化がない", "short": "変化なし" },
+        { "value": "same", "label": "変化がない", "short": "変化なし", "hidden": true },
         { "value": "worse", "label": "悪くなった", "short": "悪くなった" }
       ],
       "next": [

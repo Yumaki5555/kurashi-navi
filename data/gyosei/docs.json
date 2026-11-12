@@ -7,8 +7,8 @@
       "fields": [
         { "id": "to", "label": "あて先", "placeholder": "〇〇市 〇〇課 御中（課長 〇〇様）" },
         { "id": "date_prev", "label": "前に相談した日", "type": "date", "optional": true },
-        { "id": "topic", "label": "相談した内容", "type": "textarea", "placeholder": "〇〇町〇丁目の〇〇について、夜間の騒音が続いていること" },
-        { "id": "answer", "label": "受けた回答", "type": "textarea", "placeholder": "「法律上は問題ない」とのお答えでした" },
+        { "id": "topic", "label": "相談した内容", "type": "textarea", "placeholder": "〇〇町〇丁目の〇〇について、夜間の騒音が続いていること", "info": "problems" },
+        { "id": "answer", "label": "受けた回答", "type": "textarea", "placeholder": "「法律上は問題ない」とのお答えでした", "info": "lastResponse" },
         { "id": "concern", "label": "特に心配していること", "type": "textarea", "optional": true, "placeholder": "送迎の車が通学路に止まること" },
         { "id": "deadline", "label": "回答をお願いする期限", "optional": true, "placeholder": "12月10日" },
         { "id": "name", "label": "あなたの名前と連絡先", "type": "textarea", "placeholder": "〇〇町 〇〇〇〇　電話〇〇〇-〇〇〇〇" }
@@ -63,9 +63,9 @@
       "desc": "議員に、経過と役所の回答、お願いしたいことを短く伝えるメモです。",
       "fields": [
         { "id": "name", "label": "あなたの名前と住所（町名まで）", "placeholder": "〇〇町 〇〇〇〇" },
-        { "id": "problem", "label": "困りごと（1〜2行）", "type": "textarea", "placeholder": "〇〇の夜間の騒音が、〇月から週3回ほど続いている" },
-        { "id": "timeline", "label": "これまでの経過", "type": "textarea", "placeholder": "11/5 〇〇課に電話「確認する」→ 11/20 メール、回答なし" },
-        { "id": "gov_answer", "label": "役所の回答", "type": "textarea", "optional": true, "placeholder": "「法律上は問題ない」" },
+        { "id": "problem", "label": "困りごと（1〜2行）", "type": "textarea", "placeholder": "〇〇の夜間の騒音が、〇月から週3回ほど続いている", "info": "problems" },
+        { "id": "timeline", "label": "これまでの経過", "type": "textarea", "placeholder": "11/5 〇〇課に電話「確認する」→ 11/20 メール、回答なし", "info": "history" },
+        { "id": "gov_answer", "label": "役所の回答", "type": "textarea", "optional": true, "placeholder": "「法律上は問題ない」", "info": "lastResponse" },
         { "id": "ask", "label": "議員にお願いしたいこと", "type": "textarea", "placeholder": "担当課に、確認の状況を聞いていただきたい" },
         { "id": "contact", "label": "連絡先", "placeholder": "電話〇〇〇-〇〇〇〇／メール" }
       ],

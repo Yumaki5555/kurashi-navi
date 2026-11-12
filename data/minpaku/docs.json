@@ -6,8 +6,8 @@
       "title": "施設の管理者・事業者への連絡（改善のお願い）",
       "desc": "管理会社や運営者に、困りごとと改善してほしいことを伝える文です。メールや手紙、問い合わせフォームに使えます。",
       "fields": [
-        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）" },
-        { "id": "problems", "label": "困っていること", "prefill": { "fact": "problems" } },
+        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）", "info": "place" },
+        { "id": "problems", "label": "困っていること", "prefill": {"fact": "problems"}, "info": "problems" },
         { "id": "dates", "label": "起きた日時", "type": "textarea", "placeholder": "11月10日 23時ごろ〜24時ごろ／11月12日 22時ごろ" },
         { "id": "detail", "label": "具体的な様子", "type": "textarea", "placeholder": "話し声と音楽が続き、窓を閉めても聞こえた" },
         { "id": "request", "label": "お願いしたいこと", "type": "textarea", "placeholder": "夜10時以降は静かにするよう、宿泊者に伝えてください" },
@@ -35,13 +35,13 @@
       "title": "自治体への相談メモ（電話・窓口・メール用）",
       "desc": "電話や窓口で伝える要点のメモです。メールで送るときは、「声を届ける」の文面づくりに貼りつけて使えます。",
       "fields": [
-        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）" },
-        { "id": "problems", "label": "困っていること", "prefill": { "fact": "problems" } },
-        { "id": "period", "label": "いつから・どのくらい", "placeholder": "9月ごろから、週に2〜3回" },
+        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）", "info": "place" },
+        { "id": "problems", "label": "困っていること", "prefill": {"fact": "problems"}, "info": "problems" },
+        { "id": "period", "label": "いつから・どのくらい", "placeholder": "9月ごろから、週に2〜3回", "info": "since" },
         { "id": "detail", "label": "具体的な様子", "type": "textarea" },
-        { "id": "know", "label": "施設について分かっていること", "optional": true, "prefill": { "fact": "know" } },
-        { "id": "done_before", "label": "これまでにしたこと", "optional": true, "prefill": { "fact": "done" } },
-        { "id": "response_before", "label": "前回の回答", "optional": true, "prefill": { "fact": "gov_response" } },
+        { "id": "know", "label": "施設について分かっていること", "optional": true, "prefill": {"fact": "know"}, "info": "know" },
+        { "id": "done_before", "label": "これまでにしたこと", "optional": true, "prefill": {"fact": "done"}, "info": "history" },
+        { "id": "response_before", "label": "前回の回答", "optional": true, "prefill": {"fact": "gov_response"}, "info": "lastResponse" },
         { "id": "ask", "label": "確認したいこと・お願いしたいこと", "type": "textarea", "placeholder": "届出や許可の有無、事業者への指導の予定、結果を教えてもらえるか" }
       ],
       "body": [
@@ -56,7 +56,11 @@
         { "text": "確認したいこと：{ask}", "requires": ["ask"] }
       ],
       "checks": ["事実と、自分の推測を分けて書いた", "聞きたいことを1〜3つにしぼった", "相談したら、日時・部署・名前・回答を記録する"],
-      "links": [ { "type": "todokeru-guide", "guide": "phone", "label": "電話のかけ方（声を届ける）" }, { "type": "todokeru-guide", "guide": "email", "label": "メールの文面づくり（声を届ける）" }, { "type": "todokeru-contacts" } ]
+      "links": [
+        { "type": "todokeru-guide", "guide": "phone", "label": "電話のかけ方（声を届ける）" },
+        { "type": "todokeru-guide", "guide": "email", "label": "メールの文面づくり（声を届ける）" },
+        { "type": "todokeru-contacts" }
+      ]
     },
     {
       "id": "gov_request",
@@ -65,11 +69,18 @@
       "fields": [
         { "id": "to", "label": "宛先", "placeholder": "〇〇市 〇〇課 御中" },
         { "id": "date", "label": "日付", "type": "date" },
-        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）" },
-        { "id": "problems", "label": "困っていること", "prefill": { "fact": "problems" } },
-        { "id": "period", "label": "時期・回数", "placeholder": "9月ごろから、週に2〜3回" },
+        { "id": "place", "label": "施設の場所の目安", "placeholder": "〇〇町〇丁目の〇〇（建物の目印）", "info": "place" },
+        { "id": "problems", "label": "困っていること", "prefill": {"fact": "problems"}, "info": "problems" },
+        { "id": "period", "label": "時期・回数", "placeholder": "9月ごろから、週に2〜3回", "info": "since" },
         { "id": "detail", "label": "具体的な様子", "type": "textarea" },
-        { "id": "done_before", "label": "これまでの対応", "type": "textarea", "optional": true, "placeholder": "10月5日に電話で相談し、指導すると回答をいただいた" },
+        {
+          "id": "done_before",
+          "label": "これまでの対応",
+          "type": "textarea",
+          "optional": true,
+          "placeholder": "10月5日に電話で相談し、指導すると回答をいただいた",
+          "info": "history"
+        },
         { "id": "request", "label": "お願い・問い合わせたいこと", "type": "textarea", "placeholder": "事業者への指導の内容と結果を教えてください" },
         { "id": "reply_by", "label": "回答の期限", "optional": true, "placeholder": "12月10日" },
         { "id": "reply_how", "label": "回答の方法", "optional": true, "placeholder": "文書（郵送）／メール" },
@@ -92,7 +103,7 @@
         { "text": "{name}", "requires": ["name"] }
       ],
       "checks": ["事実だけを書き、確かめていないことを「違反」と書いていない", "日時・回数が記録と合っている", "求める回答（何を・いつまでに・どの方法で）がはっきりしている", "出す前に写しを保存した"],
-      "links": [ { "type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方（声を届ける）" }, { "type": "todokeru-contacts" } ]
+      "links": [{"type": "todokeru-guide", "guide": "email", "label": "メール・手紙の送り方（声を届ける）"}, {"type": "todokeru-contacts"}]
     },
     {
       "id": "disclosure_draft",
@@ -100,7 +111,7 @@
       "desc": "請求書の「請求する行政文書の名称・内容」の欄に書く文の下書きです。請求書の様式や出し方は「声を届ける」で確認できます。",
       "fields": [
         { "id": "org", "label": "請求先の自治体", "placeholder": "〇〇市" },
-        { "id": "place", "label": "施設の所在地（町名・丁目まで）", "placeholder": "〇〇町〇丁目" },
+        { "id": "place", "label": "施設の所在地（町名・丁目まで）", "placeholder": "〇〇町〇丁目", "info": "place" },
         { "id": "period", "label": "対象の期間", "placeholder": "2026年4月1日から2026年10月31日まで" },
         { "id": "docs_wanted", "label": "見たい文書", "type": "textarea", "help": "例：近隣からの苦情・相談の受付記録／事業者への指導や助言の記録／事業者からの報告の記録" }
       ],
@@ -109,7 +120,7 @@
         { "text": "・{docs_wanted}", "requires": ["docs_wanted"] }
       ],
       "checks": ["対象の期間をしぼった（広すぎると時間や費用がかかる）", "個人の名前など、公開されない部分があることを理解した", "わからなければ、請求の前に窓口で文書の名前を相談する"],
-      "links": [ { "type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手続き（声を届ける）" } ]
+      "links": [{"type": "todokeru-guide", "guide": "disclosure", "label": "情報公開請求の手続き（声を届ける）"}]
     },
     {
       "id": "petition_draft",
@@ -119,7 +130,7 @@
         { "id": "council", "label": "提出先", "placeholder": "〇〇市議会議長 様" },
         { "id": "title", "label": "件名", "placeholder": "民泊による生活環境への影響を防ぐための条例の見直しを求める陳情" },
         { "id": "gist", "label": "要旨（求めること）", "type": "textarea", "placeholder": "開業前に近隣へ説明することを、条例で義務づけてください" },
-        { "id": "problems", "label": "地域で困っていること", "optional": true, "prefill": { "fact": "problems" } },
+        { "id": "problems", "label": "地域で困っていること", "optional": true, "prefill": {"fact": "problems"}, "info": "problems" },
         { "id": "reasons", "label": "理由（地域で起きていること）", "type": "textarea" },
         { "id": "examples", "label": "参考になる他の自治体の例", "type": "textarea", "optional": true },
         { "id": "name", "label": "陳情者（住所・名前）", "type": "textarea", "optional": true }
@@ -140,7 +151,7 @@
         { "text": "{name}", "requires": ["name"] }
       ],
       "checks": ["求めることが1つか2つにしぼられている", "理由は事実にもとづいている", "特定の個人や施設を名指しで非難していない", "議会の締め切りと書式を確認した"],
-      "links": [ { "type": "todokeru-guide", "guide": "petition", "label": "請願・陳情の出し方（声を届ける）" }, { "type": "shomei" } ]
+      "links": [{"type": "todokeru-guide", "guide": "petition", "label": "請願・陳情の出し方（声を届ける）"}, {"type": "shomei"}]
     },
     {
       "id": "pubcome_note",
@@ -163,7 +174,7 @@
         { "text": "【参考：地域での経験】{experience}", "requires": ["experience"] }
       ],
       "checks": ["どの箇所への意見かがはっきりしている", "賛成・反対だけでなく理由を書いた", "締め切りと提出方法を確認した"],
-      "links": [ { "type": "pubcome" }, { "type": "todokeru-guide", "guide": "public-comment", "label": "パブコメの書き方（声を届ける）" } ]
+      "links": [{"type": "pubcome"}, {"type": "todokeru-guide", "guide": "public-comment", "label": "パブコメの書き方（声を届ける）"}]
     }
   ]
 }

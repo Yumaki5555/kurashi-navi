@@ -1,7 +1,7 @@
 {
  "cases": [
   {
-   "id": "case_toshima_stop",
+   "id": "case_toshima_stop", "outcomeLabel": "行政の処分あり／住民の困りごとの改善は不明",
    "title": "豊島区が届出住宅に1年間の業務停止を命じた",
    "place": {
     "pref": "東京都",
@@ -95,7 +95,7 @@
    "checked": "2026-11-11"
   },
   {
-   "id": "case_kyoto_report",
+   "id": "case_kyoto_report", "outcomeLabel": "行政の対応を強化／効果は不明",
    "title": "京都市が定期報告を出さない民泊への対応を厳しくした",
    "place": {
     "pref": "京都府",
@@ -177,7 +177,7 @@
    "checked": "2026-11-11"
   },
   {
-   "id": "case_toshima_ordinance",
+   "id": "case_toshima_ordinance", "outcomeLabel": "条例の改正案を提出／成立したかは不明",
    "title": "豊島区が住民の声を受けて民泊の条例改正案を議会へ出した",
    "place": {
     "pref": "東京都",

@@ -49,6 +49,7 @@ export function recordsText(file, labels) {
     lines.push(`■ ${i + 1}. ${r.date || '日付なし'}　${labels.toType[r.toType] || ''}${r.toName ? '（' + r.toName + '）' : ''}　${labels.method[r.method] || ''}`);
     if (r.content) lines.push('  内容：' + esc1(r.content));
     if (r.response) lines.push('  回答：' + esc1(r.response));
+    if (r.resultType && labels.result?.[r.resultType]) lines.push('  回答の種類：' + labels.result[r.resultType]);
     if (r.next) lines.push('  次にすること：' + esc1(r.next));
     lines.push('  状況：' + (labels.state[r.state] || '—'), '');
   });
