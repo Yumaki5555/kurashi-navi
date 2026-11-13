@@ -200,6 +200,7 @@
       "priority": 88,
       "recType": ["gov"],
       "boost": [
+        { "if": { "fact": "stage", "in": ["heard"] }, "add": 30 },
         { "if": { "fact": "stage", "in": ["meeting_planned", "meeting_done"] }, "add": -25 },
         { "if": { "fact": "pre_response", "in": ["no_meeting", "no_answer", "refused", "opening"] }, "add": -30 }
       ],
@@ -676,7 +677,8 @@
         { "if": { "fact": "goal", "in": ["stop"] }, "add": 25 },
         { "if": { "fact": "pre_response", "in": ["gov_ok"] }, "add": 30 },
         { "if": { "fact": "meeting_issue", "in": ["plan"] }, "add": 15 },
-        { "if": { "fact": "biz_type", "in": ["ryokan"] }, "add": 5 }
+        { "if": { "fact": "biz_type", "in": ["ryokan"] }, "add": 5 },
+        { "if": { "all": [{ "fact": "stage", "in": ["heard"] }, { "not": { "fact": "done", "has": "gov" } }] }, "add": -20 }
       ],
       "when": { "fact": "situation", "eq": "A" },
       "title": "建築・消防・用途地域のきまりに合っているか、担当部署に確かめてもらう",

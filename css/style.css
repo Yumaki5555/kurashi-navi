@@ -9,6 +9,8 @@ a{color:var(--accent)}
 h1,h2,h3{color:var(--accent)}
 h1{font-size:1.45rem;line-height:1.45;margin:.6em 0 .5em}
 h1.q{font-size:1.4rem}
+/* 画面を開いたときにタイトルへ読み上げの注目を移すが、枠線は出さない */
+h1[tabindex="-1"]:focus{outline:none}
 h2{font-size:1.15rem;margin:1.6em 0 .5em;padding-top:.4em;border-top:1px solid var(--line)}
 h2 small{font-weight:400;color:var(--sub);font-size:.85rem}
 h3{font-size:1.05rem}
