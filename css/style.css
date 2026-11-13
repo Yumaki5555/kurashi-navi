@@ -16,7 +16,7 @@ h2 small{font-weight:400;color:var(--sub);font-size:.85rem}
 h3{font-size:1.05rem}
 small,.meta{color:var(--sub);font-size:.85rem}
 .lead{font-size:1.05rem}
-.note{color:var(--sub);font-size:.92rem}
+.note{color:var(--sub);font-size:max(16px,.92rem)}
 .help{color:var(--sub);margin-top:-.2em}
 .muted{color:var(--sub)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -24,8 +24,8 @@ header.site{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;justify-
 header.site .logo{display:inline-flex;align-items:center;gap:.5em;min-height:44px;font-weight:700;text-decoration:none;color:var(--accent)}
 header.site .logo::before{content:"";flex:none;width:1.6em;height:1.6em;background:url(../icons/favicon.svg) center/contain no-repeat}
 header.site .logo small{color:var(--sub);font-weight:400}
-header.site nav{display:flex;flex-wrap:wrap;gap:0 14px;font-size:.92rem}header.site nav a{display:inline-flex;align-items:center;min-height:44px}
-footer.site{max-width:720px;margin:0 auto;padding:16px;color:var(--sub);font-size:.82rem;border-top:1px solid var(--line)}
+header.site nav{display:flex;flex-wrap:wrap;gap:0 14px;font-size:max(16px,.92rem)}header.site nav a{display:inline-flex;align-items:center;min-height:44px}
+footer.site{max-width:720px;margin:0 auto;padding:16px;color:var(--sub);font-size:max(16px,.82rem);border-top:1px solid var(--line)}
 .crumb{font-size:.92rem;margin:0;overflow-wrap:anywhere}.crumb a{display:inline-block;padding:8px 0;min-height:44px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 16px;border:1px solid var(--line-strong);border-radius:var(--r);background:var(--card);color:var(--fg);font:inherit;text-decoration:none;cursor:pointer;line-height:1.5}
 .btn:hover{border-color:var(--accent)}
@@ -108,8 +108,6 @@ textarea{line-height:1.7}
 .rec p{margin:6px 0}
 .region .row{flex-wrap:wrap}
 .sticky-end{margin-top:28px}
-.tagline{margin:.4em 0 0;color:var(--accent);font-weight:700;font-size:.92rem}
-.cat{flex-direction:column;align-items:flex-start;gap:2px;padding:12px 16px}.cat b{font-size:1.08rem}.cat small{font-size:.86rem;line-height:1.5}
 h2.q2{border:0;font-size:1.15rem;margin-top:1em}
 .box.now{background:var(--accent-bg);border-color:var(--accent)}.box.now>b{color:var(--accent)}.box.now p{margin:4px 0;font-size:1.02rem}.box.now details{font-size:.92rem}.box.now summary{cursor:pointer;color:var(--sub)}
 .box.cause{border-left:5px solid var(--accent)}.box.cause p{margin:4px 0}
@@ -124,8 +122,7 @@ section.start .btn{flex:1 1 200px}
 @media (min-width:760px){html{font-size:17px}}
 @media print{.noprint,.btn,.nav,.links,button,select,input[type=file],.crumb,form,.region,.termbox{display:none!important}body{background:#fff;color:#000}main{max-width:none;padding:0}.card,details{border:0}details>*{display:block}textarea{border:0;height:auto;min-height:0;overflow:visible;white-space:pre-wrap}}
 .region-start{margin:12px 0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
-.region-start small,.cat .cat-note{display:block}
-.cat .cat-note{color:var(--accent)}
+.region-start small{display:block}
 .region-line{margin:4px 0 10px}
 .region-line>summary{cursor:pointer;color:var(--sub)}
 .contacts,.lists{margin:6px 0 0;padding-left:1.2em}
@@ -188,3 +185,54 @@ details.how.flat{margin-left:0}
 /* 結果の画面の「次の一手を探す」：ティールの太枠・太字で、ほかのボタンより目立たせる */
 a.btn.big[href$="/next/new"]:not(.primary){border:2px solid var(--accent);color:var(--accent);font-weight:700}
 a.btn.big[href$="/next/new"]:not(.primary):hover{background:var(--accent-bg)}
+
+/* ---------- トップページ：スマホ（幅320〜430px）を基準に作り、広い画面で列とイラストを足す ---------- */
+.ico{flex:none;width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+main[data-view=home]{padding-top:10px}
+main[data-view=home] h2{border-top:0;padding-top:0;font-size:1.3rem;margin:1.3em 0 .3em}
+.hero{margin:4px 0 12px;padding:18px 16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,var(--amber-bg),var(--card) 75%)}
+.hero h1{margin:0;font-size:1.7rem;line-height:1.3}
+.hero-c{margin:.5em 0 0;font-weight:700;line-height:1.6}
+/* 緊急の案内：薄い赤の細い帯。押すと緊急の画面へ */
+.emg-bar{display:flex;align-items:center;gap:10px;min-height:52px;padding:8px 14px;border:1px solid var(--danger);border-left-width:6px;border-radius:var(--r);background:var(--danger-bg);color:var(--danger);font-weight:700;line-height:1.4;text-decoration:none}
+.emg-bar small{display:block;font-weight:400;color:var(--danger)}
+.emg-bar .ico{width:24px;height:24px}
+.emg-bar::after,.cat::after{content:"›";margin-left:auto;font-size:1.6rem;line-height:1}
+/* 分野のカード：アイコン＋名前＋短い説明。カード全体が押せる */
+.cats{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+.cat{display:flex;align-items:center;gap:14px;min-height:64px;padding:12px 14px;border:1px solid var(--line-strong);border-radius:12px;background:var(--card);color:var(--fg);line-height:1.5;text-decoration:none}
+.cat:hover{border-color:var(--amber-line);background:var(--amber-bg)}
+.cat::after{color:var(--amber-line)}
+.cat .ico{width:46px;height:46px;padding:10px;border-radius:50%;background:var(--accent-bg);color:var(--accent)}
+.cat .ct{flex:1;min-width:0}
+.cat b{display:block;font-size:1.08rem;color:var(--accent)}
+.cat small{display:block;color:var(--sub);line-height:1.5}
+.cat .cat-note{color:var(--accent)}
+.cat:focus-visible,.emg-bar:focus-visible,.hints a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+/* 続きから：状態（ラベル）と、押すボタンを分けて見せる。1件目のボタンをアンバーにする */
+.files.cards li.fc{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;padding:12px 14px;border-left:5px solid var(--amber)}
+.fc>.ico{width:40px;height:40px;padding:8px;border-radius:50%;background:var(--amber-bg);color:var(--accent)}
+.fc .fi{min-width:0}
+.fc .ttl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5;overflow-wrap:anywhere}
+.fc .tag{margin:4px 6px 0 0}
+.files .fbtn{display:flex;grid-column:1/-1;width:100%;margin-top:6px;text-align:center}
+.more-link{display:inline-flex;align-items:center;min-height:44px;font-weight:700}
+/* 迷ったときのヒント：淡いブルーの帯 */
+.hints{margin:28px 0 12px;padding:4px 16px 8px;border-radius:16px;background:var(--accent-bg)}
+main[data-view=home] .hints h2{margin-top:.8em}
+.hints ul{list-style:none;margin:0;padding:0}
+.hints li+li{border-top:1px solid var(--line-strong)}
+.hints a{display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 0;color:var(--fg);text-decoration:none;line-height:1.5}
+.hints b{display:block;color:var(--accent)}
+.hints small{display:block;color:var(--sub)}
+.hints .go{margin-left:auto;font-size:1.4rem;color:var(--accent)}
+@media (min-width:760px){
+  main[data-view=home]{max-width:1040px}
+  .hero{padding:28px 32px}.hero h1{font-size:2.3rem}.hero-c{font-size:1.15rem}
+  .cats,.files.cards{grid-template-columns:repeat(2,1fr)}
+  .files.cards{display:grid;gap:12px}.files.cards li.fc{margin:0}
+  .hints ul{display:grid;grid-template-columns:repeat(3,1fr);gap:0 24px}.hints li+li{border-top:0}
+}
+@media (min-width:1000px){.cats{grid-template-columns:repeat(3,1fr)}}
+/* イラストは広い画面だけ（スマホでは読み込まない） */
+@media (min-width:900px){.hero{min-height:250px;padding-right:420px;display:flex;flex-direction:column;justify-content:center;background:url(../icons/hero.svg) right 28px center/360px auto no-repeat,linear-gradient(135deg,var(--amber-bg),var(--card) 75%)}}

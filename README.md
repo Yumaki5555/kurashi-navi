@@ -40,6 +40,7 @@ node tools/scenarios.mjs        # 利用者を想定したテスト（ケースA
 node tools/acceptance.mjs       # 受け入れテスト（保存・複数タブ・復元・再開など。実際のブラウザの保存領域は使わない）
 node tools/preopen-cases.mjs    # 民泊の開業前（近所に民泊ができるらしい）の利用場面テスト。詳細は tools/preopen-report.txt
 node tools/screens.mjs <保存先> <幅>  # スマホ幅の画面写真（テスト用サーバー 8791 を起動してから。使い捨ての保存領域で撮る）
+node tools/home-check.mjs [保存先]  # トップページの確認（幅320〜1280px・押せる大きさ・文字の大きさ・行き先・再開。サーバー 8791 を起動してから）
 python tools/make-icons.py      # サイトのアイコン（icons/favicon.svg が原本）から 16・32・180・192・512px の PNG を書き出す
 node tools/verify-laws.mjs      # e-Gov の条文と、事実データの言い回しの照合
 node tools/import-regions.mjs   # 自治体一覧と施設一覧の出典を取り込み直す（元サイトは読み取りのみ）

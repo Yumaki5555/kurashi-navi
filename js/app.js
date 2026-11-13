@@ -51,14 +51,21 @@ async function copy(text, btn) {
 const KIND = { law: '法令', ordinance: '条例', guideline: '国の指針・ガイドライン', official: '公式発表', minutes: '議会の資料（会議録・審査結果など）', court: '裁判例', news: '報道' };
 const OUTCOME = { resolved: '解決', partial: '一部改善', unresolved: '未解決', unknown: '結果不明' };
 
+// 最初に読むのは、トップに要る小さなデータ（分野の一覧・外部リンク）だけ。トップを早く出すため
 async function loadCommon() {
-  const [domains, sources, links, areas, lists, focus, actions] = await Promise.all([
-    getJSON('data/domains.json'), getJSON('data/sources.json'), getJSON('data/links.json'),
-    getJSON('data/regions/areas.json'), getJSON('data/regions/minpaku-lists.json'), getJSON('data/regions/focus.json'), getJSON('data/actions.json')
-  ]);
+  const [domains, links] = await Promise.all([getJSON('data/domains.json'), getJSON('data/links.json')]);
   G.domains = domains?.domains || [];
-  for (const s of sources?.sources || []) G.sources[s.id] = s;
-  G.links = links || {}; G.areas = areas; G.lists = lists; G.focus = focus; G.actions = actions?.actions || [];
+  G.links = links || {};
+}
+// 出典・地域の窓口・施設の一覧・手段の一覧（合わせて約230KB）は、トップ以外の画面を開くときに1回だけ読む
+let heavy = null;
+function loadHeavy() {
+  return heavy ||= Promise.all([
+    getJSON('data/sources.json'), getJSON('data/regions/areas.json'), getJSON('data/regions/minpaku-lists.json'), getJSON('data/regions/focus.json'), getJSON('data/actions.json')
+  ]).then(([sources, areas, lists, focus, actions]) => {
+    for (const s of sources?.sources || []) G.sources[s.id] = s;
+    G.areas = areas; G.lists = lists; G.focus = focus; G.actions = actions?.actions || [];
+  });
 }
 
 async function loadDomain(d) {
@@ -173,7 +180,7 @@ function setView(html, title, keep = false) {
   const y = window.scrollY;
   keep = keep || keepScroll; keepScroll = false;
   main.innerHTML = `<p class="printonly print-head">${esc(SITE)}／${esc(title || '')}／印刷日 ${new Date().toLocaleDateString('ja-JP')}</p>` + html;
-  delete main.dataset.pane;
+  delete main.dataset.pane; delete main.dataset.view;
   document.title = (title ? title + '｜' : '') + SITE;
   if (keep) { window.scrollTo(0, y); return; }
   const h = main.querySelector('h1');
@@ -334,40 +341,66 @@ function regionInfo(listed = false) {
 }
 
 // ---------- 画面：トップ ----------
+// 分野ごとのアイコン（線だけの小さな絵。文字の色で描くので、暗い画面でも見える）
+const ICONS = {
+  minpaku: '<path d="M3 19V6"/><path d="M3 15h18v4"/><path d="M21 15v-2.5A3.5 3.5 0 0 0 17.5 9H11v6"/><circle cx="7" cy="11.5" r="2"/>',
+  kenchiku: '<path d="M2 21h20"/><path d="M4 21V8l6-4v17"/><path d="M10 21V10h10v11"/><path d="M13 13.5h1m2 0h1m-4 3.5h1m2 0h1"/>',
+  gakko: '<path d="M3 21h18"/><path d="M5 21V11l7-4 7 4v10"/><path d="M12 7V3l3.5 1.2L12 5.4"/><path d="M10 21v-4h4v4"/>',
+  gyosei: '<path d="M3 9l9-5 9 5"/><path d="M4 9h16"/><path d="M6.5 9v8m3.7-8v8m3.6-8v8m3.7-8v8"/><path d="M4 17h16M3 21h18"/>',
+  yosan: '<circle cx="12" cy="12" r="9"/><path d="M8.5 7l3.5 5 3.5-5"/><path d="M12 12v5.5M9 13h6m-6 2.5h6"/>',
+  act: '<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 12h6m-6 4h4"/>',
+  tel: '<path d="M5 4h3.5l2 5-2.4 1.5a11 11 0 0 0 5.4 5.4L15 13.5l5 2V19a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>'
+};
+const ico = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || ICONS.act}</svg>`;
+
 async function viewHome() {
   const files = S.listFiles();
   const ds = G.domains.filter(d => d.status === 'active');
   const closed = f => ['resolved', 'paused'].includes(currentStatus(f));
   const act = files.filter(f => !closed(f)), done = files.filter(closed);
-  const cats = `<div class="stack cats">${ds.map(d => `<a class="btn big left cat" href="#/start/${d.id}"><b>${esc(d.name)}</b><small>${esc(d.desc || '')}</small>${d.note ? `<small class="cat-note">${esc(d.note)}</small>` : ''}</a>`).join('')}</div>`;
+  const cat = (href, icon, name, desc, note = '') => `<a class="cat" href="${href}">${ico(icon)}<span class="ct"><b>${esc(name)}</b><small>${esc(desc)}</small>${note ? `<small class="cat-note">${esc(note)}</small>` : ''}</span></a>`;
+  const cats = `<div class="cats">${ds.map(d => cat(`#/start/${d.id}`, d.id, d.name, d.desc || '', d.note)).join('')}
+    ${cat('#/act', 'act', '使いたい手段から選ぶ', '情報公開請求・請願・署名・問い合わせなど。使う前の注意つき')}</div>`;
+  // 迷ったときのヒント：今あるページにつながるものだけ
+  const hint = (href, text, sub, ext = false) => `<li><a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}><span><b>${esc(text)}</b><small>${esc(sub)}</small></span><span class="go" aria-hidden="true">${ext ? '↗' : '›'}</span></a></li>`;
   setView(`
-    <p class="tagline">困ったときも、行き詰まったときも。次にできることがわかる行動ガイド</p>
-    <p class="emg-top"><a href="#/emergency">今まさに危険なことが起きているとき（110・119など）</a></p>
-    ${act.length ? `<h1>続きから</h1><p class="help">途中の質問や、前に見た結果から再開できます。</p>${await fileList(act.slice(0, 3))}${act.length > 3 ? `<p><a href="#/data">進行中の相談をすべて見る（${act.length}件）</a></p>` : ''}
-      <h2>新しく状況を整理する</h2>` : `<h1>何に困っていますか？</h1>
-      <p class="lead">質問に答えると、今の状況に合った次の行動がわかります。すでに相談や請願をした方も、そこから先の方法を探せます。</p>`}
-    ${cats}
+    <section class="hero">
+      <h1>困りごと、次どうする？</h1>
+      <p class="hero-c">困ったときも、行き詰まったときも。<br>次にできることがわかる行動ガイド</p>
+    </section>
+    <a class="emg-bar" href="#/emergency">${ico('tel')}<span>今すぐ危険なことが起きているとき<small>110・119など</small></span></a>
+    ${act.length ? `<section class="sec"><h2>続きから</h2>${await fileList(act.slice(0, 2), { compact: true })}
+      ${act.length > 2 ? `<p><a class="more-link" href="#/data">進行中の相談をすべて見る（${act.length}件）</a></p>` : ''}</section>` : ''}
+    <section class="sec"><h2>${act.length ? '新しく状況を整理する' : '何に困っていますか？'}</h2>
+      <p class="help">近いものを選んで質問に答えると、次にできることがわかります。</p>
+      ${cats}</section>
     ${done.length ? `<details class="more"><summary>解決した・休んでいる相談（${done.length}件）</summary>${await fileList(done)}</details>` : ''}
-    <h2>自分で行動する</h2>
-    <p class="help">問い合わせ・情報公開請求・請願など、使いたい手段が決まっている方へ。</p>
-    <div class="stack"><a class="btn" href="#/act">手段の一覧と、使う前の注意</a></div>
+    <section class="hints"><h2>迷ったときは</h2><ul>
+      ${hint('#/start/gyosei', '一度断られた・回答がないとき', '相談や請願のあとにできる「次の一手」を探す')}
+      ${hint('#/cases', '似た問題の事例と対策を見る', 'うまくいかなかった例も載せています')}
+      ${G.links.todokeru ? hint(G.links.todokeru + '#/contacts', '相談先（役所の窓口）を探す', '姉妹サイト「声を届ける」が別タブで開きます', true) : ''}
+    </ul></section>
     <p class="note">入力した内容は、このブラウザの中だけに保存されます。サーバーへは送りません。共有の端末では、使い終わったら<a href="#/data">保存した相談</a>から削除してください。</p>`);
+  main.dataset.view = 'home';
 }
 
 // 相談の一覧（トップ・分野のページ・保存した相談で同じ表示）：状態・最後にしたこと・記録の件数と、押した先がわかる再開ボタン
-async function fileList(files, { manage = false, href } = {}) {
+// compact：トップ用のカード（分野のアイコン・題名・状態・更新日・記録の件数と、大きな再開ボタン。1件目のボタンを目立たせる）
+async function fileList(files, { manage = false, href, compact = false } = {}) {
   const labs = {}, common = (await ladderOf(N.NEXT_DOMAIN)).commonRecordTypes || {};
   const trees = {}, ntree = await treeOf(N.NEXT_DOMAIN);
   for (const d of new Set(files.map(f => f.domain))) { labs[d] = await ladderOf(d); trees[d] = await treeOf(d); }
-  return `<ul class="files">${files.map(f => {
+  return `<ul class="files${compact ? ' cards' : ''}">${files.map((f, i) => {
     const L = labs[f.domain] || {}, rs = f.rounds || [];
     const st = currentStatus(f), sl = (f.statusLog || []).at(-1), last = N.latestDone(f.records), rc = (f.records || []).length;
     const rz = resumeOf(f), openR = rs.find(r => !r.done), lastR = rs.filter(r => r.done).at(-1);
     const badge = f.state?.node !== E.RESULT ? '診断の途中' : openR ? '次の一手の途中' : st === 'waiting' ? '回答待ち' : st ? STATUS.find(s => s.value === st)?.label : lastR ? roundTitle(lastR) : '結果あり';
     const did = last ? [fmtDay(last.date), L.recordTypes?.[last.toType] || common[last.toType], L.methods?.[last.method]].filter(Boolean).join(' ') : f.done && lastDid(f, trees[f.domain], ntree);
     const wait = st === 'waiting' && sl?.wait?.due ? `回答予定 ${fmtDay(sl.wait.due)}` : '';
-    const meta = [`${fmtDate(f.updatedAt)} 更新`, wait, did && '最後にしたこと：' + did, rc && `記録${rc}件`].filter(Boolean).join('・');
+    const meta = [`${fmtDate(f.updatedAt)} 更新`, wait, !compact && did && '最後にしたこと：' + did, rc && `記録${rc}件`].filter(Boolean).join('・');
     const to = href ? href(f) : rz.href;
+    if (compact) return `<li class="fc">${ico(f.domain)}<div class="fi"><b class="ttl" title="${esc(fileName(f))}">${esc(fileName(f))}</b><span class="tag">${esc(badge)}</span><span class="meta">${esc(meta)}</span></div>
+      <a class="btn fbtn${i === 0 ? ' primary' : ''}" href="${to}">${esc(rz.label)}</a></li>`;
     return `<li><div class="fi"><b>${short(fileName(f), 34)}</b> <span class="tag">${esc(badge)}</span><span class="meta">${esc(meta)}</span></div>
       <div class="row wrap fa"><a class="btn slim${rz.open || href ? ' primary' : ''}" href="${to}">${esc(href ? '選ぶ' : rz.label)}</a>
       ${manage ? `<button class="btn slim" data-act="rename" data-id="${f.id}">名前を変える</button><button class="btn slim" data-act="delfile" data-id="${f.id}">この相談を削除</button>` : ''}</div></li>`;
@@ -1158,12 +1191,13 @@ async function route() {
   try {
     if (a !== 'f') cur = null;
     if (!a) return await viewHome();
+    if (a === 'emergency') return viewEmergency();
+    await loadHeavy();
     if (a === 'start') return await viewStart(b, q);
     if (a === 'act') return viewAct();
     if (a === 'cases' && !b) return viewCaseDomains();
     if (a === 'cases') return await viewCases(b, q);
     if (a === 'case') return await viewCase(b, c, q);
-    if (a === 'emergency') return viewEmergency();
     if (a === 'data') return await viewData(false);
     if (a === 'about') return viewAbout();
     if (a === 'f') {
