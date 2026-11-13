@@ -927,7 +927,9 @@ function viewDoc(docId) {
     const v = esc(values[f.id] || '');
     const input = f.type === 'textarea' ? `<textarea id="f-${f.id}" data-act="field" data-f="${f.id}" rows="3" placeholder="${esc(f.placeholder || '')}">${v}</textarea>`
       : `<input id="f-${f.id}" type="${f.type === 'date' ? 'date' : 'text'}" data-act="field" data-f="${f.id}" value="${v}" placeholder="${esc(f.placeholder || '')}">`;
-    return `<div class="field"><label for="f-${f.id}">${esc(f.label)}${f.info ? ' <small class="inl">（共通）</small>' : ''}${f.optional ? ' <small class="inl">（なくても可）</small>' : ''}${from[f.id] ? ` <span class="tag">引き継ぎ：${esc(from[f.id])}</span>` : ''}</label>${f.help ? `<small>${esc(f.help)}</small>` : ''}${input}</div>`;
+    // 例文をそのまま使うボタン：欄が空のときだけ出す（書いた内容を上書きしない）
+    const ex = f.type !== 'date' && exampleOk(f.placeholder) ? `<div class="exrow noprint" data-ex="${f.id}"${filled(values[f.id]) ? ' hidden' : ''}><button type="button" class="btn slim" data-act="useex" data-f="${f.id}">例文を入れる</button>${f.info ? ' <small class="inl">（共通の欄なので、ほかの下書きにも入ります）</small>' : ''}</div>` : '';
+    return `<div class="field"><label for="f-${f.id}">${esc(f.label)}${f.info ? ' <small class="inl">（共通）</small>' : ''}${f.optional ? ' <small class="inl">（なくても可）</small>' : ''}${from[f.id] ? ` <span class="tag">引き継ぎ：${esc(from[f.id])}</span>` : ''}</label>${f.help ? `<small>${esc(f.help)}</small>` : ''}${input}${ex}</div>`;
   };
   const hasInfo = d.fields.some(f => f.info), anyFrom = Object.keys(from).length;
   const checks = saved?.checks || {};
@@ -941,6 +943,7 @@ function viewDoc(docId) {
       <button class="btn mobile-only" data-act="pane" data-p="out">下書きを確認する →</button></section>
     <section id="pane-out" class="card plainc pane"><h2 class="noprint">2. できた下書き（ここで直せます）</h2>
       <p class="warn noprint" id="editwarn" role="status"${saved?.edited ? '' : ' hidden'}>手で直した下書きです。上の欄を変えても、この下書きは変わりません（手で直した内容はそのまま残ります）。<button class="btn slim" data-act="regen">欄の内容で作り直す</button></p>
+      <p class="warn noprint" id="maruwarn" role="status" hidden></p>
       <label for="doctext" class="sr">下書きの文章</label><textarea id="doctext" class="noprint" data-act="doctext" rows="14">${esc(text)}</textarea>
       <div id="docprint" class="printonly pre">${esc(text)}</div>
       <p class="help small noprint">直接直した内容も自動で保存され、画面を移っても、ブラウザを閉じても残ります。</p>
@@ -952,6 +955,19 @@ function viewDoc(docId) {
     <section class="card plainc noprint"><h2>送ったら・伝えたら</h2><p class="help">送った日と相手を記録しておくと、回答がないときに次の方法を考えやすくなります。</p>
       <a class="btn" href="#/f/${file.id}/records?add=1&doc=${encodeURIComponent(d.id)}">送ったことを記録する</a></section>`, d.title);
   main.dataset.pane = 'in';
+  maruWarn(d);
+}
+// 例文をそのまま入れてよいか：日付や「A／B」の選択肢は、その人の事実に置きかえるものなので対象外
+const exampleOk = p => !!p && !/／|\d+月\d+日|\d{4}年|令和\d|年度|月[上中下]旬/.test(p);
+// 下書きに「〇〇」（例文の書きかえ忘れ）が残っていたら、どの欄かを添えて知らせる
+function maruWarn(d) {
+  const w = document.getElementById('maruwarn');
+  if (!w) return;
+  const has = /〇/.test(document.getElementById('doctext')?.value || '');
+  w.hidden = !has;
+  if (!has) return;
+  const vals = docValues(d).v, names = d.fields.filter(f => /〇/.test(vals[f.id] || '')).map(f => `「${f.label}」`);
+  w.textContent = `下書きに「〇〇」の部分が残っています${names.length ? `（${names.join('、')}の欄）` : ''}。本当の名前や数字に書きかえてから使ってください。`;
 }
 // 3. 伝える・届ける：電話・メールなど届け方ごとに分けたボタン（deliver）か、ボタンだけ（links）
 function deliverBlock(d) {
@@ -1305,6 +1321,17 @@ document.addEventListener('click', async e => {
   else if (act === 'copy') copy(t.dataset.text, t);
   else if (act === 'copydoc') copy(document.getElementById('doctext').value, t);
   else if (act === 'savedoc') { const d = allDocs().find(x => x.id === location.hash.split('/')[4]); download(`下書き_${safeName(d?.title || '文書')}_${ymd()}.txt`, document.getElementById('doctext').value); }
+  else if (act === 'useex') {
+    // 灰色の例文を本物の文字として欄に入れ、ふつうの入力と同じく保存・下書きに反映する
+    const inp = document.getElementById('f-' + t.dataset.f);
+    if (!inp || inp.value.trim()) return;
+    inp.value = inp.placeholder;
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+    inp.focus();
+    // 最初の「〇〇」を選んだ状態にして、そのまま打てば書きかわるように
+    const m = inp.value.match(/〇+/);
+    if (m) inp.setSelectionRange(m.index, m.index + m[0].length);
+  }
   else if (act === 'regen') {
     if (!confirm('手で直した部分は消えて、上の欄の内容で下書きを作り直します。よろしいですか？')) return;
     const id = location.hash.split('/')[4]; cur.file.docs[id].edited = false; save(); viewDoc(id);
@@ -1414,12 +1441,15 @@ document.addEventListener('input', e => {
     const fd = d.fields.find(x => x.id === t.dataset.f);
     if (fd?.info) (cur.file.info ||= {})[fd.info] = t.value; else sv.values[t.dataset.f] = t.value;
     if (!sv.edited) document.getElementById('doctext').value = renderDoc(d, docValues(d).v);
+    const ex = main.querySelector(`[data-ex="${t.dataset.f}"]`);
+    if (ex) ex.hidden = filled(t.value);
   } else {
     // 最初に手で直したときに、その場で「以後は欄の変更が反映されない」ことを知らせる
     if (!sv.edited) { const w = document.getElementById('editwarn'); if (w) w.hidden = false; }
     sv.edited = true; sv.text = t.value;
   }
   const pr = document.getElementById('docprint'); if (pr) pr.textContent = document.getElementById('doctext').value;
+  maruWarn(d);
   save();
 });
 

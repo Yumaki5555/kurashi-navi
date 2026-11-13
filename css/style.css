@@ -154,6 +154,7 @@ details.how p.script,p.script{background:var(--accent-bg);padding:8px 10px;borde
 .printonly{display:none}
 .pre{white-space:pre-wrap}
 .field>label{display:block;font-weight:700}
+.exrow{margin-top:6px}
 h3{margin:1.2em 0 .4em}
 @media (max-width:759px){.seg{display:flex}.mobile-only{display:inline-flex;width:100%;margin-top:10px}main[data-pane=in] #pane-out,main[data-pane=out] #pane-in{display:none}}
 @media print{.printonly{display:block!important}.print-head{font-size:.85rem;border-bottom:1px solid #999;padding-bottom:4px}.savestate,.seg,.mobile-only,#doctext,.emg-top,.emg-link,.qno,.fix,.inh,.region-line{display:none!important}.pre{font-size:1rem;line-height:1.8;page-break-inside:auto}.card,.box,.cstep,.rec{break-inside:avoid}h1,h2,h3{break-after:avoid}}
