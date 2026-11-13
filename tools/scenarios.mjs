@@ -313,7 +313,27 @@ caseRun('K', () => {
   ok('K 民泊の流れでは「建築主」を出さない', !/建築主/.test(lab('next_did', 'minpaku') + lab('target', 'minpaku')) && /建築主/.test(lab('target', 'kenchiku')));
 });
 
-const head = `ケースA〜K：OK ${pass} / NG ${fail}`;
+// ---- L. ルールを変えたい：選んだ方法の案内が「まずすること」の先頭に出る（ほかの答えの組み合わせすべて） ----
+caseRun('L', () => {
+  const want = {
+    minpaku: { giin: 'do_e_giin', petition: 'do_e_petition', pubcome: 'do_e_pubcome', shomei: 'do_e_shomei' },
+    kenchiku: { proposal: 'do_e_proposal', giin: 'do_e_giin', petition: 'do_e_petition', pubcome: 'do_e_pubcome', shomei: 'do_e_shomei' }
+  };
+  const YN = ['yes', 'no', 'unknown'];
+  for (const [d, map] of Object.entries(want)) {
+    const goals = E.optionsOf(D[d].tree, D[d].tree.nodes.e_what).map(o => o.value).filter(v => v !== 'undecided');
+    let total = 0; const bad = [];
+    for (const [method, id] of Object.entries(map)) for (const g of [['undecided'], ...goals.map(x => [x]), goals]) for (const a of YN) for (const b of YN) for (const c of YN) {
+      const ans = { situation: 'E', e_what: g, e_checked_rule: a, e_allies: b, e_method: method, ...(d === 'minpaku' ? { e_pubcome: c } : { e_landowners: c }) };
+      const top = result(D[d], run(D[d].tree, ans).st).fresh[0];
+      total++;
+      if (top?.id !== id) bad.push(`${method}/${g.join('+')}/${a}/${b}/${c} → ${top ? titles([top]) : 'なし'}`);
+    }
+    ok(`L ${d} 選んだ方法の案内が先頭（${total}通り）`, !bad.length, bad.slice(0, 3).join(' ／ '));
+  }
+});
+
+const head = `ケースA〜L：OK ${pass} / NG ${fail}`;
 writeFileSync(path.join(ROOT, 'tools/scenarios-report.txt'), [head, '', ...log].join('\n') + '\n');
 console.log(head + '（詳細: tools/scenarios-report.txt）');
 for (const l of log.filter(l => l.startsWith('NG'))) console.log(l);

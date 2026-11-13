@@ -1169,6 +1169,7 @@
    "id": "do_e_proposal",
    "section": "do",
    "priority": 80,
+   "boost": [{ "if": { "fact": "rule_method", "eq": "proposal" }, "add": 50 }],
    "when": {
     "any": [
      {
@@ -1243,6 +1244,7 @@
    "id": "do_e_giin",
    "section": "do",
    "priority": 68,
+   "boost": [{ "if": { "fact": "rule_method", "eq": "giin" }, "add": 50 }],
    "when": {
     "any": [
      {
@@ -1286,6 +1288,7 @@
    "id": "do_e_petition",
    "section": "do",
    "priority": 66,
+   "boost": [{ "if": { "fact": "rule_method", "eq": "petition" }, "add": 50 }],
    "when": {
     "fact": "rule_method",
     "eq": "petition"
@@ -1319,6 +1322,7 @@
    "id": "do_e_pubcome",
    "section": "do",
    "priority": 62,
+   "boost": [{ "if": { "fact": "rule_method", "eq": "pubcome" }, "add": 50 }],
    "when": {
     "any": [
      {
@@ -1359,6 +1363,7 @@
    "id": "do_e_shomei",
    "section": "do",
    "priority": 60,
+   "boost": [{ "if": { "fact": "rule_method", "eq": "shomei" }, "add": 50 }],
    "when": {
     "fact": "rule_method",
     "eq": "shomei"

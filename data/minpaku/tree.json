@@ -298,7 +298,7 @@
     },
     "e_checked_rule": { "type": "yesno", "fact": "checked_rule", "sum": "今のルールの確認", "text": "今の自治体の民泊のルール（[[条例]]など）を確認しましたか？", "next": "e_allies" },
     "e_allies": { "type": "yesno", "fact": "allies", "sum": "仲間", "text": "同じ考えの住民や町内会など、一緒に動ける人はいますか？", "next": "e_pubcome" },
-    "e_pubcome": { "type": "yesno", "fact": "pubcome_open", "sum": "意見募集", "text": "自治体で、民泊のルールについての意見募集（[[パブコメ]]）が行われていますか？", "next": "e_method" },
+    "e_pubcome": { "type": "yesno", "fact": "pubcome_open", "sum": "意見募集", "text": "自治体で、民泊のルールについての意見募集（[[パブコメ]]）が行われていますか？", "help": "下の「パブコメ掲示板」（別のタブで開きます）や、自治体のホームページの「意見募集」のページで確かめられます。わからなければ「わからない」で大丈夫です。", "links": [{ "type": "pubcome" }], "next": "e_method" },
     "e_method": {
       "type": "choice",
       "fact": "rule_method",

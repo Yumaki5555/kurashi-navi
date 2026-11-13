@@ -466,6 +466,7 @@ function viewQuestion() {
     <h1 class="q">${rich(node.text)}</h1>
     ${node.help ? `<p class="help">${rich(node.help)}</p>` : ''}
     <div class="termbox" hidden></div>
+    ${linksBlock(node.links)}
     ${body}
     <div class="nav"><button class="btn" data-act="back">← 戻る</button>${cur.edit && full.node === E.RESULT ? `<a class="btn" href="${resultHash(c)}">変更せずに結果へ</a>` : `<a class="btn" href="#/">中断する</a>`}</div>
     <p class="help small">答えは自動で保存されます。「戻る」で前の質問に戻っても、先の答えは消えません。中断しても、トップの「続きから」でこの質問に戻れます。</p>

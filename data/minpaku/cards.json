@@ -422,6 +422,7 @@
       "section": "do",
       "priority": 70,
       "when": { "fact": "rule_method", "in": ["giin", "petition", "undecided"] },
+      "boost": [{ "if": { "fact": "rule_method", "eq": "giin" }, "add": 50 }],
       "title": "地元の議員に相談する",
       "body": "条例は議会で決まります。議員は、議会での質問や、請願の紹介などで動いてくれることがあります。",
       "where": "市区町村（または都道府県）議会の議員。考えの近い人に限らず、複数の議員に相談してかまいません",
@@ -435,6 +436,7 @@
     {
       "id": "do_e_petition", "section": "do", "priority": 65,
       "when": { "fact": "rule_method", "eq": "petition" },
+      "boost": [{ "if": { "fact": "rule_method", "eq": "petition" }, "add": 50 }],
       "title": "陳情・請願を出す",
       "body": "[[陳情・請願]]は、議会に正式に意見を届ける方法です。議会の日程に合わせて準備します。",
       "where": "議会事務局",
@@ -447,6 +449,7 @@
     {
       "id": "do_e_pubcome", "section": "do", "priority": 75,
       "when": { "any": [ { "fact": "rule_method", "eq": "pubcome" }, { "fact": "pubcome_open", "eq": "yes" } ] },
+      "boost": [{ "if": { "fact": "rule_method", "eq": "pubcome" }, "add": 50 }],
       "title": "意見募集（パブコメ）に意見を出す",
       "body": "[[パブコメ]]は、ルールを決める前に住民の意見を聞く手続きです。締め切りまでに出します。",
       "where": "自治体の意見募集のページ",
@@ -459,6 +462,7 @@
     {
       "id": "do_e_shomei", "section": "do", "priority": 60,
       "when": { "any": [ { "fact": "rule_method", "eq": "shomei" }, { "all": [ { "fact": "situation", "eq": "E" }, { "fact": "allies", "eq": "yes" } ] } ] },
+      "boost": [{ "if": { "fact": "rule_method", "eq": "shomei" }, "add": 50 }],
       "title": "仲間と一緒に声を集める（署名など）",
       "body": "同じ考えの住民がいると、陳情や議員への相談に重みが出ます。署名を集めるときは、集めた個人情報の管理に気をつけます。",
       "where": "町内会・自治会、近所の住民",
