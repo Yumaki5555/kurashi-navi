@@ -789,7 +789,7 @@
       "section": "do",
       "key": "category",
       "priority": 90,
-      "when": { "fact": "want", "eq": "unsure" },
+      "when": { "all": [{ "fact": "want", "eq": "unsure" }, { "any": [{ "fact": "from", "answered": false }, { "fact": "from", "eq": "gyosei" }] }] },
       "title": "困りごとの分野から、診断をやり直す",
       "body": "困りごとの中身（民泊・建物・学校・税金の使い道など）がわかると、相談先と手順を具体的にご案内できます。",
       "where": "このサイトの分野別の診断",
@@ -804,6 +804,22 @@
         { "type": "page", "url": "#/start/yosan", "label": "税金・予算の使い道" }
       ],
       "facts": ["houterasu"]
+    },
+    {
+      "id": "do_back_main",
+      "section": "do",
+      "key": "back_main",
+      "kind": "internal",
+      "priority": 90,
+      "when": { "all": [{ "fact": "want", "eq": "unsure" }, { "fact": "from", "answered": true }, { "fact": "from", "ne": "gyosei" }] },
+      "title": "{field|最初の診断}の案内に戻って、「まずすること」から始める",
+      "body": "この相談では、最初の診断で、あなたの状況に合わせた手順をすでにご案内しています。何をしたいか決まっていないときは、その案内のいちばん上から順に進めるのが近道です。",
+      "where": "このサイトの、この相談の案内",
+      "check": "「まずすること」に書かれた最初の一歩",
+      "bring": ["困りごとのメモ"],
+      "script": "（案内に戻り、「まずすること」から読んでください）",
+      "ifNoAnswer": "案内どおりに進めて、回答がない・断られた・変わらないときは、もう一度「次の一手を探す」から、そのときの状況を選んでください。",
+      "links": [{ "type": "main", "label": "{field|最初の診断}の案内に戻る", "primary": true }]
     },
     {
       "id": "do_watch",

@@ -243,6 +243,8 @@ function infoVals() {
   const last = N.latestDone(file.records), lastRound = (file.rounds || []).filter(x => x.done).at(-1);
   const v = {
     place: '', since: '', detail: '', ask: '',
+    // 分野の名前（次の一手の案内で「民泊・宿泊施設の案内に戻る」のように使う）
+    field: DOM(file.domain)?.name || '',
     problems: factLabel(t, st, 'problems'),
     know: factLabel(t, st, 'know') || factLabel(t, st, 'reasons'),
     history: [factLabel(t, st, 'done'), ...done.map(r => [fmtDay(r.date), L.toType[r.toType], L.method[r.method]].filter(Boolean).join(' '))].filter(Boolean).join('、'),
@@ -531,19 +533,22 @@ function linkHref(l) {
     case 'doc': return f ? `#/f/${f.id}/doc/${l.doc}` : '#/';
     case 'records': return f ? `#/f/${f.id}/records` : '#/';
     case 'next': return f ? `#/f/${f.id}/next/new` : '#/start/gyosei';
+    // main：この相談の最初の診断の結果（分野ごとの「まずすること」）
+    case 'main': return f ? `#/f/${f.id}/result` : '#/';
     case 'page': return l.url;
     case 'tel': return telHref(l.tel);
     default: return l.url || '#/';
   }
 }
-const INTERNAL = ['doc', 'records', 'tel', 'next', 'page'];
+const INTERNAL = ['doc', 'records', 'tel', 'next', 'page', 'main'];
 // skipNext：「次の一手を探す」は結果の画面の決まった場所に1つだけ出すので、案内の中のボタンからは外す
 function linksBlock(links = [], { skipNext = false } = {}) {
   const ls = links.filter(l => !(skipNext && l.type === 'next'));
   if (!ls.length) return '';
   return `<div class="links">${ls.map(l => {
     const ext = !INTERNAL.includes(l.type);
-    const label = l.label || G.links.labels?.[l.type] || (l.type === 'next' ? '次の一手を探す' : 'ひらく');
+    // ボタンの名前にも分野の名前（{field|…}）を差し込める
+    const label = fillText(l.label || G.links.labels?.[l.type] || (l.type === 'next' ? '次の一手を探す' : 'ひらく'), {}, { field: DOM(cur?.file?.domain)?.name || '' });
     return `<a class="btn${l.type === 'next' || l.primary ? ' primary' : ''}" href="${esc(linkHref(l))}"${ext ? ' target="_blank" rel="noopener"' : ''}>${esc(label)}${ext ? ' <small class="ext">↗ 別タブ</small>' : ''}</a>`;
   }).join('')}</div>`;
 }
@@ -582,7 +587,8 @@ function todoCard(c, i, open, chosen, T, extra = {}) {
   const k = kindOf(c, T), K = KL[k];
   const where = fill(c.where, T), script = fill(c.script, T), check = fill(c.check, T), bring = partsOf(c.bring, T);
   const ex = k === 'contact' || k === 'research' ? whereExtra(c, where, T) : { html: '' };
-  const canCopy = !!script && (k === 'record' || /「/.test(script));
+  // サイト内の案内（internal）は文例を出さないので、コピーのボタンも出さない
+  const canCopy = !!script && k !== 'internal' && (k === 'record' || /「/.test(script));
   const needRec = bring.some(b => /記録/.test(b));
   const body = k === 'internal' ? '' : [
     dd(K.where, where ? (ex.contacts ? `${ex.html}<details class="gen"><summary>${esc(plain(where))}</summary></details>` : rich(where) + ex.html) : ex.html),

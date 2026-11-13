@@ -219,6 +219,13 @@ caseRun('G', () => {
   const x = run(NX.tree, { next_did: 'none', want: 'unsure' }, { entry: 'next' });
   const res = result(NX, x.st);
   ok('G 次の一手：何をしたいか分からなくても行き止まらない', res.top.length > 0, titles(res.top));
+  ok('G 次の一手（分野なし）：分野を選び直す案内が出る', res.todo.some(c => c.id === 'do_category') && !res.todo.some(c => c.id === 'do_back_main'), titles(res.top));
+  // 分野の相談（例：民泊）の続きでは、分野を選び直させず、その相談の最初の案内へ戻す
+  for (const d of DOMAINS.filter(x => x !== 'gyosei')) {
+    const y = run(NX.tree, { next_did: 'none', want: 'unsure' }, { entry: 'next', facts: { from: d } });
+    const r2 = result(NX, y.st);
+    ok(`G 次の一手（${d}の相談）：分野選びに戻さず、最初の案内へ戻す`, !r2.todo.some(c => c.id === 'do_category') && r2.top[0]?.id === 'do_back_main', titles(r2.top));
+  }
 });
 
 // ---- H. 途中で閉じて再開（保存と復元） ----
