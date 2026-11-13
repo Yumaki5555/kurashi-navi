@@ -1,0 +1,14 @@
+{
+  "name": "困りごと、次どうする？",
+  "short_name": "次どうする？",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#FFF9E6",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

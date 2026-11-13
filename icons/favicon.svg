@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 困りごと、次どうする？ のアイコン原本：アンバーの角丸正方形に、白抜きの「チェックリスト（2項目）＋右向き矢印」。
+       状況を確認する → 次の行動へ進む。16pxでも潰れないよう線は太く（8）、横線は画素の境目にそろえている。
+       PNG は python tools/make-icons.py で書き出す -->
+  <rect width="64" height="64" rx="14" fill="#D69E2E"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20l5 5 8-9"/>
+    <path d="M33 20h7"/>
+    <path d="M12 40l5 5 8-9"/>
+    <path d="M33 40h11"/>
+  </g>
+  <path d="M42 28l13 12-13 12z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round"/>
+</svg>
