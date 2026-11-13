@@ -1182,7 +1182,12 @@ function viewAbout() {
 
 // ---------- 道順 ----------
 // #/f/{相談}/q/{n}：最初の診断の n 問目 ／ #/f/{相談}/next/{回}/q/{n}：次の一手の n 問目 ／ ?edit=1：結果から「直す」で来た
+// 読み込みに時間がかかる間に別の画面へ移ったら、古い画面は出さない（通信が遅いとき、戻ったはずのトップが後から上書きされないように）
+let routeSeq = 0;
+// 相談の一覧に要るデータ（段階・質問の木）を先に読んでおく
+const preloadFiles = files => files.length ? Promise.all([N.NEXT_DOMAIN, ...new Set(files.map(f => f.domain))].map(d => Promise.all([ladderOf(d), treeOf(d)]))) : null;
 async function route() {
+  const my = ++routeSeq, stale = () => my !== routeSeq;
   track(location.hash || '#/');
   const [, a, b, c, d, e, f] = (location.hash.slice(1).split('?')[0] || '/').split('/');
   const q = Object.fromEntries(new URLSearchParams(location.hash.split('?')[1] || ''));
@@ -1190,9 +1195,11 @@ async function route() {
   if (S.conflict && (a !== 'f' || cur?.file?.id !== b)) { S.clearConflict(); const bar = document.getElementById('savebar'); if (bar) bar.hidden = true; }
   try {
     if (a !== 'f') cur = null;
+    if (!a || a === 'data' || a === 'start') { await preloadFiles(S.listFiles()); if (stale()) return; }
     if (!a) return await viewHome();
     if (a === 'emergency') return viewEmergency();
-    await loadHeavy();
+    await loadHeavy(); if (stale()) return;
+    if (['start', 'cases', 'case'].includes(a) && DOM(b)?.status === 'active') { await loadDomain(b).catch(() => null); if (stale()) return; }
     if (a === 'start') return await viewStart(b, q);
     if (a === 'act') return viewAct();
     if (a === 'cases' && !b) return viewCaseDomains();
@@ -1202,7 +1209,9 @@ async function route() {
     if (a === 'about') return viewAbout();
     if (a === 'f') {
       const file = openFile(b); if (!file) return;
-      cur = { file, data: await loadDomain(file.domain), next: await loadDomain(N.NEXT_DOMAIN), round: null, qn: 0, edit: q.edit === '1' };
+      const data = await loadDomain(file.domain), next = await loadDomain(N.NEXT_DOMAIN);
+      if (stale()) return;
+      cur = { file, data, next, round: null, qn: 0, edit: q.edit === '1' };
       migrateOpen(file);
       if (c === 'q') { cur.qn = +d || 0; return viewQuestion(); }
       if (c === 'result') return viewResult();

@@ -38,7 +38,9 @@ async function js(expr) {
   return r.result.value;
 }
 async function size(w, h = 812) { width = w; await cdp('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: w < 760 }); await W(300); }
-async function load(hash) { await cdp('Page.navigate', { url: BASE + hash }); await W(1500); }
+// ページを読み直して開く（# の後ろだけ変えると読み直しにならないので、毎回 ?r= を変える）
+let reloads = 0;
+async function load(hash) { await cdp('Page.navigate', { url: `${BASE}?r=${++reloads}${hash}` }); await W(1500); await waitFor('main h1'); }
 async function go(hash) { await js(`location.hash = ${JSON.stringify(hash)};`); await W(900); }
 async function shot(name) {
   await js('window.scrollTo(0, 0);'); await W(200);
@@ -136,7 +138,7 @@ try {
   for (const [href, name] of cats) {
     await go('#/'); await js(`document.querySelector('.cat[href="${href}"]').click();`); await W(900);
     const t = await h1(), hash = await js('return location.hash;');
-    ok(`分野「${name}」→ ${hash}`, hash === href && t && !/表示できません/.test(t), `見出し「${t}」`);
+    ok(`分野「${name}」→ ${hash}`, hash === href && t === (href === '#/act' ? '自分で行動する' : name), `見出し「${t}」`);
   }
   ok('「手段から選ぶ」に手段が9つ', (await js(`await new Promise(r => setTimeout(r, 300)); location.hash = '#/act'; await new Promise(r => setTimeout(r, 900)); return document.querySelectorAll('main details.card').length;`)) === 9);
   await go('#/'); await js(`document.querySelector('.emg-bar').click();`); await W(900);
@@ -147,8 +149,16 @@ try {
     if (tgt === '_blank') { ok(`ヒント「${name}」（別タブ）`, href === 'https://yumaki5555.github.io/todokeru/#/contacts', href); continue; }
     await go('#/'); await js(`document.querySelector('.hints a[href="${href}"]').click();`); await W(900);
     const t = await h1();
-    ok(`ヒント「${name}」→ ${href}`, (await js('return location.hash;')) === href && t && !/表示できません/.test(t), `見出し「${t}」`);
+    ok(`ヒント「${name}」→ ${href}`, (await js('return location.hash;')) === href && t === { '#/start/gyosei': '役所の対応', '#/cases': '似た問題の事例集' }[href], `見出し「${t}」`);
   }
+  // 通信が遅いとき：分野を押してすぐトップへ戻っても、あとから届いた分野の画面でトップが上書きされない
+  await cdp('Network.enable');
+  await cdp('Network.emulateNetworkConditions', { offline: false, latency: 1200, downloadThroughput: -1, uploadThroughput: -1 });
+  await load('#/'); await waitFor('.cat[href="#/start/kenchiku"]');
+  await js(`document.querySelector('.cat[href="#/start/kenchiku"]').click();`); await W(300);
+  await js(`location.hash = '#/';`); await W(7000);
+  ok('遅い通信で分野→すぐトップに戻ってもトップのまま', (await h1()) === '困りごと、次どうする？' && (await js('return location.hash;')) === '#/', await h1());
+  await cdp('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
 
   console.log('■ 4. トップ以外から開いたとき（あとから読むデータが届くか）');
   await load('#/act');
