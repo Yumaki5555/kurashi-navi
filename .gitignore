@@ -5,3 +5,5 @@ tools/report.txt
 tools/scenarios-report.txt
 tools/verify-cases-report.txt
 tools/preopen-report.txt
+tools/check-reihai-report.txt
+tools/import-guide-report.txt

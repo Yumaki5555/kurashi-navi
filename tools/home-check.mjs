@@ -134,11 +134,11 @@ try {
   console.log('■ 3. 行き先（分野・緊急・ヒント）');
   await go('#/');
   const cats = await js(`return [...document.querySelectorAll('.cat')].map(a => [a.getAttribute('href'), a.querySelector('b').textContent]);`);
-  ok('分野カードは6枚（5分野＋手段から選ぶ）', cats.length === 6, cats.map(c => c[1]).join('・'));
+  ok('分野カードは7枚（5分野＋礼拝施設の確認＋手段から選ぶ）', cats.length === 7, cats.map(c => c[1]).join('・'));
   for (const [href, name] of cats) {
     await go('#/'); await js(`document.querySelector('.cat[href="${href}"]').click();`); await W(900);
     const t = await h1(), hash = await js('return location.hash;');
-    ok(`分野「${name}」→ ${hash}`, hash === href && t === (href === '#/act' ? '自分で行動する' : name), `見出し「${t}」`);
+    ok(`分野「${name}」→ ${hash}`, hash === href && t === ({ '#/act': '自分で行動する', '#/reihai': '礼拝施設の確認チェックリスト' }[href] || name), `見出し「${t}」`);
   }
   ok('「手段から選ぶ」に手段が9つ', (await js(`await new Promise(r => setTimeout(r, 300)); location.hash = '#/act'; await new Promise(r => setTimeout(r, 900)); return document.querySelectorAll('main details.card').length;`)) === 9);
   await go('#/'); await js(`document.querySelector('.emg-bar').click();`); await W(900);

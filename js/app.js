@@ -4,6 +4,7 @@ import * as S from './store.js';
 import { renderDoc, fillText, filled } from './docs.js';
 import { STATUS, STATUS_OUTCOME, DUE_TYPES, ladderState, currentStatus, recordsText, isPlanned } from './records.js';
 import * as N from './rounds.js';
+import * as R from './reihai.js';
 
 const SITE = '困りごと、次どうする？';
 const main = document.getElementById('main');
@@ -360,6 +361,7 @@ async function viewHome() {
   const act = files.filter(f => !closed(f)), done = files.filter(closed);
   const cat = (href, icon, name, desc, note = '') => `<a class="cat" href="${href}">${ico(icon)}<span class="ct"><b>${esc(name)}</b><small>${esc(desc)}</small>${note ? `<small class="cat-note">${esc(note)}</small>` : ''}</span></a>`;
   const cats = `<div class="cats">${ds.map(d => cat(`#/start/${d.id}`, d.id, d.name, d.desc || '', d.note)).join('')}
+    ${cat('#/reihai', 'kenchiku', '近所の礼拝施設を確かめる', 'モスク・寺院・教会など。事実の確かめ方と、役所への質問を項目ごとに案内')}
     ${cat('#/act', 'act', '使いたい手段から選ぶ', '情報公開請求・請願・署名・問い合わせなど。使う前の注意つき')}</div>`;
   // 迷ったときのヒント：今あるページにつながるものだけ
   const hint = (href, text, sub, ext = false) => `<li><a href="${esc(href)}"${ext ? ' target="_blank" rel="noopener"' : ''}><span><b>${esc(text)}</b><small>${esc(sub)}</small></span><span class="go" aria-hidden="true">${ext ? '↗' : '›'}</span></a></li>`;
@@ -1184,6 +1186,8 @@ function viewAbout() {
 // #/f/{相談}/q/{n}：最初の診断の n 問目 ／ #/f/{相談}/next/{回}/q/{n}：次の一手の n 問目 ／ ?edit=1：結果から「直す」で来た
 // 読み込みに時間がかかる間に別の画面へ移ったら、古い画面は出さない（通信が遅いとき、戻ったはずのトップが後から上書きされないように）
 let routeSeq = 0;
+// 礼拝施設の確認チェックリスト（js/reihai.js）に渡す道具
+const RH = { setView, esc, copy, download, getJSON, go, KIND, src: id => G.sources[id], route: keep => { keepScroll = !!keep; route(); } };
 // 相談の一覧に要るデータ（段階・質問の木）を先に読んでおく
 const preloadFiles = files => files.length ? Promise.all([N.NEXT_DOMAIN, ...new Set(files.map(f => f.domain))].map(d => Promise.all([ladderOf(d), treeOf(d)]))) : null;
 async function route() {
@@ -1202,6 +1206,7 @@ async function route() {
     if (['start', 'cases', 'case'].includes(a) && DOM(b)?.status === 'active') { await loadDomain(b).catch(() => null); if (stale()) return; }
     if (a === 'start') return await viewStart(b, q);
     if (a === 'act') return viewAct();
+    if (a === 'reihai') return await R.view([b, c].filter(x => x !== undefined && x !== ''), q, RH);
     if (a === 'cases' && !b) return viewCaseDomains();
     if (a === 'cases') return await viewCases(b, q);
     if (a === 'case') return await viewCase(b, c, q);
