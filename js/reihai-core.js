@@ -8,9 +8,10 @@ export function emptyState() {
   return { v: 1, rev: 0, updatedAt: '', ans: {}, info: {}, st: {}, memo: {}, picks: {}, cross: { summary: {}, rows: {}, pit: {} }, log: [] };
 }
 
-// 条件：{q, in:[…]}（1つ選ぶ質問）／{q, has:[…]}（いくつでも選ぶ質問のどれか）／{pick, in}（項目で記録した値）／{any}／{all}
+// 条件：{q, in:[…]}（1つ選ぶ質問）／{q, has:[…]}（いくつでも選ぶ質問のどれか）／{pick, in}（項目で記録した値）／{any}／{all}／{not}
 export function test(w, s) {
   if (!w) return true;
+  if (w.not) return !test(w.not, s);
   if (w.any) return w.any.some(x => test(x, s));
   if (w.all) return w.all.every(x => test(x, s));
   if (w.pick) return (w.in || []).includes(s.picks?.[w.pick]);
@@ -21,20 +22,43 @@ export function test(w, s) {
 }
 
 export const questionsFor = (D, s) => D.questions.filter(q => test(q.when, s));
+// 選択肢にも条件をつけられる（例：「請願・陳情が否決」は、議会に請願・陳情を出したときだけ）
+export const optionsFor = (q, s) => (q.options || []).filter(o => test(o.when, s));
 export const statusOf = (s, id) => s.st?.[id] || 'todo';
 export const statusLabel = (D, v) => (D.statuses.find(x => x.v === v) || D.statuses[0]).label;
 export const fill = (t, s) => String(t || '').replaceAll('{addr}', s.info?.addr?.trim() || ADDR);
 
-// 今は表示されない質問（例：「困っていない」に変えたあとの困りごとの質問）の古い答えは、判定に使わない
+// 今は表示されない質問・選択肢（例：「困っていない」に変えたあとの困りごとの質問）の古い答えは、判定に使わない
 export function active(D, s) {
-  const vis = new Set(questionsFor(D, s).map(q => q.id));
-  return { ...s, ans: Object.fromEntries(Object.entries(s.ans || {}).filter(([k]) => vis.has(k))) };
+  const ans = {};
+  for (const q of questionsFor(D, s)) {
+    const v = s.ans?.[q.id];
+    if (v === undefined) continue;
+    if (!q.options) { ans[q.id] = v; continue; }
+    const ok = new Set(optionsFor(q, s).map(o => o.v));
+    if (Array.isArray(v)) { const f = v.filter(x => ok.has(x)); if (f.length) ans[q.id] = f; } else if (ok.has(v)) ans[q.id] = v;
+  }
+  return { ...s, ans };
 }
+
+// 答えに合わせて項目の文を言いかえる（vary：[{when, t, ask, req…}]。例：「予定と聞いた」なら「使われている」ではなく「使う予定」）。
+// 同じ項目・同じ言いかえには、いつも同じものを返す
+const varied = new WeakMap();
+export function itemFor(it, s) {
+  const i = (it.vary || []).findIndex(v => test(v.when, s));
+  if (i < 0) return it;
+  if (!varied.has(it)) varied.set(it, []);
+  const c = varied.get(it);
+  if (!c[i]) { const { when, ...over } = it.vary[i]; c[i] = { ...it, ...over }; }
+  return c[i];
+}
+// 部署ごとの質問文：askBy にその部署があればそちら（false は、その部署には聞かない）、なければ共通の質問文
+export const askFor = (it, d) => (it.askBy && d in it.askBy ? it.askBy[d] : it.ask) || '';
 
 // 関係する項目（条件なし＝基本の項目、または条件に合う）と、そのほかの項目
 export function relevant(D, s) {
   const a = active(D, s), rel = [], other = [];
-  for (const it of D.items) (test(it.when, a) ? rel : other).push(it);
+  for (const it0 of D.items) { const it = itemFor(it0, a); (test(it.when, a) ? rel : other).push(it); }
   return { rel, other };
 }
 
@@ -43,6 +67,7 @@ function reasons(D, it, s) {
   if (!it.when) return ['最初に確かめる基本の項目'];
   const out = [];
   const walk = w => {
+    if (w.not) return;   // 「〜でない」は理由に書かない
     if (w.any || w.all) return (w.any || w.all).forEach(walk);
     if (!test(w, s)) return;
     if (w.pick) { out.push('区域の確認の結果から'); return; }
@@ -51,7 +76,7 @@ function reasons(D, it, s) {
     vs.forEach(x => { const o = q.options.find(o => o.v === x); if (o) out.push(`「${o.label}」と答えたため`); });
   };
   walk(it.when);
-  return [...new Set(out)];
+  return out.length ? [...new Set(out)] : ['最初に確かめる基本の項目'];
 }
 
 // 優先して確かめる項目：関係する項目のうち、確かめ終わっていないもの。今の困りごとに関係する生活環境・通学路の項目を先に
@@ -76,9 +101,9 @@ export function byDept(D, s) {
   const noOp = s.ans.contact === 'gov';
   const map = new Map();
   for (const it of relevant(D, s).rel) {
-    if (!it.ask || DONE.includes(statusOf(s, it.id))) continue;
+    if (DONE.includes(statusOf(s, it.id))) continue;
     for (const d of it.dept || []) {
-      if (d === 'op' && noOp) continue;
+      if ((d === 'op' && noOp) || !askFor(it, d)) continue;
       if (!map.has(d)) map.set(d, []);
       map.get(d).push(it);
     }
@@ -106,17 +131,24 @@ export function deptText(D, s) {
   const out = ['担当部署別の質問一覧'];
   for (const g of byDept(D, s)) {
     out.push('', `■ ${g.name}`);
-    g.items.forEach((it, i) => out.push(`${i + 1}. ${fill(it.ask, s)}`));
+    g.items.forEach((it, i) => out.push(`${i + 1}. ${fill(askFor(it, g.dept), s)}`));
   }
   return out.join('\n');
 }
 
-// 3. 相談票（部署を選ぶと、その部署あての質問だけを入れる）
-export function sheetText(D, s, dept = '', hope = '') {
-  const A = active(D, s).ans, I = s.info || {};
+// 相談票のあて先（1枚に1つの部署）：選んだ部署に質問があればそこ。なければ「優先して確かめる項目」の順で、最初に質問できる部署
+export function sheetDept(D, s, dept = '') {
+  const ok = byDept(D, s).map(g => g.dept).filter(d => d !== 'op');
+  if (ok.includes(dept)) return dept;
+  for (const { it } of priority(D, s, D.items.length)) { const d = (it.dept || []).find(x => ok.includes(x)); if (d) return d; }
+  return ok[0] || '';
+}
+
+// 3. 相談票（あて先の部署あての質問だけを入れる。部署ごとに聞く内容が違う項目は、その部署あての文にする）
+export function sheetText(D, s, dept0 = '', hope = '') {
+  const A = active(D, s).ans, I = s.info || {}, dept = sheetDept(D, s, dept0);
   // 一度に出す質問は、優先度の高い順に5つまで（残りは「担当部署別の質問一覧」に出る）
-  const all = relevant(D, s).rel.filter(it => it.ask && !DONE.includes(statusOf(s, it.id)) && (!dept || (it.dept || []).includes(dept)) && !(it.dept || []).every(d => d === 'op'))
-    .sort((a, b) => b.pri - a.pri);
+  const all = dept ? byDept(D, s).find(g => g.dept === dept).items.slice().sort((a, b) => b.pri - a.pri) : [];
   const items = all.slice(0, 5), rest = all.length - items.length;
   const ev = k => (s.log || []).filter(e => e.type === 'ev' && e.real === k).map(e => `・${evLine(e)}`);
   const memos = items.map(it => s.memo?.[it.id] && `・${s.memo[it.id]}`).filter(Boolean);
@@ -141,7 +173,7 @@ export function sheetText(D, s, dept = '', hope = '') {
     ...(ev('heard').length ? ev('heard') : ['　（なし）']),
     '',
     '5. 確認していただきたいこと',
-    ...(items.length ? items.map((it, i) => `（${i + 1}）${fill(it.ask, s)}`) : ['　（質問文を選んでください）']),
+    ...(items.length ? items.map((it, i) => `（${i + 1}）${fill(askFor(it, dept), s)}`) : ['　（確かめ終わっていない質問はありません）']),
     rest > 0 ? `　※ このほかの質問（${rest}件）は「担当部署別の質問一覧」にあります。必要なものを書き足してください。` : '',
     '',
     '6. お願い',

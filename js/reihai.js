@@ -29,7 +29,8 @@ function bar(msg) { const b = document.getElementById('savebar'); if (!b) return
 const e = s => H.esc(s);
 const li = xs => (xs || []).filter(Boolean).map(x => `<li>${e(x)}</li>`).join('');
 const stPill = v => `<span class="rh-st rh-st-${v}">${e(C.statusLabel(D, v))}</span>`;
-const itemById = id => D.items.find(x => x.id === id);
+// 答えに合わせて言いかえた項目（例：「予定と聞いた」なら「使う予定」の文）
+const itemById = id => { const it = D.items.find(x => x.id === id); return it && C.itemFor(it, C.active(D, S)); };
 const groupOf = it => D.groups.find(g => g.id === it.g);
 const copyBtn = (text, label = 'コピー') => `<button type="button" class="btn slim" data-r="copy" data-text="${e(text)}">${label}</button>`;
 function srcLinks(ids) {
@@ -69,10 +70,10 @@ const mythTable = () => `<ul class="rh-myths">${D.myths.map(m => `<li><s>${e(m.w
 function viewQ(n) {
   const qs = C.questionsFor(D, S);
   if (n >= qs.length) { H.go(`${base}/list`); return; }
-  const q = qs[n], v = S.ans[q.id];
+  const q = qs[n], v = S.ans[q.id], opts = C.optionsFor(q, S);
   let body = '';
-  if (q.type === 'one') body = `<div class="stack">${q.options.map(o => `<button type="button" class="btn big left${v === o.v ? ' chosen' : ''}" data-r="ans" data-q="${q.id}" data-v="${o.v}" aria-pressed="${v === o.v}">${e(o.label)}</button>`).join('')}</div>`;
-  if (q.type === 'many') body = `<fieldset class="stack"><legend class="sr">${e(q.text)}</legend>${q.options.map(o => `<label class="btn check left"><input type="checkbox" value="${o.v}"${o.ex ? ' data-ex="1"' : ''}${(v || []).includes(o.v) ? ' checked' : ''}><span>${e(o.label)}</span></label>`).join('')}</fieldset>
+  if (q.type === 'one') body = `<div class="stack">${opts.map(o => `<button type="button" class="btn big left${v === o.v ? ' chosen' : ''}" data-r="ans" data-q="${q.id}" data-v="${o.v}" aria-pressed="${v === o.v}">${e(o.label)}</button>`).join('')}</div>`;
+  if (q.type === 'many') body = `<fieldset class="stack"><legend class="sr">${e(q.text)}</legend>${opts.map(o => `<label class="btn check left"><input type="checkbox" value="${o.v}"${o.ex ? ' data-ex="1"' : ''}${(v || []).includes(o.v) ? ' checked' : ''}><span>${e(o.label)}</span></label>`).join('')}</fieldset>
     <button type="button" class="btn primary big" data-r="many" data-q="${q.id}">次へ</button>`;
   if (q.type === 'text') body = `<div id="rh-info">${q.fields.map(f => `<label class="field"><span>${e(f.label)}</span><input type="text" data-k="${f.k}" value="${e(S.info[f.k] || '')}" autocomplete="off"></label>`).join('')}</div>
     <button type="button" class="btn primary big" data-r="info">次へ</button>`;
@@ -89,7 +90,7 @@ function itemRow(it) {
 function viewList() {
   const { rel, other } = C.relevant(D, S), cnt = C.counts(D, S), pri = C.priority(D, S);
   const qs = C.questionsFor(D, S).filter(q => q.type !== 'text');
-  const ansLine = qs.map(q => { const v = S.ans[q.id]; const ls = (Array.isArray(v) ? v : v ? [v] : []).map(x => q.options.find(o => o.v === x)?.label).filter(Boolean); return ls.length ? `<li>${e(q.text.replace(/（いくつでも）/, ''))}<br><b>${e(ls.join('、'))}</b></li>` : ''; }).join('');
+  const A = C.active(D, S).ans, ansLine = qs.map(q => { const v = A[q.id]; const ls = (Array.isArray(v) ? v : v ? [v] : []).map(x => q.options.find(o => o.v === x)?.label).filter(Boolean); return ls.length ? `<li>${e(q.text.replace(/（いくつでも）/, ''))}<br><b>${e(ls.join('、'))}</b></li>` : ''; }).join('');
   H.setView(`<p class="crumb"><a href="${base}">礼拝施設の確認</a> › 項目の一覧</p>${nav()}
     <h1>確かめる項目</h1>
     ${S.info.addr ? `<p class="help">施設：${e(S.info.addr)}${S.info.name ? `（${e(S.info.name)}）` : ''}</p>` : ''}
@@ -112,7 +113,10 @@ function viewItem(id) {
   const it = itemById(id); if (!it) { H.go(`${base}/list`); return; }
   const { rel } = C.relevant(D, S), seq = rel.some(x => x.id === id) ? rel : D.items, i = seq.findIndex(x => x.id === id);
   const prev = seq[i - 1], next = seq[i + 1], st = C.statusOf(S, id), g = groupOf(it);
-  const ask = C.fill(it.ask, S);
+  // 質問文：部署ごとに違う項目は、あて先ごとに分けて出す（askBy で false の部署には聞かない）
+  const asks = []; for (const d of it.dept || []) { const t = C.askFor(it, d); if (!t) continue; const a = asks.find(x => x.t === t); if (a) a.d.push(d); else asks.push({ t, d: [d] }); }
+  const ask = asks.length ? C.fill(asks[0].t, S) : '';
+  const askBox = x => `<div class="rh-ask"><p>${e(C.fill(x.t, S))}</p></div><p class="row wrap">${copyBtn(C.fill(x.t, S), '質問文をコピー')}</p>`;
   const sec = (h, inner) => (inner ? `<h2>${h}</h2>${inner}` : '');
   H.setView(`<p class="crumb"><a href="${base}/list">項目の一覧</a> › ${e(g.title)}</p>${nav()}
     <h1>${e(it.t)}</h1>
@@ -123,8 +127,8 @@ function viewItem(id) {
     ${sec('役所に確かめてもらうこと', it.gov?.length ? `<ul>${li(it.gov)}</ul>` : '')}
     ${sec('手に入る資料と取り方', it.docs?.length ? `<ul>${it.docs.map(d => `<li><b>${e(d.n)}</b>：${e(d.w)}<br><small>${e(WHO[d.who] || '')}</small></li>`).join('')}</ul>` : '')}
     ${sec('相談先の候補', it.dept?.length ? `<ul>${li(it.dept.map(d => D.depts[d]))}</ul>` : '')}
-    ${ask ? `<h2>そのまま使える質問文</h2><div class="rh-ask"><p>${e(ask)}</p></div>
-      <p class="row wrap">${copyBtn(ask, '質問文をコピー')}${S.info.addr ? '' : `<a class="btn slim" href="${base}/q/2">施設の住所を入れる</a>`}<a class="btn slim" href="${base}/out/sheet">相談票にまとめる</a></p>
+    ${ask ? `<h2>そのまま使える質問文</h2>${asks.length > 1 || it.askBy ? asks.map(x => `<h3 class="rh-to">${e(x.d.map(d => D.depts[d].replace(/（.*$/, '')).join('・'))}あて</h3>${askBox(x)}`).join('') : askBox(asks[0])}
+      <p class="row wrap">${S.info.addr ? '' : `<a class="btn slim" href="${base}/q/2">施設の住所を入れる</a>`}<a class="btn slim" href="${base}/out/sheet">相談票にまとめる</a></p>
       <p class="help">〇〇の部分は、自分の記録に合わせて書きかえてください。</p>` : ''}
     ${sec('求める対応', it.req ? `<p>${e(it.req)}</p>` : '')}
     ${sec('回答のあとの次の行動', it.next?.length ? `<ul>${li(it.next)}</ul>` : '')}
@@ -191,7 +195,7 @@ function viewLog(q) {
 }
 
 function viewResp() {
-  const got = S.ans.resp || [];
+  const got = C.active(D, S).ans.resp || [];
   H.setView(`<p class="crumb"><a href="${base}/list">項目の一覧</a> › 回答別の次の一手</p>${nav()}
     <h1>役所の回答ごとの「次の一手」</h1>
     <p class="help">言われた言葉に近いものを開くと、次に聞くことが分かります。聞いたことと回答は、記録表に残します。</p>
@@ -211,12 +215,12 @@ const OUTS = [
 function viewOut(k, q) {
   k = OUTS.some(o => o[0] === k) ? k : 'pri';
   const groups = C.byDept(D, S).filter(g => g.dept !== 'op');
-  const dept = q.dept || '', hope = q.hope || '';
+  const dept = C.sheetDept(D, S, q.dept || ''), hope = q.hope || '';
   const text = { pri: () => C.priorityText(D, S), dept: () => C.deptText(D, S), sheet: () => C.sheetText(D, S, dept, hope), cross: () => C.crossText(D, S), log: () => C.logText(D, S), next: () => C.nextText(D, S) }[k]();
   H.setView(`<p class="crumb"><a href="${base}/list">項目の一覧</a> › 書き出す</p>${nav()}
     <h1>書き出す・印刷する</h1>
     <div class="rh-outs noprint" role="group" aria-label="書き出すもの">${OUTS.map(([v, l]) => `<a class="btn slim${v === k ? ' chosen' : ''}" href="${base}/out/${v}"${v === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
-    ${k === 'sheet' ? `<form class="card plainc noprint" id="rh-sheet"><label class="field"><span>あて先の部署</span><select name="dept"><option value="">（選ばない：すべての質問を入れる）</option>${groups.map(g => `<option value="${g.dept}"${dept === g.dept ? ' selected' : ''}>${e(g.name)}</option>`).join('')}</select></label>
+    ${k === 'sheet' ? `<form class="card plainc noprint" id="rh-sheet"><label class="field"><span>あて先の部署</span><small>相談票は1枚に1つの部署あてです。その部署に聞く質問だけが入ります。ほかの部署あては、選び直して作ります。</small><select name="dept">${groups.map(g => `<option value="${g.dept}"${dept === g.dept ? ' selected' : ''}>${e(g.name)}</option>`).join('')}</select></label>
       <label class="field"><span>回答の希望日（任意）</span><small>希望として書きます。一般の問い合わせに、法律で決まった回答の期限はありません。</small><input type="date" name="hope" value="${e(hope)}"></label>
       <button class="btn" type="submit">相談票に反映する</button></form>` : ''}
     <h2>${e(OUTS.find(o => o[0] === k)[1])}</h2>

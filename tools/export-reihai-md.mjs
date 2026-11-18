@@ -8,6 +8,7 @@ const WHO = { all: 'だれでも', pub: '公開情報', owner: '所有者など�
 const qLabel = (qid, v) => D.questions.find(q => q.id === qid)?.options?.find(o => o.v === v)?.label || v;
 function cond(w) {
   if (!w) return '常に表示（基本の項目）';
+  if (w.not) return `（${cond(w.not)}）ではない`;
   if (w.any) return w.any.map(cond).join(' または ');
   if (w.all) return w.all.map(cond).join(' かつ ');
   if (w.pick) return `項目${w.pick}で「${w.in.map(v => D.items.find(i => i.id === w.pick).pick.options.find(o => o.v === v).label).join('・')}」`;
@@ -24,7 +25,7 @@ o.push('## 最初の質問と分岐', '');
 D.questions.forEach((q, i) => {
   o.push(`### Q${i + 1}. ${q.text}${q.when ? `（表示条件：${cond(q.when)}）` : ''}`);
   if (q.help) o.push(`補足：${q.help}`);
-  if (q.options) o.push(...q.options.map(x => `- ${x.label}${x.ex ? '（ほかと同時に選べない）' : ''}`));
+  if (q.options) o.push(...q.options.map(x => `- ${x.label}${x.ex ? '（ほかと同時に選べない）' : ''}${x.when ? `（表示条件：${cond(x.when)}）` : ''}`));
   if (q.fields) o.push(...q.fields.map(f => `- 入力欄：${f.label}`));
   o.push('');
 });
@@ -38,6 +39,8 @@ for (const g of D.groups) {
     if (it.docs?.length) o.push('- 入手できる資料と取得先：', ...it.docs.map(d => `  - ${d.n}：${d.w}（${WHO[d.who]}）`));
     if (it.dept?.length) o.push(`- 担当部署の候補：${it.dept.map(d => D.depts[d]).join('／')}`);
     if (it.ask) o.push(`- そのまま使える質問文：${it.ask}`);
+    for (const [d, t] of Object.entries(it.askBy || {})) o.push(t ? `- そのまま使える質問文（${D.depts[d]}あて）：${t}` : `- ${D.depts[d]}あての相談票・質問一覧には、この項目の質問文を入れない`);
+    for (const v of it.vary || []) o.push(`- 言いかえ（${cond(v.when)}のとき）：`, ...['t', 'ask', 'req'].filter(k => v[k]).map(k => `  - ${{ t: '項目名', ask: '質問文', req: '求める対応' }[k]}：${v[k]}`));
     if (it.req) o.push(`- 求める対応：${it.req}`);
     o.push('- 回答後の次の行動：', ...it.next.map(x => `  - ${x}`));
     if (it.pick) o.push(`- 記録する値：${it.pick.options.map(x => x.label).join('／')}`);

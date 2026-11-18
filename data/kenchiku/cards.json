@@ -1503,6 +1503,19 @@
    ]
   },
   {
+   "id": "chk_reihai_list",
+   "section": "check",
+   "priority": 96,
+   "top": true,
+   "when": {
+    "fact": "facility",
+    "eq": "religious"
+   },
+   "title": "礼拝施設の確認チェックリストで、確かめることを整理する",
+   "body": "礼拝施設について確かめることを、建物・都市計画・消防・音や車・通学路などの項目ごとにまとめたチェックリストがあります。答えに合わせて、役所の部署ごとの質問文や相談票も作れます。印刷できる「確認と相談のガイド」もあります。",
+   "links": [{"type": "page", "url": "#/reihai", "label": "礼拝施設の確認チェックリストを開く", "primary": true}]
+  },
+  {
    "id": "chk_cemetery",
    "section": "check",
    "priority": 92,

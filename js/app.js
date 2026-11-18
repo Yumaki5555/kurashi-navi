@@ -750,11 +750,14 @@ function viewResult() {
   const plan = !isRound && c.tree.planLayout && E.test(c.tree.planLayout.when, facts) ? c.tree.planLayout : null;
   const scenes = plan ? r.ifnot.filter(x => x.scene) : [];
   const clHtml = r.checklist.length ? checklistBlock(r.checklist, file.checks || {}, T, { status: c.data.checklistMode === 'status', title: plan?.titles.checklist }) : '';
+  // top のついた案内（例：宗教施設 → 礼拝施設の確認チェックリスト）は、折りたたまずに「今の状況」のすぐ下に出す
+  const tops = r.check.filter(x => x.top), checks = r.check.filter(x => !x.top);
+  const topHtml = tops.map(x => `<div class="box point"><b>${rich(fill(x.title, T))}</b><p>${rich(fill(x.body || '', T))}</p>${linksBlock(x.links, { skipNext: true })}</div>`).join('');
   const other = [
     plan && r.cause.length ? more('今わかっていること・次に確かめること', r.cause.slice(0, 2).map(x => `<div class="box cause"><b>${rich(fill(x.title, T).replace(/^見立て：/, ''))}</b><p>${rich(fill(x.body, T))}</p>${sourcesBlock(x.sources, x.facts)}<div class="termbox" hidden></div></div>`).join('')) : '',
     more(`すでに試したこと・選んだこと（${tried.length}件・同じ提案はしません）`, tried.length ? `<ul>${tried.map(x => `<li>${rich(fill(x.title, T))}</li>`).join('')}</ul>` : ''),
     more('また起きたとき・ほかの困りごとが残るとき', r.recur.map((x, i) => todoCard(x, i, false, chosen, T)).join('')),
-    more(`あわせて確かめておくと役立つこと（${r.check.length}件）`, r.check.map(x => infoCard(x, T)).join('')),
+    more(`あわせて確かめておくと役立つこと（${checks.length}件）`, checks.map(x => infoCard(x, T)).join('')),
     plan ? '' : clHtml,
     r.dont.map(x => infoCard(x, T)).join(''),
     !isRound && lad.next ? more(`この分野の次の段階：${esc(lad.next.title)}`, `<p>${rich(lad.next.body)}</p>${linksBlock(lad.next.links, { skipNext: true })}`) : '',
@@ -772,6 +775,7 @@ function viewResult() {
     <div class="box now"><b>今の状況</b><p>${esc(nowText(sum))}</p>
       <details><summary>答えた内容をすべて見る・変更する</summary><ul>${sum.map(s => `<li>${esc(s.label)}：<b>${esc(s.value)}</b>${s.auto ? ' <small>（引き継ぎ）</small>' : ''} <a class="fix" href="${qHash(c, s.n)}?edit=1">回答を変更</a></li>`).join('')}</ul></details></div>
     ${outcome ? `<p class="note">「対応の記録」で相談全体の状態を「${esc(STATUS.find(s => s.value === st).label)}」にしているので、それに合わせた案内を出しています。<a href="#/f/${file.id}/records">状態を変える</a></p>` : ''}
+    ${topHtml}
     ${plan ? planHtml(plan, { fresh, chosen, T, recHelp, noneHtml, clHtml, scenes, nextSec, roundList, file }) : `<section><h2>まずすること</h2>
       ${first ? todoCard(first, null, true, chosen, T, { recHelp }) : noneHtml}
     </section>

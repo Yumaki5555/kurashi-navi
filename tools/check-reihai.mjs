@@ -19,6 +19,7 @@ for (const q of D.questions) {
   if (q.type !== 'text' && !q.options.some(o => /分からない|決めていない|まだどこにも|覚えていない/.test(o.label))) err(`質問 ${q.id} に「分からない」に当たる選択肢がない`);
   if (q.when && !qIds.has(q.when.q)) err(`質問 ${q.id} の条件の参照先がない`);
 }
+if (!D.questions.find(q => q.id === 'worry').options.find(o => o.v === 'proc')?.ex) err('「手続きを確かめたいだけ」が、ほかの答えと同時に選べる');
 const respOpts = D.questions.find(q => q.id === 'resp').options.map(o => o.v).filter(v => v !== 'unk');
 for (const v of respOpts) if (!D.responses.some(r => r.id === v)) err(`回答「${v}」に次の一手がない`);
 if (D.responses.length < 11) err('回答別の分岐が11より少ない');
@@ -29,11 +30,13 @@ const WHO = ['all', 'pub', 'owner', 'foi', 'local', 'self'];
 const optOk = (qid, v) => D.questions.find(q => q.id === qid)?.options?.some(o => o.v === v);
 function checkWhen(w, id) {
   if (!w) return;
+  if (w.not) return checkWhen(w.not, id);
   if (w.any || w.all) return (w.any || w.all).forEach(x => checkWhen(x, id));
   if (w.pick) { const it = D.items.find(i => i.id === w.pick); if (!it?.pick) err(`${id} の条件：項目 ${w.pick} に記録欄がない`); (w.in || []).forEach(v => it?.pick?.options.some(o => o.v === v) || err(`${id} の条件：${w.pick} に値 ${v} がない`)); return; }
   if (!qIds.has(w.q)) return err(`${id} の条件：質問 ${w.q} がない`);
   (w.in || w.has || []).forEach(v => optOk(w.q, v) || err(`${id} の条件：質問 ${w.q} に選択肢 ${v} がない`));
 }
+for (const q of D.questions) (q.options || []).forEach(o => o.when && checkWhen(o.when, `質問 ${q.id} の選択肢 ${o.v}`));
 for (const it of D.items) {
   for (const k of ['t', 'why', 'next', 'basis']) if (!it[k] || (Array.isArray(it[k]) && !it[k].length)) err(`${it.id} に「${k}」がない`);
   if (!groups.has(it.g)) err(`${it.id} の分類 ${it.g} がない`);
@@ -42,6 +45,10 @@ for (const it of D.items) {
   (it.docs || []).forEach(d => WHO.includes(d.who) || err(`${it.id} の資料「${d.n}」の取得できる人の区分 ${d.who} が不明`));
   (it.basis || []).forEach(b => { if (!D.levels[b.k]) err(`${it.id} の根拠の区分 ${b.k} が不明`); if (b.src && !SRC.has(b.src)) err(`${it.id} の出典 ${b.src} が sources.json にない`); if (b.k !== 'vol' && b.k !== 'local' && !b.src) err(`${it.id} の根拠（${b.k}）に出典がない`); });
   checkWhen(it.when, it.id);
+  (it.vary || []).forEach((v, i) => { if (!v.when) err(`${it.id} の言いかえ${i + 1}に条件がない`); checkWhen(v.when, `${it.id} の言いかえ${i + 1}`); Object.keys(v).forEach(k => ['when', 't', 'ask', 'req', 'askBy'].includes(k) || err(`${it.id} の言いかえで変えられない欄 ${k}`)); });
+  Object.entries(it.askBy || {}).forEach(([d, t]) => { if (!(it.dept || []).includes(d)) err(`${it.id} の部署ごとの質問文 ${d} が相談先にない`); if (t !== false && typeof t !== 'string') err(`${it.id} の部署ごとの質問文 ${d} は文か false`); });
+  for (const a of [it.ask, ...Object.values(it.askBy || {}), ...(it.vary || []).map(v => v.ask)].filter(x => typeof x === 'string' && x))
+    if (!a.includes('（施設へのお願い）') && !/教えて|確認|お願い|検討|ご検討/.test(a)) err(`${it.id} の質問文が、役所に確認を求める形になっていない：${a.slice(0, 20)}`);
   if (it.ask && !it.ask.includes('（施設へのお願い）') && !/教えて|確認|お願い|検討|ご検討/.test(it.ask)) err(`${it.id} の質問文が、役所に確認を求める形になっていない`);
   for (const t of [...(it.next || [])]) for (const m of t.matchAll(/(?<![A-Za-z])([A-I]\d)(?!\d)/g)) if (!items.has(m[1])) err(`${it.id} の案内にある項目 ${m[1]} がない`);
 }
@@ -87,6 +94,25 @@ function run(s) {
   outs.forEach((t, i) => { if (/undefined|null|NaN|\[object/.test(t)) err(`出力${i}に undefined など：${JSON.stringify(s.ans)}`); });
   if (!outs[2].includes(D.askClose)) err('相談票に基本のお願いの文がない');
   if (s.ans.contact === 'gov' && C.byDept(D, s).some(g => g.dept === 'op')) err('運営者に連絡しない希望なのに、運営者へのお願いが入った');
+  // 相談票は1枚に1つの部署あて：質問がある部署があれば、あて先は空にしない。入る質問はその部署あての文だけ
+  const sd = C.sheetDept(D, s), groupsNoOp = C.byDept(D, s).filter(g => g.dept !== 'op');
+  if (groupsNoOp.length && (!sd || !outs[2].includes(`あて先：${D.depts[sd]}`))) err(`相談票のあて先が空：${JSON.stringify(s.ans)}`);
+  for (const g of groupsNoOp) {
+    const t = C.sheetText(D, s, g.dept);
+    if (!t.includes(`あて先：${D.depts[g.dept]}`)) err(`相談票（${g.dept}）のあて先が違う`);
+    for (const it of D.items) for (const [d, x] of Object.entries(it.askBy || {})) if (d === g.dept && x === false && it.ask && t.includes(C.fill(it.ask, s).slice(0, 40))) err(`相談票（${d}）に、その部署には聞かない ${it.id} の質問が入った`);
+  }
+  // 予定・工事中なら、「使われている」前提の文を出さない
+  const { rel: rl } = C.relevant(D, s), st0 = C.active(D, s).ans.stage;
+  if (['plan', 'build'].includes(st0)) for (const it of rl) for (const t of [it.t, ...(it.dept || []).map(d => C.askFor(it, d))])
+    if (/使われているようです|現在は〇〇|いつから・何に・どのくらい」使われて|今の使い方は合って/.test(t || '')) err(`段階「${st0}」なのに ${it.id} が「使われている」前提の文`);
+  if (['plan', 'build'].includes(st0) && C.active(D, s).ans.bldg === 'new' && rl.some(it => it.id === 'D4')) err('新しく建てる計画・工事中なのに、検査済証（D4）が出た');
+  // 市街化区域と分かったら、都市計画法42条・43条（C4）は出さない
+  if (s.picks?.C1 === 'shigaika' && rl.some(it => it.id === 'C4')) err('市街化区域なのに C4 が出た');
+  // 回答の選択肢：役所に相談していないのに窓口の回答、請願・陳情を出していないのに「否決」を判定に使わない
+  const ra = C.active(D, s).ans.resp || [], ak = s.ans.asked || [];
+  if (!ak.includes('petition') && ra.includes('rejected')) err('請願・陳情を出していないのに「否決」が判定に入った');
+  if (!ak.includes('gov') && ra.some(v => !['rejected', 'noreply', 'unk'].includes(v))) err('役所に相談していないのに、窓口の回答が判定に入った');
 }
 let seed = 1; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
 const sub = id => { const o = opts(id).filter(v => !D.questions.find(q => q.id === id).options.find(x => x.v === v).ex); const r = o.filter(() => rnd() < 0.3); return r.length ? r : [opts(id).find(v => D.questions.find(q => q.id === id).options.find(x => x.v === v).ex) || o[0]]; };
