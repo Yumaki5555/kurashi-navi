@@ -157,11 +157,17 @@
       "text": "そう思う理由はどれですか？（いくつでも）",
       "help": "見て分かることだけで大丈夫です。分からないまま「違反」と決めつけないための質問です。",
       "options": [
-        { "value": "no_sign", "label": "工事現場に「建築確認」の表示（看板）が見当たらない", "short": "確認の表示がない" },
+        { "value": "no_sign", "label": "工事現場に「建築確認」の表示（看板）が見当たらない", "short": "確認の表示がない", "when": { "not": { "fact": "facility", "eq": "land" } } },
         { "value": "use_diff", "label": "聞いていた使い道と違う使い方をしているように見える", "short": "使い道が違うように見える" },
         { "value": "size", "label": "高さや大きさが、聞いていた計画と違うように見える", "short": "大きさが違うように見える" },
-        { "value": "farmland", "label": "田畑だった土地が、資材置き場や駐車場などに変わった", "short": "田畑が別の使い方に" },
-        { "value": "morido", "label": "土や残土が高く積まれている・盛土が崩れそう", "short": "盛土・土の積み上げ" },
+        {
+          "value": "farmland",
+          "label": "田畑だった土地が、資材置き場や駐車場などに変わった",
+          "short": "田畑が別の使い方に",
+          "when": { "not": { "fact": "facility", "in": ["condo", "shop", "public", "religious", "cemetery"] } },
+          "alt": [{ "when": { "fact": "facility", "eq": "houses" }, "label": "田畑だった土地が、宅地として造成されている", "short": "田畑が宅地に" }]
+        },
+        { "value": "morido", "label": "土や残土が高く積まれている・盛土が崩れそう", "short": "盛土・土の積み上げ", "when": { "not": { "fact": "facility", "in": ["condo", "shop", "public", "religious", "cemetery"] } } },
         { "value": "other", "label": "その他・はっきりしない", "short": "その他" }
       ],
       "next": "c_checked"

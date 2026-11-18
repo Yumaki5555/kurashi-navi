@@ -140,12 +140,15 @@ export function stateAt(state, n) {
   return { node: h[n - 1].node, facts: h[n - 1].facts, history: h.slice(0, n - 1) };
 }
 
-// 答えを直したあと：残りの質問に前の答え（prev：質問ID → 答え）を当てはめて進める。分岐が変わって前の答えがない質問で止まる
+// 答えを直したあと：残りの質問に前の答え（prev：質問ID → 答え）を当てはめて進める。分岐が変わって前の答えがない質問や、
+// 前の答えに今は出ない選択肢がある質問（例：「土地」→「宗教施設」に直したあとの「盛土」）で止まり、聞き直す
 export function replay(tree, state, prev = {}) {
   let s = state;
   for (let i = 0; i < 50 && s.node !== RESULT && s.node !== EMERGENCY; i++) {
     const node = tree.nodes[s.node], v = prev[s.node];
-    if (!node || v === undefined || !known(tree, node, v) || (node.type !== 'multi' && !optionsOf(tree, node, s.facts).some(o => o.value === v))) break;
+    if (!node || v === undefined || !known(tree, node, v)) break;
+    const shown = optionsOf(tree, node, s.facts);
+    if (![].concat(v).every(x => shown.some(o => o.value === x))) break;
     try { s = answer(tree, s, v); } catch { break; }
   }
   return s;
