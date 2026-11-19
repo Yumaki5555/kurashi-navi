@@ -47,6 +47,7 @@ python tools/make-icons.py      # サイトのアイコン（icons/favicon.svg �
 node tools/verify-laws.mjs      # e-Gov の条文と、事実データの言い回しの照合
 node tools/check-reihai.mjs       # 礼拝施設の確認チェックリストの検査（形・参照・禁止表現・答えの組み合わせ2万通り）
 node tools/verify-reihai-laws.mjs # 同チェックリストの根拠条文を e-Gov で照合（--dump で research/reihai-laws.txt）
+bash tools/guide-pdf/build.sh     # 印刷用PDFを作り直す（元のPDF tools/guide-pdf/src/guide.pdf → 見やすい版 tools/guide-pdf/work/new.pdf。元と文字が1字も変わっていないか照合。見た目は render.py で直し、できたPDFを print/shisetsu-guide.pdf に上書きする。src と work は公開しない）
 python -I tools/import-guide.py   # 印刷用PDF（print/shisetsu-guide.pdf）を差し替えたら、ガイドの本文を取り込み直す（PyMuPDF が必要。取りこぼし・宗教の名前が0件か tools/import-guide-report.txt で確認）
 node tools/export-reihai-md.mjs   # 同チェックリストの全文を research/reihai_checklist_全文.md に書き出す（見直し用）
 node tools/import-regions.mjs   # 自治体一覧と施設一覧の出典を取り込み直す（元サイトは読み取りのみ）
