@@ -1,0 +1,2 @@
+# bash のスクリプトは改行を LF のままにする（CRLF だと bash で動かない）
+*.sh text eol=lf
