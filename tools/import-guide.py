@@ -105,10 +105,12 @@ def page_lines(page):
                 continue
             x0, y0, x1, y1 = ln['bbox']
             s0 = next(s for s in ln['spans'] if s['text'].strip())
+            s9 = next(s for s in reversed(ln['spans']) if s['text'].strip())
             if (y0 < HEAD_Y and s0['size'] < 9) or (y0 > FOOT_Y and s0['size'] < 8):
                 continue
             out.append(dict(x0=x0, y0=y0, x1=x1, y1=y1, t=t.strip(), size=round(s0['size'], 1),
-                            bold=bool(s0['flags'] & 16), color=s0['color'], used=False, uri=None))
+                            bold=bool(s0['flags'] & 16), color=s0['color'], used=False, uri=None,
+                            end=(bool(s9['flags'] & 16), s9['color'])))  # 行の終わりの文字の太さ・色（折り返しの判定用）
     out.sort(key=lambda r: (round(r['y0'] / 3), r['x0']))
     return out
 
@@ -247,7 +249,8 @@ def build_page(page, pno, rep):
     for ln in flow:
         if paras:
             pv = paras[-1]
-            same = abs(pv['size'] - ln['size']) <= 0.4 and pv['bold'] == ln['bold'] and pv['color'] == ln['color']
+            # 同じ書式：段落の始まりと同じか、前の行の終わりと同じ（リンクや「言葉：」など色の違う文字の途中で折り返した行もつなぐ）
+            same = abs(pv['size'] - ln['size']) <= 0.4 and ((pv['bold'], pv['color']) == (ln['bold'], ln['color']) or pv['end'] == (ln['bold'], ln['color']))
             gap = ln['y0'] - pv['y1']
             near = -1 <= gap <= pv['size'] * 1.1 and abs(ln['x0'] - pv['x0']) <= pv['size'] * 1.3
             full = pv['x1'] >= pv['right'] - pv['size'] * 1.6
@@ -255,7 +258,7 @@ def build_page(page, pno, rep):
             if same and near and full and cont and (pv['uri'] == ln['uri']) and ln['size'] < 14 or \
                (same and near and pv['size'] >= 14 and ln['size'] >= 14):
                 pv['t'] += ln['t']
-                pv['x1'], pv['y1'] = ln['x1'], ln['y1']
+                pv['x1'], pv['y1'], pv['end'] = ln['x1'], ln['y1'], ln['end']
                 pv['right'] = max(pv['right'], right_of(ln))
                 continue
         p = dict(ln)
@@ -300,6 +303,13 @@ def tidy(blocks):
     for b in blocks:
         if out and b['k'] in ('p', 'h') and out[-1]['k'] == 'p' and re.search(r'[→、の・／]$', out[-1]['t']) and len(b['t']) <= 20:
             out[-1]['t'] += b['t']
+            continue
+        # 言葉の途中で切れた行（例：「土地を削」＋「る・盛る…」、「確認で」＋「きますか。」）をつなぐ
+        if out and b['k'] == 'p' and re.match(r'[ぁ-ん]', b['t']) and out[-1]['k'] in ('p', 'chk', 'li', 'note') \
+                and not re.search(r'[。？?」）：]$', out[-1]['t']):
+            out[-1]['t'] += b['t']
+            if out[-1]['k'] == 'p' and out[-1]['t'].startswith('「') and out[-1]['t'].endswith('」'):
+                out[-1]['k'] = 'say'
             continue
         if out and b['k'] in ('p', 'say') and out[-1]['k'] in ('p', 'li', 'note') and unbalanced(out[-1]['t']):
             out[-1]['t'] += b['t']
